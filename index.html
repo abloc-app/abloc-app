@@ -2785,6 +2785,15 @@ const supa = {
   async resetPassword(email) {
     return this.req('/auth/v1/recover', 'POST', {email});
   },
+  async getBlocs() {
+    return this.req('/rest/v1/blocs?actif=eq.true&order=added_at.asc', 'GET', null, currentToken);
+  },
+  async insertBloc(bloc) {
+    return this.req('/rest/v1/blocs', 'POST', bloc, currentToken);
+  },
+  async deleteBloc(id) {
+    return this.req('/rest/v1/blocs?id=eq.'+id, 'DELETE', null, currentToken);
+  },
   async getProfile(userId, token) {
     const data = await this.req(`/rest/v1/profiles?id=eq.${userId}&select=*`, 'GET', null, token);
     return Array.isArray(data) ? data[0] : null;
@@ -2926,6 +2935,7 @@ function onAuthSuccess() {
   hideAuthScreen();
   updateUserPill();
   showToast('Bienvenue ' + (currentProfile?.pseudo || currentUser?.email?.split('@')[0]) + ' !');
+  loadBlocsFromSupabase();
   // Merge local data already present
   renderBlocs();
   updateSummary && updateSummary();
@@ -3092,35 +3102,51 @@ function submitNewBloc() {
     addedAt: new Date().toISOString(),
   };
 
-  // Add to BLOCS array
-  BLOCS.push(bloc);
+  // Sauvegarder dans Supabase + localement
+  const blocToSave = {
+    id: bloc.id,
+    couleur: bloc.couleur,
+    col: bloc.col,
+    secteur: bloc.secteur,
+    hall: seanceHall||'ancienne',
+    inclinaisons: bloc.inclinaisons,
+    styles: bloc.styles,
+    prises: bloc.prises,
+    cotation: bloc.cotation||'',
+    ouvreur: bloc.ouvreur||'',
+    note: bloc.note||'',
+    date: bloc.date,
+    added_by: bloc.addedBy,
+  };
 
-  // Save to localStorage
+  // Ajouter localement immédiatement
+  BLOCS.push(bloc);
   saveAll();
+
+  // Puis sauvegarder dans Supabase
+  if(currentToken) {
+    supa.insertBloc(blocToSave).then(res=>{
+      if(res.error) console.warn('Supabase insert error:', res.error);
+      else console.log('Bloc saved to Supabase:', bloc.id);
+    }).catch(e=>console.warn('Supabase error:', e));
+  }
 
   // Show success
   const succ = document.getElementById('addbloc-success');
   const succSub = document.getElementById('addbloc-success-sub');
   if(succ) succ.classList.add('show');
-  if(succSub) succSub.textContent = `Bloc ${id} — ${newBlocData.couleur} — Secteur ${newBlocData.secteur} ajouté par ${bloc.addedBy}`;
+  if(succSub) succSub.textContent = `Bloc ${id} — ${newBlocData.couleur} — Secteur ${newBlocData.secteur} ajouté !`;
   succ?.scrollIntoView({behavior:'smooth',block:'nearest'});
 
-  // Check badge
   checkBadge('first_avis');
   showToast('Bloc ' + id + ' ajouté !');
 
-  // Revenir sur seance avec le secteur ouvert après 1.5s
+  // Revenir sur la séance avec le bon secteur après 1.5s
   setTimeout(()=>{
     resetBlocForm();
     showTab('seance');
-    // Rouvrir le secteur si on venait de la map
-    if(seanceSelZone){
-      setTimeout(()=>selectSeanceZone(seanceSelZone), 200);
-    } else {
-      // Ouvrir le secteur du bloc qu'on vient d'ajouter
-      setTimeout(()=>selectSeanceZone(bloc.secteur), 200);
-    }
-    renderSeanceOverlays();
+    const zone = seanceSelZone || bloc.secteur;
+    setTimeout(()=>{ if(zone) selectSeanceZone(zone); renderSeanceOverlays(); }, 200);
   }, 1500);
 }
 
@@ -3453,6 +3479,7 @@ function loginDemo() {
   updateUserPill();
   showTab('seance');
   loadAll();
+  loadBlocsFromSupabase();
   initSeanceMap();
   renderActuFeed();
   checkAllBadges();
@@ -3501,6 +3528,47 @@ function getCoachingNote(){
   return cn||on||'Aucune note personnelle.';
 }
 
+
+// ========== BLOCS SUPABASE ==========
+async function loadBlocsFromSupabase() {
+  if(!currentToken) return;
+  try {
+    const data = await supa.getBlocs();
+    if(!Array.isArray(data)) return;
+    let added = 0;
+    data.forEach(b => {
+      // Convertir format Supabase -> format app
+      const bloc = {
+        id: b.id,
+        couleur: b.couleur,
+        col: b.col || '#888',
+        secteur: b.secteur,
+        hall: b.hall || 'ancienne',
+        inclinaisons: b.inclinaisons || [],
+        styles: b.styles || [],
+        prises: b.prises || [],
+        cotation: b.cotation || '',
+        ouvreur: b.ouvreur || '',
+        note: b.note || '',
+        date: b.date || '',
+        addedBy: b.added_by || '',
+        style: (b.inclinaisons||[])[0] || '',
+      };
+      // Ajouter seulement s'il n'existe pas déjà
+      if(!BLOCS.find(x => x.id === bloc.id)) {
+        BLOCS.push(bloc);
+        added++;
+      }
+    });
+    if(added > 0) {
+      console.log('Loaded', added, 'blocs from Supabase');
+      renderSeanceOverlays();
+    }
+  } catch(e) {
+    console.warn('loadBlocsFromSupabase error:', e);
+  }
+}
+
 // ========== INIT ==========
 // Auth check
 if(loadAuthState()) {
@@ -3509,6 +3577,7 @@ if(loadAuthState()) {
     currentProfile = p;
     updateUserPill();
   }).catch(()=>{});
+  loadBlocsFromSupabase();
 } else {
   showAuthScreen();
 }
