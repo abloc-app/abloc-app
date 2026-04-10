@@ -1,10 +1,10 @@
 [build]
-  functions = "netlify/functions"
   publish = "."
 
 [[headers]]
-  for = "/*"
+  for = "/*.html"
   [headers.values]
-    Access-Control-Allow-Origin = "*"
-    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
-    Access-Control-Allow-Headers = "Content-Type"
+    Content-Type = "text/html; charset=utf-8"
+
+[functions]
+  directory = "netlify/functions"
