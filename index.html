@@ -547,6 +547,28 @@ textarea{resize:none;height:62px;line-height:1.5}
 .zone-overlay:hover{border-color:var(--accent)!important}
 .zone-overlay.zsel{border-color:var(--accent)!important;border-width:2.5px!important}
 .prof-empty{text-align:center;padding:20px;color:var(--ink3);font-size:13px}
+/* ── ADMIN DASHBOARD ── */
+.admin-wrap{position:fixed;inset:0;background:var(--bg);z-index:200;overflow-y:auto;padding:20px 16px}
+.admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.admin-title{font-family:var(--display);font-size:20px;font-weight:800;color:var(--ink)}
+.admin-title span{color:var(--accent)}
+.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.admin-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.admin-card{background:var(--card-bg);border:1px solid var(--line);border-radius:var(--rs);padding:14px 16px}
+.admin-card-title{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--ink3);margin-bottom:8px}
+.admin-big{font-family:var(--display);font-size:32px;font-weight:800;line-height:1}
+.admin-sub{font-size:11px;color:var(--ink3);margin-top:3px}
+.admin-alert{padding:10px 12px;border-radius:8px;margin-bottom:8px;font-size:12px;border:1px solid transparent}
+.admin-alert-red{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.2);color:var(--ink)}
+.admin-alert-yellow{background:rgba(251,191,36,.06);border-color:rgba(251,191,36,.15);color:var(--ink)}
+.admin-alert-blue{background:rgba(59,130,246,.06);border-color:rgba(59,130,246,.15);color:var(--ink)}
+.admin-color-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.admin-bar-wrap{flex:1;background:var(--line);border-radius:4px;height:7px;overflow:hidden}
+.admin-bar-fill{height:100%;border-radius:4px;transition:width .4s}
+.admin-table{width:100%;border-collapse:collapse;font-size:11px}
+.admin-table th{text-align:left;padding:6px 8px;color:var(--ink3);font-size:10px;letter-spacing:.4px;text-transform:uppercase;border-bottom:1px solid var(--line)}
+.admin-table td{padding:7px 8px;border-bottom:1px solid rgba(255,255,255,.03);color:var(--ink2);vertical-align:middle}
+.admin-table tr:hover td{background:rgba(255,255,255,.02)}
 .zone-overlay.zdim{opacity:0.12}
 .zone-panel{background:var(--white);border-radius:var(--r);border:1.5px solid var(--line);box-shadow:var(--shadow-md);margin-top:10px;overflow:hidden;display:none}
 .zone-panel.open{display:block}
@@ -645,6 +667,11 @@ textarea{resize:none;height:62px;line-height:1.5}
     <button id="sync-btn" class="btn" style="margin-top:10px;font-size:12px;color:var(--accent);border-color:var(--accent)" onclick="syncBlocsToSupabase()">
       ☁ Synchroniser les blocs vers Supabase
     </button>
+    <div id="admin-btn-wrap" style="display:none;margin-top:8px">
+      <button class="btn btn-primary" style="font-size:12px" onclick="openAdmin()">
+        🛠 Dashboard ouvreurs
+      </button>
+    </div>
   </div>
 
   <!-- Stats globales -->
@@ -690,6 +717,74 @@ textarea{resize:none;height:62px;line-height:1.5}
 
 </div>
 
+
+<!-- ADMIN DASHBOARD (overlay) -->
+<div id="admin-dashboard" style="display:none" class="admin-wrap">
+  <div class="admin-header">
+    <div>
+      <div class="admin-title">À Bloc<span>.</span> <span style="font-size:13px;font-weight:500;color:var(--ink3)">Dashboard ouvreurs</span></div>
+    </div>
+    <button class="btn" style="width:auto;padding:7px 14px;font-size:12px" onclick="closeAdmin()">✕ Fermer</button>
+  </div>
+
+  <div id="admin-err" style="display:none;padding:12px 14px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:10px;color:var(--red);font-size:12px;margin-bottom:14px"></div>
+
+  <!-- Métriques -->
+  <div class="admin-grid-4">
+    <div class="admin-card"><div class="admin-card-title">Blocs actifs</div><div class="admin-big" id="adm-total">—</div></div>
+    <div class="admin-card"><div class="admin-card-title">Ouvreurs</div><div class="admin-big" id="adm-ouvreurs">—</div></div>
+    <div class="admin-card"><div class="admin-card-title">Alertes</div><div class="admin-big" id="adm-alerts" style="color:var(--yellow)">—</div></div>
+    <div class="admin-card"><div class="admin-card-title">Top bloc ★</div><div class="admin-big" id="adm-top" style="font-size:20px;color:var(--yellow)">—</div><div class="admin-sub" id="adm-top-sub"></div></div>
+  </div>
+
+  <div class="admin-grid">
+    <!-- Par couleur -->
+    <div class="admin-card">
+      <div class="admin-card-title">Par niveau <span id="adm-total-badge" style="color:var(--accent)"></span></div>
+      <div id="adm-couleurs"></div>
+    </div>
+    <!-- Pyramide -->
+    <div class="admin-card">
+      <div class="admin-card-title">Pyramide — actuel vs cible</div>
+      <div id="adm-pyramid"></div>
+      <div style="font-size:10px;color:var(--ink3);margin-top:6px">Cible : 30% déb · 35% inter · 25% avancé · 10% expert</div>
+    </div>
+  </div>
+
+  <!-- Alertes -->
+  <div class="admin-card" style="margin-bottom:14px">
+    <div class="admin-card-title">⚠ Alertes ouvreurs <span id="adm-alerts-count" style="color:var(--accent)"></span></div>
+    <div id="adm-alerts-list"></div>
+  </div>
+
+  <div class="admin-grid">
+    <!-- Par style -->
+    <div class="admin-card">
+      <div class="admin-card-title">Par style de grimpe</div>
+      <div id="adm-styles"></div>
+    </div>
+    <!-- Top blocs -->
+    <div class="admin-card">
+      <div class="admin-card-title">🌟 Meilleurs blocs</div>
+      <div id="adm-top-blocs"></div>
+    </div>
+  </div>
+
+  <!-- Par ouvreur -->
+  <div class="admin-card" style="margin-bottom:14px">
+    <div class="admin-card-title">Stats par ouvreur</div>
+    <div id="adm-ouvreurs-list"></div>
+  </div>
+
+  <!-- Table -->
+  <div class="admin-card" style="margin-bottom:30px">
+    <div class="admin-card-title">Tous les blocs</div>
+    <div style="overflow-x:auto"><table class="admin-table">
+      <thead><tr><th>ID</th><th>Couleur</th><th>Secteur</th><th>Cotation</th><th>Styles</th><th>Inclinaisons</th><th>Morpho</th><th>Ouvreur</th><th>★</th></tr></thead>
+      <tbody id="adm-table-body"></tbody>
+    </table></div>
+  </div>
+</div>
 
 <!-- TOPBAR -->
 <div class="topbar">
@@ -2845,6 +2940,234 @@ function checkAllBadges() {
   });
 }
 
+
+// ========== ADMIN DASHBOARD ==========
+const ADMIN_EMAILS = ['admin@abloc.brussels', 'lucas@abloc.brussels'];
+
+const ADMIN_COLORS = [
+  {key:'vert',hex:'#22c55e',label:'Vert',level:1},
+  {key:'rose',hex:'#ec4899',label:'Rose',level:1},
+  {key:'orange',hex:'#f97316',label:'Orange',level:2},
+  {key:'bleu',hex:'#3b82f6',label:'Bleu',level:2},
+  {key:'noir',hex:'#94a3b8',label:'Noir',level:2},
+  {key:'mauve',hex:'#8b5cf6',label:'Mauve',level:3},
+  {key:'jaune',hex:'#fbbf24',label:'Jaune',level:3},
+  {key:'rouge',hex:'#ef4444',label:'Rouge',level:4},
+  {key:'blanc',hex:'#e2e8f0',label:'Blanc',level:4},
+];
+const ADMIN_LEVEL_LABELS = {1:'Débutant',2:'Intermédiaire',3:'Avancé',4:'Expert'};
+const ADMIN_LEVEL_IDEAL  = {1:.30,2:.35,3:.25,4:.10};
+const ADMIN_COT_RANK = {'3':1,'4':2,'4+':3,'5':4,'5+':5,'6A':6,'6A+':7,'6B':8,'6B+':9,'6C':10,'6C+':11,'7A':12,'7A+':13,'7B':14,'7B+':15,'7C':16,'7C+':17,'8A':18,'8A+':19,'8B':20};
+const ADMIN_COT_RANGE = {
+  vert:{min:1,max:5},rose:{min:3,max:7},orange:{min:5,max:9},
+  bleu:{min:6,max:11},noir:{min:7,max:12},
+  mauve:{min:10,max:15},jaune:{min:10,max:16},
+  rouge:{min:13,max:18},blanc:{min:14,max:20}
+};
+
+function isAdmin() {
+  return currentUser && ADMIN_EMAILS.includes(currentUser.email);
+}
+
+function openAdmin() {
+  document.getElementById('admin-dashboard').style.display = 'block';
+  loadAdminData();
+}
+function closeAdmin() {
+  document.getElementById('admin-dashboard').style.display = 'none';
+}
+
+async function loadAdminData() {
+  const errEl = document.getElementById('admin-err');
+  errEl.style.display = 'none';
+  try {
+    const data = await supa.req('/rest/v1/blocs?select=*&order=added_at.desc&limit=500','GET',null,currentToken);
+    if(!Array.isArray(data)) {
+      errEl.textContent = 'Erreur Supabase : ' + (data?.message||data?.error||JSON.stringify(data));
+      errEl.style.display = 'block';
+      return;
+    }
+    renderAdminDashboard(data);
+  } catch(e) {
+    errEl.textContent = 'Erreur réseau : ' + e.message;
+    errEl.style.display = 'block';
+  }
+}
+
+function renderAdminDashboard(blocs) {
+  renderAdminMetrics(blocs);
+  renderAdminCouleurs(blocs);
+  renderAdminPyramide(blocs);
+  renderAdminAlerts(blocs);
+  renderAdminStyles(blocs);
+  renderAdminTopBlocs(blocs);
+  renderAdminOuvreurs(blocs);
+  renderAdminTable(blocs);
+}
+
+function renderAdminMetrics(blocs) {
+  document.getElementById('adm-total').textContent = blocs.length;
+  const ouvreurs = new Set(blocs.map(b=>b.ouvreur).filter(Boolean));
+  document.getElementById('adm-ouvreurs').textContent = ouvreurs.size||'—';
+  const alerts = computeAdminAlerts(blocs);
+  const aEl = document.getElementById('adm-alerts');
+  aEl.textContent = alerts.length;
+  aEl.style.color = alerts.length>0?'var(--yellow)':'var(--green)';
+  const noted = blocs.filter(b=>b.etoiles>0).sort((a,b)=>b.etoiles-a.etoiles);
+  if(noted.length) {
+    document.getElementById('adm-top').textContent = '★'.repeat(noted[0].etoiles);
+    document.getElementById('adm-top-sub').textContent = noted[0].id+(noted[0].ouvreur?' — '+noted[0].ouvreur:'');
+  }
+}
+
+function renderAdminCouleurs(blocs) {
+  const counts = {};
+  ADMIN_COLORS.forEach(c=>counts[c.key]=0);
+  blocs.forEach(b=>{if(counts[b.couleur]!==undefined)counts[b.couleur]++;});
+  const max = Math.max(...Object.values(counts),1);
+  document.getElementById('adm-total-badge').textContent = blocs.length+' blocs';
+  document.getElementById('adm-couleurs').innerHTML = ADMIN_COLORS.map(c=>{
+    const n=counts[c.key];
+    const pct=blocs.length?Math.round(n/blocs.length*100):0;
+    return `<div class="admin-color-row">
+      <div style="width:10px;height:10px;border-radius:50%;background:${c.hex};flex-shrink:0"></div>
+      <div style="width:60px;font-size:11px;color:var(--ink)">${c.label}</div>
+      <div class="admin-bar-wrap"><div class="admin-bar-fill" style="width:${Math.round(n/max*100)}%;background:${c.hex}88"></div></div>
+      <div style="font-size:11px;color:var(--ink3);width:40px;text-align:right">${n} (${pct}%)</div>
+    </div>`;
+  }).join('');
+}
+
+function renderAdminPyramide(blocs) {
+  const lc={1:0,2:0,3:0,4:0};
+  blocs.forEach(b=>{const c=ADMIN_COLORS.find(x=>x.key===b.couleur);if(c)lc[c.level]++;});
+  const total=blocs.length||1;
+  document.getElementById('adm-pyramid').innerHTML = [4,3,2,1].map(k=>{
+    const actual=lc[k]/total, ideal=ADMIN_LEVEL_IDEAL[k];
+    const color=k===4?'#ef4444':k===3?'#8b5cf6':k===2?'#3b82f6':'#22c55e';
+    const warn = actual>ideal*1.3?' ⚠':actual<ideal*.6?' ↓':'';
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+      <div style="font-size:11px;color:var(--ink2);width:72px;text-align:right">${ADMIN_LEVEL_LABELS[k]}</div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:2px">
+        <div style="background:var(--line);border-radius:3px;height:10px;overflow:hidden">
+          <div style="width:${Math.round(actual*100)}%;height:100%;background:${color}99;border-radius:3px"></div>
+        </div>
+        <div style="background:var(--line);border-radius:3px;height:4px;overflow:hidden">
+          <div style="width:${Math.round(ideal*100)}%;height:100%;background:${color};border-radius:3px;opacity:.4"></div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--ink3);width:52px">${lc[k]} (${Math.round(actual*100)}%)${warn}</div>
+    </div>`;
+  }).join('');
+}
+
+function computeAdminAlerts(blocs) {
+  const alerts = [];
+  const morpho = blocs.filter(b=>b.morpho===true);
+  if(morpho.length) alerts.push({sev:'red',icon:'🔴',title:`${morpho.length} bloc${morpho.length>1?'s':''} signalé${morpho.length>1?'s':''} morpho`,desc:'À vérifier avec les ouvreurs.',items:morpho.map(b=>b.id)});
+  const mismatch = blocs.filter(b=>{
+    if(!b.cotation||!b.couleur) return false;
+    const rank=ADMIN_COT_RANK[b.cotation.toUpperCase()];
+    const range=ADMIN_COT_RANGE[b.couleur];
+    return rank&&range&&rank>range.max+1;
+  });
+  if(mismatch.length) alerts.push({sev:'yellow',icon:'🟡',title:`${mismatch.length} bloc${mismatch.length>1?'s':''} trop dur${mismatch.length>1?'s':''} pour leur couleur`,desc:'Cotation au-dessus du range attendu.',items:mismatch.map(b=>`${b.id} (${b.couleur}/${b.cotation})`)});
+  const sc={};
+  const KS=['Athlétique','Technique','Dynamique','Coordination','Équilibre','Adhérence'];
+  blocs.forEach(b=>(b.styles||[]).forEach(s=>{sc[s]=(sc[s]||0)+1;}));
+  const miss=KS.filter(s=>!sc[s]||sc[s]<2);
+  if(miss.length) alerts.push({sev:'blue',icon:'🔵',title:'Styles sous-représentés (< 2 blocs)',desc:'',items:miss});
+  const lc={1:0,2:0,3:0,4:0};
+  blocs.forEach(b=>{const c=ADMIN_COLORS.find(x=>x.key===b.couleur);if(c)lc[c.level]++;});
+  const tot=blocs.length||1;
+  [1,2,3,4].forEach(k=>{
+    const p=lc[k]/tot;
+    if(p>.5) alerts.push({sev:'yellow',icon:'🟡',title:`${ADMIN_LEVEL_LABELS[k]} sur-représenté (${Math.round(p*100)}%)`,desc:`Cible : ${Math.round(ADMIN_LEVEL_IDEAL[k]*100)}%`,items:[]});
+    if(p<.04&&tot>8) alerts.push({sev:'blue',icon:'🔵',title:`${ADMIN_LEVEL_LABELS[k]} sous-représenté (${Math.round(p*100)}%)`,desc:`Cible : ${Math.round(ADMIN_LEVEL_IDEAL[k]*100)}%`,items:[]});
+  });
+  return alerts;
+}
+
+function renderAdminAlerts(blocs) {
+  const alerts = computeAdminAlerts(blocs);
+  document.getElementById('adm-alerts-count').textContent = `(${alerts.length})`;
+  if(!alerts.length){document.getElementById('adm-alerts-list').innerHTML='<div class="empty" style="color:var(--green);padding:8px 0">✓ Aucune alerte</div>';return;}
+  document.getElementById('adm-alerts-list').innerHTML = alerts.map(a=>`
+    <div class="admin-alert admin-alert-${a.sev}">
+      <div style="font-weight:600;margin-bottom:2px">${a.icon} ${a.title}</div>
+      ${a.desc?`<div style="font-size:11px;color:var(--ink3)">${a.desc}</div>`:''}
+      ${a.items.length?`<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:5px">${a.items.slice(0,8).map(i=>`<span style="font-size:10px;padding:2px 7px;border-radius:4px;background:rgba(255,255,255,.07);color:var(--ink2)">${i}</span>`).join('')}${a.items.length>8?`<span style="font-size:10px;padding:2px 7px;border-radius:4px;background:rgba(255,255,255,.07)">+${a.items.length-8}</span>`:''}</div>`:''}
+    </div>`).join('');
+}
+
+function renderAdminStyles(blocs) {
+  const sc={};
+  blocs.forEach(b=>(b.styles||[]).forEach(s=>{sc[s]=(sc[s]||0)+1;}));
+  const sorted=Object.entries(sc).sort((a,b)=>b[1]-a[1]);
+  const max=sorted[0]?.[1]||1;
+  document.getElementById('adm-styles').innerHTML = sorted.length?sorted.map(([s,n])=>`
+    <div class="admin-color-row">
+      <div style="width:88px;font-size:11px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s}</div>
+      <div class="admin-bar-wrap"><div class="admin-bar-fill" style="width:${Math.round(n/max*100)}%;background:var(--accent)66"></div></div>
+      <div style="font-size:11px;color:var(--ink3);width:24px;text-align:right">${n}</div>
+    </div>`).join(''):'<div class="empty">Aucun style renseigné</div>';
+}
+
+function renderAdminTopBlocs(blocs) {
+  const rated=blocs.filter(b=>b.etoiles>0).sort((a,b)=>b.etoiles-a.etoiles).slice(0,8);
+  if(!rated.length){document.getElementById('adm-top-blocs').innerHTML='<div class="empty">Aucun bloc noté</div>';return;}
+  document.getElementById('adm-top-blocs').innerHTML = rated.map((b,i)=>{
+    const c=ADMIN_COLORS.find(x=>x.key===b.couleur);
+    return `<div style="display:flex;align-items:center;gap:8px;padding:7px 0;${i?'border-top:1px solid var(--line)':''}">
+      <div style="width:4px;height:28px;border-radius:2px;background:${c?.hex||'#555'};flex-shrink:0"></div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:600;color:var(--ink)">${b.id}</div>
+        <div style="font-size:10px;color:var(--ink3)">${(b.styles||[]).slice(0,2).join(' · ')||'—'}${b.cotation?' · '+b.cotation:''}</div>
+      </div>
+      <div>
+        <div style="color:var(--yellow);font-size:13px">${'★'.repeat(b.etoiles||0)}</div>
+        <div style="font-size:10px;color:var(--ink3);text-align:right">${b.ouvreur||''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderAdminOuvreurs(blocs) {
+  const stats={};
+  blocs.forEach(b=>{
+    const ou=b.ouvreur||'(inconnu)';
+    if(!stats[ou]) stats[ou]={n:0,cols:new Set()};
+    stats[ou].n++;
+    if(b.couleur) stats[ou].cols.add(b.couleur);
+  });
+  const sorted=Object.entries(stats).sort((a,b)=>b[1].n-a[1].n);
+  const max=sorted[0]?.[1].n||1;
+  document.getElementById('adm-ouvreurs-list').innerHTML = sorted.map(([ou,s])=>`
+    <div class="admin-color-row">
+      <div style="width:90px;font-size:12px;font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:0">${ou}</div>
+      <div style="display:flex;gap:3px;flex-shrink:0">${[...s.cols].map(c=>{const cc=ADMIN_COLORS.find(x=>x.key===c);return cc?`<div style="width:8px;height:8px;border-radius:50%;background:${cc.hex}"></div>`:''}).join('')}</div>
+      <div class="admin-bar-wrap"><div class="admin-bar-fill" style="width:${Math.round(s.n/max*100)}%;background:var(--accent)55"></div></div>
+      <div style="font-size:11px;color:var(--ink3);width:52px;text-align:right">${s.n} bloc${s.n>1?'s':''}</div>
+    </div>`).join('')||'<div class="empty">Aucun ouvreur</div>';
+}
+
+function renderAdminTable(blocs) {
+  document.getElementById('adm-table-body').innerHTML = blocs.map(b=>{
+    const c=ADMIN_COLORS.find(x=>x.key===b.couleur);
+    return `<tr>
+      <td style="font-weight:600;color:var(--ink)">${b.id||'—'}</td>
+      <td><span style="display:inline-flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:${c?.hex||'#555'}"></span>${b.couleur||'—'}</span></td>
+      <td>${b.secteur||'—'}</td>
+      <td>${b.cotation||'—'}</td>
+      <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${(b.styles||[]).join(', ')||'—'}</td>
+      <td style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${(b.inclinaisons||[]).join(', ')||'—'}</td>
+      <td style="color:${b.morpho?'var(--yellow)':'var(--ink3)'}">${b.morpho?'⚠ Oui':'Non'}</td>
+      <td>${b.ouvreur||'—'}</td>
+      <td style="color:var(--yellow)">${b.etoiles?'★'.repeat(b.etoiles):'—'}</td>
+    </tr>`;
+  }).join('');
+}
+
 // ========== RANKING ==========
 let _rankingPeriod = 'month';
 
@@ -3253,6 +3576,9 @@ function renderProfile() {
   const pn = document.getElementById('profile-name'); if(pn) pn.textContent=pseudo;
   const pe = document.getElementById('profile-email'); if(pe) pe.textContent=currentUser?.email||'';
   const pi = document.getElementById('profile-pseudo-input'); if(pi) pi.value=pseudo;
+  // Show admin button only for admins
+  const adminWrap = document.getElementById('admin-btn-wrap');
+  if(adminWrap) adminWrap.style.display = isAdmin() ? 'block' : 'none';
 
   // --- Stats globales ---
   const nbS = historique.length;
