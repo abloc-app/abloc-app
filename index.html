@@ -1230,34 +1230,6 @@ textarea{resize:none;height:62px;line-height:1.5}
         <div class="label">Ouvreur</div>
         <input type="text" id="bloc-ouvreur" placeholder="Ton pseudo ou ton prénom">
       </div>
-      <div class="row" style="margin-bottom:10px">
-        <div class="label">Essais pour le faire</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap" id="essais-btns">
-          <button type="button" class="tag-btn" onclick="selectEssais('flash',this)">⚡ Flash</button>
-          <button type="button" class="tag-btn" onclick="selectEssais('1',this)">1 essai</button>
-          <button type="button" class="tag-btn" onclick="selectEssais('2',this)">2 essais</button>
-          <button type="button" class="tag-btn" onclick="selectEssais('3',this)">3 essais</button>
-          <button type="button" class="tag-btn" onclick="selectEssais('+3',this)">+3 essais</button>
-          <button type="button" class="tag-btn" onclick="selectEssais('projet',this)">Projet</button>
-        </div>
-      </div>
-      <div class="row" style="margin-bottom:10px">
-        <div class="label">Note du bloc</div>
-        <div style="display:flex;gap:8px;font-size:28px" id="etoiles-btns">
-          <span style="cursor:pointer" onclick="selectEtoile(1)">☆</span>
-          <span style="cursor:pointer" onclick="selectEtoile(2)">☆</span>
-          <span style="cursor:pointer" onclick="selectEtoile(3)">☆</span>
-          <span style="cursor:pointer" onclick="selectEtoile(4)">☆</span>
-          <span style="cursor:pointer" onclick="selectEtoile(5)">☆</span>
-        </div>
-      </div>
-      <div class="row" style="margin-bottom:10px">
-        <div class="label">Morpho ?</div>
-        <div style="display:flex;gap:8px">
-          <button type="button" class="tag-btn" id="morpho-oui" onclick="selectMorpho(true)">💪 Oui</button>
-          <button type="button" class="tag-btn" id="morpho-non" onclick="selectMorpho(false)">Non</button>
-        </div>
-      </div>
       <div class="row">
         <div class="label">Note / bêta</div>
         <textarea id="bloc-note" placeholder="Conseil de beta, prise clé, ambiance du bloc..."></textarea>
@@ -3558,6 +3530,24 @@ function openBlocDetail(bloc){
       : ''
     )
 
+  // Section essais / étoiles / morpho éditable (blocs utilisateur)
+  +(bloc.addedBy
+    ? '<div class="bloc-tag-group" style="margin-top:4px"><div class="bloc-tag-group-label">Mon expérience</div>'
+      +'<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--ink3);margin-bottom:5px">Essais</div>'
+      +'<div style="display:flex;gap:6px;flex-wrap:wrap" id="bd-essais-btns">'
+      +['flash','1','2','3','+3','projet'].map(v=>'<button class="tag-btn '+(bloc.essais===v?'sel':'')+'" onclick="setBlocEssais(\''+v+'\',this,\''+bloc.id+'\')">'+( v==='flash'?'⚡ Flash':v==='projet'?'📌 Projet':v+' essai'+(parseInt(v)>1?'s':'') )+'</button>').join('')
+      +'</div></div>'
+      +'<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--ink3);margin-bottom:5px">Note</div>'
+      +'<div style="display:flex;gap:6px;font-size:26px" id="bd-etoiles-btns">'
+      +[1,2,3,4,5].map(n=>'<span style="cursor:pointer" onclick="setBlocEtoile('+n+',\''+bloc.id+'\')">'+(bloc.etoiles>=n?'★':'☆')+'</span>').join('')
+      +'</div></div>'
+      +'<div><div style="font-size:11px;color:var(--ink3);margin-bottom:5px">Morpho ?</div>'
+      +'<div style="display:flex;gap:8px">'
+      +'<button class="tag-btn '+(bloc.morpho===true?'sel':'')+'" onclick="setBlocMorpho(true,\''+bloc.id+'\')">💪 Oui</button>'
+      +'<button class="tag-btn '+(bloc.morpho===false?'sel':'')+'" onclick="setBlocMorpho(false,\''+bloc.id+'\')">Non</button>'
+      +'</div></div>'
+      +'</div>'
+    : '')
   +'<button class="btn" onclick="closeBlocDetail()" style="margin-top:8px;color:var(--ink3)">Fermer</button>';
 
   document.getElementById('bloc-detail-overlay').classList.add('open');
@@ -3646,6 +3636,32 @@ function deleteBlocDetail(id, couleur) {
 }
 
 function closeBlocDetail(){document.getElementById('bloc-detail-overlay').classList.remove('open');}
+
+function setBlocEssais(val, el, id) {
+  const bloc = BLOCS.find(b=>b.id===id); if(!bloc) return;
+  bloc.essais = (bloc.essais===val) ? null : val;
+  saveAll();
+  document.querySelectorAll('#bd-essais-btns .tag-btn').forEach(b=>b.classList.remove('sel'));
+  if(bloc.essais) el.classList.add('sel');
+  renderSeanceOverlays();
+  if(seanceSelZone) selectSeanceZone(seanceSelZone);
+}
+
+function setBlocEtoile(n, id) {
+  const bloc = BLOCS.find(b=>b.id===id); if(!bloc) return;
+  bloc.etoiles = (bloc.etoiles===n) ? 0 : n;
+  saveAll();
+  const stars = document.querySelectorAll('#bd-etoiles-btns span');
+  stars.forEach((s,i)=>{ s.textContent = i < bloc.etoiles ? '★' : '☆'; });
+}
+
+function setBlocMorpho(val, id) {
+  const bloc = BLOCS.find(b=>b.id===id); if(!bloc) return;
+  bloc.morpho = (bloc.morpho===val) ? null : val;
+  saveAll();
+  document.querySelectorAll('#bd-essais-btns').length; // force refresh
+  openBlocDetail(bloc);
+}
 
 
 function initSeanceMap(){
