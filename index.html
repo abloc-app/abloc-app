@@ -1431,8 +1431,11 @@ function filterBlocs(c, el) {
 
 function renderBlocs() {
   const visible = filterCouleur==='all' ? BLOCS : BLOCS.filter(b=>b.couleur===filterCouleur);
-  document.getElementById('bloc-list-title').textContent = 'Blocs'+(filterCouleur==='all'?'':' — '+filterCouleur);
-  document.getElementById('blocs-container').innerHTML = visible.map(b=>`
+  const titleEl = document.getElementById('bloc-list-title');
+  const containerEl = document.getElementById('blocs-container');
+  if(!titleEl || !containerEl) return;
+  titleEl.textContent = 'Blocs'+(filterCouleur==='all'?'':' — '+filterCouleur);
+  containerEl.innerHTML = visible.map(b=>`
     <div class="bloc-row">
       <span class="cdot" style="background:${b.col}"></span>
       <div style="flex:1">
@@ -3364,7 +3367,14 @@ function closeSeanceZone(){
 }
 function openAddBlocFromZone(){
   showTab('addbloc');
-  setTimeout(()=>{if(seanceSelZone)document.querySelectorAll('.secteur-btn').forEach(b=>{if(b.textContent.trim()===seanceSelZone)b.click();});},100);
+  setTimeout(()=>{
+    if(seanceSelZone){
+      const shortZone = seanceSelZone.replace(/^Zone \s*/,'');
+      document.querySelectorAll('.secteur-btn').forEach(b=>{
+        if(b.textContent.trim()===seanceSelZone||b.textContent.trim()===shortZone)b.click();
+      });
+    }
+  },100);
 }
 function openBlocDetail(bloc){
   if(typeof bloc==='string')bloc=JSON.parse(decodeURIComponent(bloc));
