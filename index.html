@@ -2510,7 +2510,7 @@ Génère un programme 4 semaines en JSON (réponds UNIQUEMENT avec le JSON) :
   };
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('/.netlify/functions/coaching', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
@@ -3169,39 +3169,89 @@ function selectSeanceZone(name){
   document.getElementById('seance-zone-title').textContent=name;
   document.getElementById('seance-zone-date').textContent=z.date?'Ouverture : '+z.date:'';
   const rows=[];
+  // Blocs de la map
   Object.entries(blocs).forEach(([col,n])=>{
     for(let i=1;i<=n;i++){
-      const key='MAP|'+name+'|'+col+'|'+i;const res=mapResults[key]||'';
-      const bdata={nom:(CNAMES_S[col]||col)+' #'+i,couleur:col,col:CCOLS[col]||'#888',secteur:name,mapKey:key};
-      rows.push('<div class="bloc-row" style="cursor:pointer;padding:11px 16px;border-bottom:1px solid var(--line)" onclick="openBlocDetail('+encodeURIComponent(JSON.stringify(bdata))+')">'
+      const key='MAP|'+name+'|'+col+'|'+i;
+      const res=mapResults[key]||'';
+      const nom=(CNAMES_S[col]||col)+' #'+i;
+      rows.push(
+        '<div class="bloc-row" style="cursor:pointer;padding:11px 16px;border-bottom:1px solid var(--line)"'
+        +' data-bloc-key="'+key+'" data-bloc-nom="'+nom+'" data-bloc-col="'+(CCOLS[col]||'#888')+'"'
+        +' data-bloc-couleur="'+col+'" data-bloc-secteur="'+name+'" onclick="onBlocRowClick(this)">'
         +'<div class="color-pill" style="background:'+(CCOLS[col]||'#888')+'"></div>'
-        +'<div style="flex:1"><div class="bloc-id">'+(CNAMES_S[col]||col)+' #'+i+'</div></div>'
+        +'<div style="flex:1"><div class="bloc-id">'+nom+'</div></div>'
         +'<div style="display:flex;gap:6px;align-items:center">'
-        +'<button class="rbtn '+(res==='ok'?'ok':'')+'" onclick="event.stopPropagation();setSeanceRes(\''+key+'\',\'ok\')">&#10003;</button>'
-        +'<button class="rbtn '+(res==='nok'?'nok':'')+'" onclick="event.stopPropagation();setSeanceRes(\''+key+'\',\'nok\')">&#10007;</button>'
+        +'<button class="rbtn '+(res==='ok'?'ok':'')+'" data-key="'+key+'" data-val="ok" onclick="event.stopPropagation();setSeanceResBtn(this)">&#10003;</button>'
+        +'<button class="rbtn '+(res==='nok'?'nok':'')+'" data-key="'+key+'" data-val="nok" onclick="event.stopPropagation();setSeanceResBtn(this)">&#10007;</button>'
         +'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>'
-        +'</div></div>');
+        +'</div></div>'
+      );
     }
   });
+  // Blocs ouvreurs
   BLOCS.filter(b=>b.secteur===name).forEach(b=>{
-    const key=b.id+'|'+b.couleur;const res=results[key]||'';
+    const key=b.id+'|'+b.couleur;
+    const res=results[key]||'';
+    const nom=b.id+' '+(CNAMES_S[b.couleur]||b.couleur);
     const tags=[...(b.inclinaisons||[b.style||'']).filter(Boolean)].slice(0,2).join(', ');
-    const bdata={id:b.id,nom:b.id+' '+(CNAMES_S[b.couleur]||b.couleur),couleur:b.couleur,col:b.col||CCOLS[b.couleur]||'#888',secteur:name,inclinaisons:b.inclinaisons||[],styles:b.styles||[],prises:b.prises||[],cotation:b.cotation||'',ouvreur:b.ouvreur||'',note:b.note||'',date:b.date||''};
-    rows.push('<div class="bloc-row" style="cursor:pointer;padding:11px 16px;border-bottom:1px solid var(--line)" onclick="openBlocDetail('+encodeURIComponent(JSON.stringify(bdata))+')">'
+    rows.push(
+      '<div class="bloc-row" style="cursor:pointer;padding:11px 16px;border-bottom:1px solid var(--line)"'
+      +' data-bloc-id="'+b.id+'" data-bloc-nom="'+nom+'" data-bloc-col="'+(b.col||CCOLS[b.couleur]||'#888')+'"'
+      +' data-bloc-couleur="'+b.couleur+'" data-bloc-secteur="'+name+'"'
+      +' data-bloc-cotation="'+(b.cotation||'')+'" data-bloc-ouvreur="'+(b.ouvreur||'')+'"'
+      +' data-bloc-date="'+(b.date||'')+'" data-bloc-note="'+(b.note||'').replace(/"/g,'&quot;')+'"'
+      +' data-bloc-incl="'+(b.inclinaisons||[]).join('|')+'"'
+      +' data-bloc-styles="'+(b.styles||[]).join('|')+'"'
+      +' data-bloc-prises="'+(b.prises||[]).join('|')+'"'
+      +' onclick="onBlocRowClick(this)">'
       +'<div class="color-pill" style="background:'+(b.col||CCOLS[b.couleur]||'#888')+'"></div>'
-      +'<div style="flex:1"><div class="bloc-id">'+b.id+' '+(CNAMES_S[b.couleur]||b.couleur)+'</div>'
-      +(tags||b.cotation?'<div class="bloc-sub">'+[tags,b.cotation].filter(Boolean).join(' &middot; ')+'</div>':'')+'</div>'
+      +'<div style="flex:1"><div class="bloc-id">'+nom+'</div>'
+      +(tags||b.cotation?'<div class="bloc-sub">'+(tags||'')+(b.cotation?' &middot; '+b.cotation:'')+'</div>':'')
+      +'</div>'
       +'<div style="display:flex;gap:6px;align-items:center">'
-      +'<button class="rbtn '+(res==='ok'?'ok':'')+'" onclick="event.stopPropagation();setSeanceResBloc(\''+key+'\',\'ok\')">&#10003;</button>'
-      +'<button class="rbtn '+(res==='nok'?'nok':'')+'" onclick="event.stopPropagation();setSeanceResBloc(\''+key+'\',\'nok\')">&#10007;</button>'
+      +'<button class="rbtn '+(res==='ok'?'ok':'')+'" data-key="'+key+'" data-val="ok" data-type="bloc" onclick="event.stopPropagation();setSeanceResBtn(this)">&#10003;</button>'
+      +'<button class="rbtn '+(res==='nok'?'nok':'')+'" data-key="'+key+'" data-val="nok" data-type="bloc" onclick="event.stopPropagation();setSeanceResBtn(this)">&#10007;</button>'
       +'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>'
-      +'</div></div>');
+      +'</div></div>'
+    );
   });
   const p=document.getElementById('seance-zone-blocs');
   if(p)p.innerHTML=rows.length?rows.join(''):'<div class="empty" style="padding:14px 16px">Aucun bloc dans ce secteur.</div>';
   const zp=document.getElementById('seance-zone-panel');zp.classList.add('open');
   zp.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
+
+function onBlocRowClick(el){
+  // Construire l'objet bloc depuis les data-* attributes
+  const d=el.dataset;
+  const bloc={
+    nom: d.blocNom||'',
+    col: d.blocCol||'#888',
+    couleur: d.blocCouleur||'',
+    secteur: d.blocSecteur||'',
+    cotation: d.blocCotation||'',
+    ouvreur: d.blocOuvreur||'',
+    date: d.blocDate||'',
+    note: d.blocNote||'',
+    inclinaisons: d.blocIncl?d.blocIncl.split('|').filter(Boolean):[],
+    styles: d.blocStyles?d.blocStyles.split('|').filter(Boolean):[],
+    prises: d.blocPrises?d.blocPrises.split('|').filter(Boolean):[],
+  };
+  if(d.blocKey) bloc.mapKey=d.blocKey;
+  if(d.blocId) bloc.id=d.blocId;
+  openBlocDetail(bloc);
+}
+
+function setSeanceResBtn(btn){
+  const key=btn.dataset.key;
+  const val=btn.dataset.val;
+  const type=btn.dataset.type;
+  if(type==='bloc') setSeanceResBloc(key,val);
+  else setSeanceRes(key,val);
+}
+
+
 function setSeanceRes(key,val){
   mapResults[key]===val?delete mapResults[key]:mapResults[key]=val;
   const parts=key.split('|');const bk=parts[1]+'|'+parts[2]+'|'+parts[3];
