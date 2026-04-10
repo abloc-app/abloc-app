@@ -1230,6 +1230,34 @@ textarea{resize:none;height:62px;line-height:1.5}
         <div class="label">Ouvreur</div>
         <input type="text" id="bloc-ouvreur" placeholder="Ton pseudo ou ton prénom">
       </div>
+      <div class="row" style="margin-bottom:10px">
+        <div class="label">Essais pour le faire</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap" id="essais-btns">
+          <button type="button" class="tag-btn" onclick="selectEssais('flash',this)">⚡ Flash</button>
+          <button type="button" class="tag-btn" onclick="selectEssais('1',this)">1 essai</button>
+          <button type="button" class="tag-btn" onclick="selectEssais('2',this)">2 essais</button>
+          <button type="button" class="tag-btn" onclick="selectEssais('3',this)">3 essais</button>
+          <button type="button" class="tag-btn" onclick="selectEssais('+3',this)">+3 essais</button>
+          <button type="button" class="tag-btn" onclick="selectEssais('projet',this)">Projet</button>
+        </div>
+      </div>
+      <div class="row" style="margin-bottom:10px">
+        <div class="label">Note du bloc</div>
+        <div style="display:flex;gap:8px;font-size:28px" id="etoiles-btns">
+          <span style="cursor:pointer" onclick="selectEtoile(1)">☆</span>
+          <span style="cursor:pointer" onclick="selectEtoile(2)">☆</span>
+          <span style="cursor:pointer" onclick="selectEtoile(3)">☆</span>
+          <span style="cursor:pointer" onclick="selectEtoile(4)">☆</span>
+          <span style="cursor:pointer" onclick="selectEtoile(5)">☆</span>
+        </div>
+      </div>
+      <div class="row" style="margin-bottom:10px">
+        <div class="label">Morpho ?</div>
+        <div style="display:flex;gap:8px">
+          <button type="button" class="tag-btn" id="morpho-oui" onclick="selectMorpho(true)">💪 Oui</button>
+          <button type="button" class="tag-btn" id="morpho-non" onclick="selectMorpho(false)">Non</button>
+        </div>
+      </div>
       <div class="row">
         <div class="label">Note / bêta</div>
         <textarea id="bloc-note" placeholder="Conseil de beta, prise clé, ambiance du bloc..."></textarea>
@@ -3031,6 +3059,9 @@ let newBlocData = {
   cotation: '',
   ouvreur: '',
   note: '',
+  essais: null,
+  etoiles: 0,
+  morpho: null,
 };
 
 // ── Couleur ──
@@ -3054,6 +3085,30 @@ function switchAddBlocHall(hall, el) {
   document.querySelectorAll('.secteur-btn').forEach(b=>b.classList.remove('sel'));
   // Mémoriser la salle pour le bloc
   newBlocData.hall = hall;
+}
+
+function selectEssais(val, el) {
+  document.querySelectorAll('#essais-btns .tag-btn').forEach(b=>b.classList.remove('sel'));
+  if(newBlocData.essais===val){newBlocData.essais=null;}
+  else{el.classList.add('sel');newBlocData.essais=val;}
+}
+
+function selectEtoile(n) {
+  newBlocData.etoiles = (newBlocData.etoiles===n) ? 0 : n;
+  const stars = document.querySelectorAll('#etoiles-btns span');
+  stars.forEach((s,i)=>{ s.textContent = i < newBlocData.etoiles ? '★' : '☆'; });
+}
+
+function selectMorpho(val) {
+  if(newBlocData.morpho===val){
+    newBlocData.morpho=null;
+    document.getElementById('morpho-oui')?.classList.remove('sel');
+    document.getElementById('morpho-non')?.classList.remove('sel');
+  } else {
+    newBlocData.morpho=val;
+    document.getElementById('morpho-oui')?.classList.toggle('sel', val===true);
+    document.getElementById('morpho-non')?.classList.toggle('sel', val===false);
+  }
 }
 
 function selectSecteur(s, el) {
@@ -3124,6 +3179,9 @@ function submitNewBloc() {
     cotation: document.getElementById('bloc-cotation')?.value || '',
     ouvreur: document.getElementById('bloc-ouvreur')?.value?.trim() || '',
     note: document.getElementById('bloc-note')?.value?.trim() || '',
+    essais: newBlocData.essais || null,
+    etoiles: newBlocData.etoiles || 0,
+    morpho: newBlocData.morpho,
     date: new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'}),
     addedBy: currentProfile?.pseudo || currentUser?.email?.split('@')[0] || 'Anonyme',
     addedAt: new Date().toISOString(),
@@ -3142,6 +3200,9 @@ function submitNewBloc() {
     cotation: bloc.cotation||'',
     ouvreur: bloc.ouvreur||'',
     note: bloc.note||'',
+    essais: bloc.essais||null,
+    etoiles: bloc.etoiles||0,
+    morpho: bloc.morpho??null,
     date: bloc.date,
     added_by: bloc.addedBy,
   };
@@ -3189,7 +3250,13 @@ function submitNewBloc() {
 }
 
 function resetBlocForm() {
-  newBlocData = {couleur:null,couleurHex:null,secteur:null,hall:'ancienne',inclinaison:[],style:[],prise:[],cotation:'',ouvreur:'',note:''};
+  newBlocData = {couleur:null,couleurHex:null,secteur:null,hall:'ancienne',inclinaison:[],style:[],prise:[],cotation:'',ouvreur:'',note:'',essais:null,etoiles:0,morpho:null};
+  document.querySelectorAll('#addbloc-hall-anc, #addbloc-hall-nouv').forEach(b=>b.classList.remove('active'));
+  document.getElementById('addbloc-hall-anc')?.classList.add('active');
+  document.querySelectorAll('#essais-btns .tag-btn').forEach(b=>b.classList.remove('sel'));
+  selectEtoile(0);
+  document.getElementById('morpho-oui')?.classList.remove('sel');
+  document.getElementById('morpho-non')?.classList.remove('sel');
   document.querySelectorAll('#s-addbloc .color-opt').forEach(e=>e.classList.remove('sel'));
   document.querySelectorAll('#s-addbloc .secteur-btn').forEach(e=>e.classList.remove('sel'));
   document.querySelectorAll('#s-addbloc .tag-btn').forEach(e=>e.classList.remove('sel'));
@@ -3332,6 +3399,11 @@ function onBlocRowClick(el){
   };
   if(d.blocKey) bloc.mapKey=d.blocKey;
   if(d.blocId) bloc.id=d.blocId;
+  // Si bloc utilisateur, prendre l'objet complet depuis BLOCS (contient addedBy etc.)
+  if(d.blocId) {
+    const full = BLOCS.find(b=>b.id===d.blocId);
+    if(full) { openBlocDetail(full); return; }
+  }
   openBlocDetail(bloc);
 }
 
@@ -3445,6 +3517,18 @@ function openBlocDetail(bloc){
         +'<span style="opacity:.7">Les ouvreurs peuvent en ajouter via <b>Ajouter un bloc</b>.</span>'
         +'</div>'
     )
+    // Essais / étoiles / morpho
+    +(function(){
+      if(!bloc.essais && !bloc.etoiles && bloc.morpho!==true && bloc.morpho!==false) return '';
+      const essaisLabel = bloc.essais==='flash'?'⚡ Flash':bloc.essais==='projet'?'📌 Projet':bloc.essais?(bloc.essais+' essai'+(parseInt(bloc.essais)>1?'s':'')):'';
+      const starsLabel = bloc.etoiles?('★'.repeat(bloc.etoiles)+'☆'.repeat(5-bloc.etoiles)):'';
+      let h='<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">';
+      if(essaisLabel) h+='<span style="background:var(--accent-bg);color:var(--accent);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600">'+essaisLabel+'</span>';
+      if(starsLabel) h+='<span style="background:var(--off);border-radius:20px;padding:4px 12px;font-size:13px">'+starsLabel+'</span>';
+      if(bloc.morpho===true) h+='<span style="background:var(--off);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600">💪 Morpho</span>';
+      if(bloc.morpho===false) h+='<span style="background:var(--off);border-radius:20px;padding:4px 12px;font-size:12px;color:var(--ink3)">Non morpho</span>';
+      return h+'</div>';
+    }())
 
     // Médias
     +'<div class="bloc-tag-group">'
@@ -3473,9 +3557,7 @@ function openBlocDetail(bloc){
       ? '<button class="btn" onclick="deleteUserBloc(\''+bloc.id+'\',\''+bloc.secteur+'\')" style="margin-top:8px;color:var(--red);border-color:var(--red)">🗑 Supprimer ce bloc</button>'
       : ''
     )
-    +(bloc.id && !bloc.mapKey && bloc.addedBy
-    ? '<button class="btn" onclick="deleteBlocDetail(\''+bloc.id+'\',\''+bloc.couleur+'\')" style="margin-top:6px;color:var(--red);border-color:var(--red)">🗑 Supprimer ce bloc</button>'
-    : '')
+
   +'<button class="btn" onclick="closeBlocDetail()" style="margin-top:8px;color:var(--ink3)">Fermer</button>';
 
   document.getElementById('bloc-detail-overlay').classList.add('open');
@@ -3535,7 +3617,10 @@ function deleteUserBloc(id, secteur) {
   // Rafraîchir le secteur
   showToast('Bloc supprimé');
   renderSeanceOverlays();
-  if(secteur) setTimeout(() => selectSeanceZone(secteur), 200);
+  if(secteur) {
+    const zone = /^\d+$/.test(secteur) ? 'Zone '+secteur : secteur;
+    setTimeout(() => selectSeanceZone(zone), 200);
+  }
 }
 
 
