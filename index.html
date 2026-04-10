@@ -3223,28 +3223,131 @@ function openAddBlocFromZone(){
 }
 function openBlocDetail(bloc){
   if(typeof bloc==='string')bloc=JSON.parse(decodeURIComponent(bloc));
-  const tags=(arr,lbl)=>arr&&arr.length?'<div class="bloc-tag-group"><div class="bloc-tag-group-label">'+lbl+'</div><div class="bloc-tag-list">'+arr.map(t=>'<span class="bloc-tag">'+t+'</span>').join('')+'</div></div>':'';
-  const m=blocMedias[bloc.id]||{};
-  let media='';
-  if(m.photo)media+='<img src="'+m.photo+'" style="width:100%;border-radius:var(--rs);margin-bottom:10px;max-height:200px;object-fit:cover">';
-  if(m.videoUrl)media+=buildVideoEmbed(m.videoUrl);
-  if(m.betas&&m.betas.length)m.betas.forEach(b=>{media+='<a href="'+b.url+'" target="_blank" style="display:flex;align-items:center;gap:9px;padding:11px 13px;background:var(--off);border-radius:var(--rs);margin-bottom:8px;text-decoration:none;color:var(--ink);border:1px solid var(--line);font-size:13px;font-weight:600">Beta - '+b.author+'</a>';});
-  if(!m.photo&&!m.videoUrl&&(!m.betas||!m.betas.length))media='<div style="font-size:12px;color:var(--ink3)">Aucun media.</div>';
+
+  // Clé media : utiliser mapKey simplifié ou id direct
+  const mediaKey = bloc.mapKey
+    ? bloc.mapKey.replace('MAP|','').replace(/\|/g,'_')
+    : (bloc.id||bloc.mapKey||'');
+  bloc._mediaKey = mediaKey;
+
+  const m = blocMedias[mediaKey] || {};
+
+  const tags=(arr,lbl)=>arr&&arr.length
+    ?'<div class="bloc-tag-group"><div class="bloc-tag-group-label">'+lbl+'</div><div class="bloc-tag-list">'+arr.map(t=>'<span class="bloc-tag">'+t+'</span>').join('')+'</div></div>'
+    :'';
+
+  // Médias existants
+  let mediaHtml='';
+  if(m.photo) mediaHtml+='<img src="'+m.photo+'" style="width:100%;border-radius:var(--rs);margin-bottom:8px;max-height:200px;object-fit:cover">';
+  if(m.videoUrl) mediaHtml+=buildVideoEmbed(m.videoUrl);
+  if(m.betas&&m.betas.length) m.betas.forEach((b,bi)=>{
+    const isIG = b.url&&b.url.includes('instagram');
+    const isYT = b.url&&(b.url.includes('youtube')||b.url.includes('youtu.be'));
+    const icon = isIG?'📷':isYT?'▶️':'🔗';
+    mediaHtml+='<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--off);border-radius:var(--rs);margin-bottom:7px;border:1px solid var(--line)">'
+      +'<a href="'+b.url+'" target="_blank" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink);flex:1">'
+      +'<span style="font-size:18px">'+icon+'</span>'
+      +'<div><div style="font-size:13px;font-weight:600">'+(b.author||'Bêta')+'</div>'
+      +(b.date?'<div style="font-size:11px;color:var(--ink3)">'+b.date+'</div>':'')
+      +'</div></a>'
+      +'<button onclick="deleteBlocMedia(\''+mediaKey+'\',\'beta\','+bi+')" style="background:none;border:none;color:var(--ink3);font-size:18px;cursor:pointer;padding:0 4px">×</button>'
+      +'</div>';
+  });
+
+  // Formulaire ajout média
+  const addMediaForm='<div style="margin-top:10px;padding:12px;background:var(--off);border-radius:var(--rs);border:1px solid var(--line)">'
+    +'<div style="font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">Ajouter un lien</div>'
+    +'<input id="bd-media-url" type="url" placeholder="https://instagram.com/reel/... ou YouTube..." style="width:100%;margin-bottom:6px;font-size:13px">'
+    +'<input id="bd-media-author" type="text" placeholder="Nom / pseudo de l\'auteur (optionnel)" style="width:100%;margin-bottom:8px;font-size:13px">'
+    +'<button class="btn btn-primary" style="margin:0;padding:8px 14px;font-size:12px;width:100%" onclick="saveBlocMedia(\''+mediaKey+'\')">Ajouter ce lien</button>'
+    +'</div>';
+
+  // Note ouvreur éditable
+  const noteHtml='<div class="bloc-tag-group">'
+    +'<div class="bloc-tag-group-label">Note / bêta texte</div>'
+    +'<textarea id="bd-note" placeholder="Conseil clé, prise importante, ambiance du bloc..." style="width:100%;font-size:13px;min-height:70px;resize:vertical">'+(m.note||bloc.note||'')+'</textarea>'
+    +'<button class="btn" style="margin-top:6px;padding:6px 12px;font-size:12px;width:auto;color:var(--accent);border-color:var(--accent)" onclick="saveBlocNote(\''+mediaKey+'\')">Sauver la note</button>'
+    +'</div>';
+
   document.getElementById('bloc-detail-sheet').innerHTML=
     '<div class="bloc-detail-handle"></div>'
-    +'<div class="bloc-detail-top"><div class="bloc-detail-color" style="background:'+(bloc.col||'#888')+'"></div>'
+
+    // En-tête
+    +'<div class="bloc-detail-top">'
+    +'<div class="bloc-detail-color" style="background:'+(bloc.col||'#888')+'"></div>'
     +'<div><div class="bloc-detail-name">'+(bloc.nom||bloc.id||'Bloc')+'</div>'
-    +'<div class="bloc-detail-sub">Secteur '+(bloc.secteur||'')+(bloc.cotation?' - '+bloc.cotation:'')+(bloc.ouvreur?' - '+bloc.ouvreur:'')+'</div></div></div>'
+    +'<div class="bloc-detail-sub">Secteur '+(bloc.secteur||'')
+    +(bloc.cotation?' · '+bloc.cotation:'')
+    +(bloc.ouvreur?' · '+bloc.ouvreur:'')+'</div></div></div>'
     +(bloc.date?'<div style="font-size:11px;color:var(--ink3);margin-bottom:12px">Ouverture : '+bloc.date+'</div>':'')
+
+    // Tags
     +tags(bloc.inclinaisons,'Inclinaison')
     +tags(bloc.styles,'Type de grimpe')
     +tags(bloc.prises,'Prises')
-    +(bloc.note?'<div class="bloc-tag-group"><div class="bloc-tag-group-label">Note ouvreur</div><div style="font-size:13px;color:var(--ink2);line-height:1.6;background:var(--off);padding:10px 12px;border-radius:var(--rs)">'+bloc.note+'</div></div>':'')
-    +'<div class="bloc-tag-group"><div class="bloc-tag-group-label">Medias</div>'+media+'</div>'
-    +'<button class="btn btn-primary" style="margin-top:8px" onclick="closeBlocDetail()">Fermer</button>';
+
+    // Médias
+    +'<div class="bloc-tag-group">'
+    +'<div class="bloc-tag-group-label">Médias & bêtas</div>'
+    +(mediaHtml||'<div style="font-size:12px;color:var(--ink3);margin-bottom:8px">Aucun média pour ce bloc.</div>')
+    +addMediaForm
+    +'</div>'
+
+    // Note
+    +noteHtml
+
+    // Résultat séance
+    +(seanceSelZone!==null?'<div class="bloc-tag-group"><div class="bloc-tag-group-label">Résultat séance</div>'
+    +'<div style="display:flex;gap:8px">'
+    +(bloc.mapKey
+      ?'<button class="rbtn '+(mapResults[bloc.mapKey]==='ok'?'ok':'')+' " style="flex:1;padding:12px;font-size:20px" onclick="setSeanceRes(\''+bloc.mapKey+'\',\'ok\');renderDetailResult(\''+bloc.mapKey+'\',\'map\')">✓ Réussi</button>'
+      +'<button class="rbtn '+(mapResults[bloc.mapKey]==='nok'?'nok':'')+'" style="flex:1;padding:12px;font-size:20px" onclick="setSeanceRes(\''+bloc.mapKey+'\',\'nok\');renderDetailResult(\''+bloc.mapKey+'\',\'map\')">✗ Raté</button>'
+      :(bloc.id
+        ?'<button class="rbtn '+(results[bloc.id+'|'+bloc.couleur]==='ok'?'ok':'')+'" style="flex:1;padding:12px;font-size:20px" onclick="setSeanceResBloc(\''+bloc.id+'|'+bloc.couleur+'\',\'ok\')">✓ Réussi</button>'
+        +'<button class="rbtn '+(results[bloc.id+'|'+bloc.couleur]==='nok'?'nok':'')+'" style="flex:1;padding:12px;font-size:20px" onclick="setSeanceResBloc(\''+bloc.id+'|'+bloc.couleur+'\',\'nok\')">✗ Raté</button>'
+        :'')
+    )+'</div></div>':'')
+
+    +'<button class="btn" onclick="closeBlocDetail()" style="margin-top:8px;color:var(--ink3)">Fermer</button>';
+
   document.getElementById('bloc-detail-overlay').classList.add('open');
 }
+
+function saveBlocMedia(mediaKey){
+  const url = document.getElementById('bd-media-url')?.value?.trim();
+  const author = document.getElementById('bd-media-author')?.value?.trim() || 'Anonyme';
+  if(!url){showToast('Colle un lien Instagram ou YouTube');return;}
+  if(!blocMedias[mediaKey])blocMedias[mediaKey]={};
+  if(!blocMedias[mediaKey].betas)blocMedias[mediaKey].betas=[];
+  blocMedias[mediaKey].betas.push({url,author,date:new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'short'})});
+  saveAll();
+  showToast('Lien ajouté !');
+  // Recharger la fiche
+  const btn=document.getElementById('bd-media-url');
+  if(btn)btn.value='';
+  // Re-render bloc list + fiche
+  if(seanceSelZone)selectSeanceZone(seanceSelZone);
+}
+
+function saveBlocNote(mediaKey){
+  const note = document.getElementById('bd-note')?.value?.trim();
+  if(!blocMedias[mediaKey])blocMedias[mediaKey]={};
+  blocMedias[mediaKey].note = note;
+  saveAll();
+  showToast('Note sauvegardée !');
+}
+
+function deleteBlocMedia(mediaKey,type,idx){
+  if(!blocMedias[mediaKey])return;
+  if(type==='beta')blocMedias[mediaKey].betas?.splice(idx,1);
+  saveAll();
+  showToast('Supprimé');
+  if(seanceSelZone)selectSeanceZone(seanceSelZone);
+}
+
 function closeBlocDetail(){document.getElementById('bloc-detail-overlay').classList.remove('open');}
+
+
 function initSeanceMap(){
   renderSeanceColorFilters();renderSeanceOverlays();
   const ia=document.getElementById('seance-img-anc'),ib=document.getElementById('seance-img-nouv');
