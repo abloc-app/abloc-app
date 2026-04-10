@@ -6,9 +6,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Bloc">
+<meta name="apple-mobile-web-app-title" content="À Bloc">
 <meta name="theme-color" content="#ffffff">
-<title>Bloc</title>
+<title>À Bloc</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -546,6 +546,7 @@ textarea{resize:none;height:62px;line-height:1.5}
 .zone-overlay .znum{font-family:var(--display);font-size:10px;font-weight:700;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.7);pointer-events:none;line-height:1;text-align:center}
 .zone-overlay:hover{border-color:var(--accent)!important}
 .zone-overlay.zsel{border-color:var(--accent)!important;border-width:2.5px!important}
+.prof-empty{text-align:center;padding:20px;color:var(--ink3);font-size:13px}
 .zone-overlay.zdim{opacity:0.12}
 .zone-panel{background:var(--white);border-radius:var(--r);border:1.5px solid var(--line);box-shadow:var(--shadow-md);margin-top:10px;overflow:hidden;display:none}
 .zone-panel.open{display:block}
@@ -574,7 +575,7 @@ textarea{resize:none;height:62px;line-height:1.5}
 <!-- ══════ AUTH SCREEN ══════ -->
 <div class="auth-screen" id="auth-screen">
   <div style="text-align:center;margin-bottom:8px">
-    <div class="auth-logo">Bloc<span>.</span></div>
+    <div class="auth-logo">À Bloc<span>.</span></div>
     <div class="auth-tagline">L'app de ta salle d'escalade</div>
   </div>
 
@@ -626,35 +627,67 @@ textarea{resize:none;height:62px;line-height:1.5}
 
 <!-- ══════ PROFILE SCREEN ══════ -->
 <div class="sc" id="s-profile">
+
+  <!-- Identité -->
   <div class="profile-panel">
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
       <div id="profile-avatar" style="width:54px;height:54px;border-radius:50%;background:var(--accent-bg);color:var(--accent);font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0"></div>
-      <div>
+      <div style="flex:1">
         <div style="font-family:var(--display);font-size:18px;font-weight:700;color:var(--ink)" id="profile-name">—</div>
         <div style="font-size:13px;color:var(--ink3)" id="profile-email">—</div>
       </div>
+      <button class="btn" style="width:auto;padding:7px 12px;margin:0;font-size:12px;color:var(--red);border-color:var(--red)" onclick="doLogout()">Déco</button>
     </div>
-    <div style="border-top:1px solid var(--line);padding-top:14px">
-      <div class="card-label" style="margin-bottom:10px">Modifier mon pseudo</div>
-      <div style="display:flex;gap:8px">
-        <input type="text" id="profile-pseudo-input" placeholder="Nouveau pseudo" style="flex:1;padding:10px 13px;font-size:14px">
-        <button class="btn btn-primary" style="width:auto;padding:10px 16px;margin:0;font-size:13px" onclick="savePseudo()">Sauver</button>
-      </div>
+    <div style="display:flex;gap:8px">
+      <input type="text" id="profile-pseudo-input" placeholder="Pseudo" style="flex:1;padding:9px 13px;font-size:14px">
+      <button class="btn btn-primary" style="width:auto;padding:9px 16px;margin:0;font-size:13px" onclick="savePseudo()">Sauver</button>
     </div>
+    <button id="sync-btn" class="btn" style="margin-top:10px;font-size:12px;color:var(--accent);border-color:var(--accent)" onclick="syncBlocsToSupabase()">
+      ☁ Synchroniser les blocs vers Supabase
+    </button>
   </div>
+
+  <!-- Stats globales -->
   <div class="card">
-    <div class="card-label">Mes stats</div>
-    <div class="metrics" style="margin-bottom:0">
+    <div class="card-label">Mes stats globales</div>
+    <div class="metrics" style="margin-bottom:0" id="prof-metrics">
       <div class="metric"><div class="metric-val" id="prof-seances">0</div><div class="metric-lbl">Séances</div></div>
       <div class="metric"><div class="metric-val" id="prof-reussis">0</div><div class="metric-lbl">Réussis</div></div>
+      <div class="metric"><div class="metric-val" id="prof-taux">—</div><div class="metric-lbl">Réussite</div></div>
       <div class="metric"><div class="metric-val" id="prof-badges">0</div><div class="metric-lbl">Badges</div></div>
     </div>
   </div>
-  <button class="btn" style="color:var(--red);border-color:var(--red)" onclick="doLogout()">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-    Se déconnecter
-  </button>
-  <button class="btn" onclick="showTab('seance')">← Retour</button>
+
+  <!-- Progression séances -->
+  <div class="card">
+    <div class="card-label">Progression (10 dernières séances)</div>
+    <div id="prof-chart" style="margin-top:8px"></div>
+  </div>
+
+  <!-- Par inclinaison -->
+  <div class="card">
+    <div class="card-label">Score par inclinaison</div>
+    <div id="prof-incl" style="margin-top:8px"></div>
+  </div>
+
+  <!-- Par style de grimpe -->
+  <div class="card">
+    <div class="card-label">Score par style de grimpe</div>
+    <div id="prof-styles" style="margin-top:8px"></div>
+  </div>
+
+  <!-- Par niveau/couleur -->
+  <div class="card">
+    <div class="card-label">Score par niveau</div>
+    <div id="prof-colors" style="margin-top:8px"></div>
+  </div>
+
+  <!-- Historique des séances -->
+  <div class="card">
+    <div class="card-label">Historique des séances</div>
+    <div id="prof-histo" style="margin-top:4px"></div>
+  </div>
+
 </div>
 
 
@@ -983,10 +1016,10 @@ textarea{resize:none;height:62px;line-height:1.5}
     <div class="card">
       <div class="card-label">Mon niveau</div>
       <div class="level-grid">
-        <div class="lv" id="lv-d" onclick="setNiveau('debutant')">Débutant<br><span style="font-size:10px;font-weight:500;opacity:.7">Jaune / Orange</span></div>
-        <div class="lv sel-i" id="lv-i" onclick="setNiveau('intermediaire')">Intermédiaire<br><span style="font-size:10px;font-weight:500;opacity:.7">Rouge / Bleu</span></div>
-        <div class="lv" id="lv-a" onclick="setNiveau('avance')">Avancé<br><span style="font-size:10px;font-weight:500;opacity:.7">Noir / Blanc</span></div>
-        <div class="lv" id="lv-e" onclick="setNiveau('expert')">Expert<br><span style="font-size:10px;font-weight:500;opacity:.7">Compétition</span></div>
+        <div class="lv" id="lv-d" onclick="setNiveau('debutant')">Débutant<br><span style="font-size:10px;font-weight:500;opacity:.7">Vert → Rose</span></div>
+        <div class="lv sel-i" id="lv-i" onclick="setNiveau('intermediaire')">Intermédiaire<br><span style="font-size:10px;font-weight:500;opacity:.7">Noir / Bleu</span></div>
+        <div class="lv" id="lv-a" onclick="setNiveau('avance')">Avancé<br><span style="font-size:10px;font-weight:500;opacity:.7">Mauve / Jaune</span></div>
+        <div class="lv" id="lv-e" onclick="setNiveau('expert')">Expert<br><span style="font-size:10px;font-weight:500;opacity:.7">Rouge / Blanc</span></div>
       </div>
       <div class="ai-bubble" style="margin-bottom:0"><div class="ai-label"><div class="ai-pulse"></div>Coaching IA</div><div class="ai-text" id="niveau-msg">Niveau intermédiaire — tu as les bases solides. Structure ta progression !</div></div>
     </div>
@@ -1032,11 +1065,26 @@ textarea{resize:none;height:62px;line-height:1.5}
   <div class="sc" id="s-community">
     <div class="community-tabs">
       <button class="ctab active" id="ctab-actu" onclick="switchCTab('actu',this)">Actualités</button>
+      <button class="ctab" id="ctab-ranking" onclick="switchCTab('ranking',this)">🏆 Ranking</button>
       <button class="ctab" id="ctab-defi" onclick="switchCTab('defi',this)">Défi</button>
       <button class="ctab" id="ctab-badges" onclick="switchCTab('badges',this)">Badges</button>
       <button class="ctab" id="ctab-histo" onclick="switchCTab('histo',this)">Historique</button>
     </div>
     <div id="ct-actu"><div id="actu-feed"></div></div>
+    <div id="ct-ranking" style="display:none">
+      <div class="card" style="margin-bottom:0">
+        <div style="display:flex;gap:0;background:var(--off);border-radius:var(--rs);padding:3px;margin-bottom:14px">
+          <button class="ctab active" id="rtab-month" onclick="switchRTab('month',this)" style="flex:1;font-size:12px">Ce mois</button>
+          <button class="ctab" id="rtab-year" onclick="switchRTab('year',this)" style="flex:1;font-size:12px">Cette année</button>
+        </div>
+        <div id="ranking-my-score" style="margin-bottom:12px"></div>
+        <div class="card-label" style="margin-bottom:8px">Classement</div>
+        <div id="ranking-list"><div class="empty">Chargement...</div></div>
+        <div style="font-size:10px;color:var(--ink3);margin-top:10px;text-align:center">
+          Score = blocs réussis × poids du niveau × bonus d'essais
+        </div>
+      </div>
+    </div>
     <div id="ct-defi" style="display:none">
       <div class="defi-hero">
         <div class="defi-deco"></div>
@@ -1273,6 +1321,10 @@ textarea{resize:none;height:62px;line-height:1.5}
     <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
     <span>Communauté</span>
   </button>
+  <button class="tab" id="tab-profile" onclick="showTab('profile')">
+    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>Profil</span>
+  </button>
 </div>
 </div><!-- /app -->
 
@@ -1369,6 +1421,24 @@ let moonResSel = null;
 let totalReussis = 0;
 let objDoneTotal = 0;
 let colorStats = {}; // cumulative ok per couleur across all sessions
+let monthScore = 0;  // score cumulé du mois en cours
+let yearScore  = 0;  // score cumulé de l'année en cours
+let scoreMonthKey = ''; // ex: "2026-04"
+let scoreYearKey  = ''; // ex: "2026"
+
+// Poids par couleur de bloc (pondération niveau)
+const BLOC_WEIGHTS = {
+  vert:100, rose:120,                   // Débutant
+  orange:160,                            // Intermédiaire bas
+  noir:220, bleu:220,                    // Intermédiaire
+  mauve:360, jaune:360,                  // Avancé
+  rouge:520, blanc:540                   // Expert
+};
+// Multiplicateur selon les essais
+const ESSAIS_MULT = {
+  'Flash':1.5, '1 essai':1.25, '2 essais':1.0,
+  '3 essais':0.8, '+3 essais':0.6, 'Projet':0.2
+};
 let feelState = {};
 
 const niveauMsgs = {
@@ -1384,7 +1454,7 @@ function showTab(t) {
   document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
   document.getElementById('s-'+t).classList.add('active');
   document.getElementById('tab-'+t)&&document.getElementById('tab-'+t).classList.add('active');
-  const titles={seance:'Ma séance',outils:'Outils de la salle',moonboard:'Moonboard 2024',hangboard:'Hangboard',campus:'Campus board',spraywall:'Spraywall',circuits:'Circuits',coaching:'Coaching IA',objectifs:'Mes objectifs',histo:'Historique',resa:'Réservation de cours',community:'Communauté'};
+  const titles={seance:'Ma séance',outils:'Outils de la salle',moonboard:'Moonboard 2024',hangboard:'Hangboard',campus:'Campus board',spraywall:'Spraywall',circuits:'Circuits',coaching:'Coaching IA',objectifs:'Mes objectifs',histo:'Historique',resa:'Réservation de cours',community:'Communauté',profile:'Mon profil & historique'};
   document.getElementById('main-title').textContent=titles[t]||t;
   if(currentUser) { updateUserPill(); } else { document.getElementById('topbar-right').textContent=t==='seance'?new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'short',weekday:'short'}):'';}  
   if(t==='outils'){updateOutilsBadges();renderOutilsReco();}
@@ -1503,9 +1573,65 @@ function finirSeance() {
     }
   });
   totalReussis += ok;
-  historique.unshift({date:new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'short',weekday:'short'}),ok,nok,objTouch:mesObjectifs.filter(o=>(o.lastPct||0)>0).length});
+  // Collect per-style and per-inclinaison stats for this session
+  const _sColorOk={}, _sStyleOk={}, _sInclOk={};
+  let _morphoOk=0, _morphoTot=0;
+  BLOCS.forEach(b=>{
+    const r=results[b.id];
+    if(r==='ok'||r==='nok'){
+      // color
+      if(!_sColorOk[b.couleur]) _sColorOk[b.couleur]={ok:0,nok:0};
+      r==='ok'?_sColorOk[b.couleur].ok++:_sColorOk[b.couleur].nok++;
+      // styles
+      (b.styles||[]).forEach(s=>{
+        if(!_sStyleOk[s]) _sStyleOk[s]={ok:0,nok:0};
+        r==='ok'?_sStyleOk[s].ok++:_sStyleOk[s].nok++;
+      });
+      // inclinaisons
+      (b.inclinaisons||[]).forEach(i=>{
+        if(!_sInclOk[i]) _sInclOk[i]={ok:0,nok:0};
+        r==='ok'?_sInclOk[i].ok++:_sInclOk[i].nok++;
+      });
+      // morpho
+      if(b.morpho!==undefined){ _morphoTot++; if(r==='ok') _morphoOk++; }
+    }
+  });
+  historique.unshift({
+    date:new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'short',weekday:'short'}),
+    ok, nok,
+    objTouch:mesObjectifs.filter(o=>(o.lastPct||0)>0).length,
+    colorOk:_sColorOk, styleOk:_sStyleOk, inclOk:_sInclOk,
+    morphoOk:_morphoOk, morphoTot:_morphoTot
+  });
+  // ── Calcul du score de la séance ──
+  const _now = new Date();
+  const _mKey = `${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}`;
+  const _yKey = String(_now.getFullYear());
+  if(_mKey !== scoreMonthKey){ monthScore=0; scoreMonthKey=_mKey; }
+  if(_yKey !== scoreYearKey){ yearScore=0; scoreYearKey=_yKey; }
+  // Score de la séance = somme des blocs réussis pondérés
+  let _sessionScore = 0;
+  BLOCS.forEach(b=>{
+    if(results[b.id]==='ok'){
+      const base = BLOC_WEIGHTS[b.couleur] || 100;
+      const mult = ESSAIS_MULT[b.essais] || 1.0;
+      _sessionScore += Math.round(base * mult);
+    }
+  });
+  monthScore += _sessionScore;
+  yearScore  += _sessionScore;
   saveAll();
+  // Upload ranking si connecté
+  if(currentUser && currentToken && _sessionScore>0) {
+    const pseudo = currentProfile?.pseudo || currentUser.email?.split('@')[0] || 'Grimpeur';
+    supa.upsertScore({
+      user_id: currentUser.id, pseudo,
+      score_month: monthScore, score_year: yearScore,
+      month_key: _mKey, year_key: _yKey
+    }, currentToken).catch(()=>{});
+  }
   results={};
+
   renderBlocs();
   document.getElementById('cnt-ok').textContent=0;
   document.getElementById('cnt-nok').textContent=0;
@@ -2080,6 +2206,7 @@ function saveAll() {
   try {
     const data = {
       results, colorStats, historique, totalReussis, objDoneTotal,
+      monthScore, yearScore, scoreMonthKey, scoreYearKey,
       mesObjectifs, niveau, moonData, hangSessions, campusSessions,
       spraySessions, mapResults,
       circuits: CIRCUITS.map(c=>({id:c.id,pct:c.pct})),
@@ -2100,6 +2227,10 @@ function loadAll() {
     if (d.colorStats)     Object.assign(colorStats, d.colorStats);
     if (d.historique)     historique.push(...d.historique);
     if (d.totalReussis)   totalReussis = d.totalReussis;
+    if (d.monthScore)     monthScore = d.monthScore;
+    if (d.yearScore)      yearScore  = d.yearScore;
+    if (d.scoreMonthKey)  scoreMonthKey = d.scoreMonthKey;
+    if (d.scoreYearKey)   scoreYearKey  = d.scoreYearKey;
     if (d.objDoneTotal)   objDoneTotal = d.objDoneTotal;
     if (d.mesObjectifs)   mesObjectifs.push(...d.mesObjectifs);
     if (d.niveau)         niveau = d.niveau;
@@ -2714,6 +2845,91 @@ function checkAllBadges() {
   });
 }
 
+// ========== RANKING ==========
+let _rankingPeriod = 'month';
+
+function switchRTab(period, el) {
+  _rankingPeriod = period;
+  document.querySelectorAll('#ct-ranking .ctab').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderRanking(period);
+}
+
+async function renderRanking(period) {
+  _rankingPeriod = period || _rankingPeriod;
+  const list = document.getElementById('ranking-list');
+  const myScoreEl = document.getElementById('ranking-my-score');
+  if(!list) return;
+
+  const now = new Date();
+  const mKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const yKey = String(now.getFullYear());
+  const isMonth = _rankingPeriod==='month';
+  const myS = isMonth ? monthScore : yearScore;
+  const pseudo = currentProfile?.pseudo || currentUser?.email?.split('@')[0] || null;
+
+  // Mon score
+  if(myScoreEl) {
+    if(!currentUser) {
+      myScoreEl.innerHTML = `<div style="background:var(--accent-bg);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--accent);text-align:center">
+        🔑 Connecte-toi pour apparaître dans le classement</div>`;
+    } else {
+      const label = isMonth ? new Date().toLocaleString('fr-FR',{month:'long',year:'numeric'}) : yKey;
+      myScoreEl.innerHTML = `<div style="background:var(--accent-bg);border-radius:10px;padding:10px 14px">
+        <div style="font-size:10px;color:var(--accent);font-weight:700;letter-spacing:.5px;margin-bottom:3px">MON SCORE — ${label.toUpperCase()}</div>
+        <div style="font-size:26px;font-weight:800;color:var(--ink);font-family:var(--display);line-height:1">${myS.toLocaleString('fr-FR')} <span style="font-size:13px;font-weight:500">pts</span></div>
+        <div style="font-size:11px;color:var(--ink3);margin-top:4px">${totalReussis} blocs réussis · ${historique.length} séances</div>
+      </div>`;
+    }
+  }
+
+  list.innerHTML = '<div class="empty" style="padding:16px 0">Chargement...</div>';
+
+  try {
+    const data = await supa.getRankings(_rankingPeriod);
+    if(!Array.isArray(data)||data.length===0){
+      list.innerHTML='<div class="empty">Aucun grimpeur classé ce '+(isMonth?'mois':'an')+'.<br>Termine une séance pour apparaître !</div>';
+      return;
+    }
+    const col = isMonth?'score_month':'score_year';
+    const sorted = data.filter(d=>(d[col]||0)>0).sort((a,b)=>(b[col]||0)-(a[col]||0));
+    if(!sorted.length){list.innerHTML='<div class="empty">Aucun score enregistré.</div>';return;}
+    const topScore = sorted[0][col]||1;
+    const medals = ['🥇','🥈','🥉'];
+    list.innerHTML = sorted.map((d,i)=>{
+      const score = d[col]||0;
+      const isMe = currentUser&&d.user_id===currentUser.id;
+      const barPct = Math.round(score/topScore*100);
+      const medal = i<3 ? medals[i] : `<span style="font-weight:700;color:var(--ink3);font-size:12px">#${i+1}</span>`;
+      return `<div style="padding:9px 0;${i?'border-top:1px solid var(--line)':''};${isMe?'background:linear-gradient(90deg,var(--accent-bg),transparent 70%);margin:0 -4px;padding:9px 4px;border-radius:8px':''}">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:26px;text-align:center;flex-shrink:0">${medal}</div>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <span style="font-size:13px;font-weight:${isMe?700:500};color:${isMe?'var(--accent)':'var(--ink)'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%">${d.pseudo||'Grimpeur'}${isMe?' (moi)':''}</span>
+              <span style="font-size:13px;font-weight:700;color:var(--ink);font-family:var(--display)">${score.toLocaleString('fr-FR')} pts</span>
+            </div>
+            <div style="background:var(--line);border-radius:4px;height:5px">
+              <div style="width:${barPct}%;height:100%;background:${i===0?'var(--accent)':isMe?'var(--accent)':'var(--ink3)'};border-radius:4px;transition:.4s"></div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    list.innerHTML = '<div class="empty">Impossible de charger le classement.</div>';
+    console.warn('Ranking error', e);
+  }
+}
+
+function computeScoreDetail() {
+  const flash = BLOCS.filter(b=>b.addedBy&&b.essais==='Flash').length;
+  const parts = [];
+  if(flash>0) parts.push(`${flash} flash ⚡`);
+  parts.push(`${totalReussis} blocs réussis total`);
+  return parts.join(' · ');
+}
+
 function renderBadges() {
   checkAllBadges();
   const grid = document.getElementById('badges-grid');
@@ -2755,13 +2971,14 @@ function renderBadges() {
 
 // ========== COMMUNITY TAB SWITCHER ==========
 function switchCTab(tab, el) {
-  ['actu','defi','badges','histo'].forEach(t=>{
+  ['actu','ranking','defi','badges','histo'].forEach(t=>{
     const ct=document.getElementById('ct-'+t);
     if(ct) ct.style.display = t===tab?'block':'none';
     const btn=document.getElementById('ctab-'+t);
     if(btn) btn.classList.remove('active');
   });
   el.classList.add('active');
+  if(tab==='ranking') renderRanking('month');
   if(tab==='defi') renderDefi();
   if(tab==='badges') renderBadges();
   if(tab==='histo') renderHisto();
@@ -2775,15 +2992,17 @@ const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsI
 
 // Supabase minimal client
 const supa = {
-  async req(path, method='GET', body=null, token=null) {
+  async req(path, method='GET', body=null, token=null, extra={}) {
     const headers = {
       'apikey': SUPA_KEY,
       'Content-Type': 'application/json',
+      ...extra,
     };
     if(token) headers['Authorization'] = 'Bearer '+token;
     const opts = {method, headers};
     if(body) opts.body = JSON.stringify(body);
     const res = await fetch(SUPA_URL+path, opts);
+    if(res.status===204||res.status===201) return {};
     return res.json();
   },
   async signUp(email, password) {
@@ -2799,10 +3018,15 @@ const supa = {
     return this.req('/auth/v1/recover', 'POST', {email});
   },
   async getBlocs() {
-    return this.req('/rest/v1/blocs?actif=eq.true&order=added_at.asc', 'GET', null, currentToken);
+    return this.req('/rest/v1/blocs?select=*&order=added_at.asc', 'GET', null, currentToken);
   },
   async insertBloc(bloc) {
     return this.req('/rest/v1/blocs', 'POST', bloc, currentToken);
+  },
+  async upsertBloc(bloc, token) {
+    return this.req('/rest/v1/blocs', 'POST', bloc, token, {
+      'Prefer': 'resolution=merge-duplicates,return=minimal'
+    });
   },
   async deleteBloc(id) {
     return this.req('/rest/v1/blocs?id=eq.'+id, 'DELETE', null, currentToken);
@@ -2818,8 +3042,23 @@ const supa = {
     return this.req(`/rest/v1/profiles?id=eq.${userId}`, 'PATCH', updates, token);
   },
   async saveSession(data, token) {
-    // Save seance to supabase
     return this.req('/rest/v1/seances', 'POST', data, token);
+  },
+  async upsertScore(data, token) {
+    return this.req('/rest/v1/scores', 'POST', data, token, {
+      'Prefer': 'resolution=merge-duplicates,return=minimal'
+    });
+  },
+  async getRankings(period) {
+    // period: 'month' or 'year'
+    const now = new Date();
+    const mKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    const yKey = String(now.getFullYear());
+    const col = period==='month' ? 'score_month' : 'score_year';
+    const keyFilter = period==='month'
+      ? `month_key=eq.${mKey}`
+      : `year_key=eq.${yKey}`;
+    return this.req(`/rest/v1/scores?${keyFilter}&${col}=gt.0&order=${col}.desc&limit=20`, 'GET', null, null);
   },
 };
 
@@ -2968,24 +3207,209 @@ function updateUserPill() {
 }
 
 // ── Profile screen ──
+
+// ========== SYNC BLOCS → SUPABASE ==========
+async function syncBlocsToSupabase() {
+  if(!currentUser || !currentToken) { showToast('Connecte-toi d'abord !'); return; }
+  const btn = document.getElementById('sync-btn');
+  if(btn) { btn.disabled = true; btn.textContent = 'Sync en cours...'; }
+
+  let ok = 0, err = 0;
+  for(const b of BLOCS) {
+    const payload = {
+      id: b.id,
+      couleur: b.couleur,
+      col: b.col||'',
+      secteur: b.secteur||'',
+      hall: b.hall||'ancienne',
+      inclinaisons: b.inclinaisons||[],
+      styles: b.styles||[],
+      prises: b.prises||[],
+      cotation: b.cotation||'',
+      ouvreur: b.ouvreur||'',
+      note: b.note||'',
+      essais: b.essais||null,
+      etoiles: b.etoiles||0,
+      morpho: b.morpho??null,
+      date: b.date||null,
+      added_by: b.addedBy||currentUser.id,
+      actif: true,
+    };
+    try {
+      const res = await supa.upsertBloc(payload, currentToken);
+      if(res && res.error) err++;
+      else ok++;
+    } catch(e) { err++; }
+  }
+
+  if(btn) { btn.disabled = false; btn.textContent = '☁ Sync Supabase'; }
+  showToast(`Sync terminé : ${ok} blocs envoyés${err>0?' ('+err+' erreurs)':''} ✓`);
+}
 function renderProfile() {
+  // --- Identité ---
   const pseudo = currentProfile?.pseudo || currentUser?.email?.split('@')[0] || '—';
   const initials = pseudo.slice(0,2).toUpperCase();
-  const el = document.getElementById('profile-avatar');
-  if(el) el.textContent = initials;
-  const pn = document.getElementById('profile-name');
-  if(pn) pn.textContent = pseudo;
-  const pe = document.getElementById('profile-email');
-  if(pe) pe.textContent = currentUser?.email || '';
-  const pi = document.getElementById('profile-pseudo-input');
-  if(pi) pi.value = pseudo;
-  // Stats
-  const ps = document.getElementById('prof-seances');
-  if(ps) ps.textContent = historique.length;
-  const pr = document.getElementById('prof-reussis');
-  if(pr) pr.textContent = totalReussis;
-  const pb = document.getElementById('prof-badges');
-  if(pb) pb.textContent = unlockedBadges?.size || 0;
+  const av = document.getElementById('profile-avatar'); if(av) av.textContent=initials;
+  const pn = document.getElementById('profile-name'); if(pn) pn.textContent=pseudo;
+  const pe = document.getElementById('profile-email'); if(pe) pe.textContent=currentUser?.email||'';
+  const pi = document.getElementById('profile-pseudo-input'); if(pi) pi.value=pseudo;
+
+  // --- Stats globales ---
+  const nbS = historique.length;
+  const totalNok = historique.reduce((s,h)=>s+(h.nok||0),0);
+  const taux = (totalReussis+totalNok)>0 ? Math.round(totalReussis/(totalReussis+totalNok)*100)+'%' : '—';
+  const elS=document.getElementById('prof-seances'); if(elS) elS.textContent=nbS;
+  const elR=document.getElementById('prof-reussis'); if(elR) elR.textContent=totalReussis;
+  const elT=document.getElementById('prof-taux'); if(elT) elT.textContent=taux;
+  const elB=document.getElementById('prof-badges'); if(elB) elB.textContent=unlockedBadges?.size||0;
+
+  // --- Graphique progression (SVG barres) ---
+  renderProfChart();
+
+  // --- Par inclinaison ---
+  renderProfBars('inclOk', 'prof-incl', [
+    'Dalle','Léger dévers','Gros dévers','Vertical','Toit','Proue','Dièdre','Arête','Mixte'
+  ]);
+
+  // --- Par style ---
+  renderProfBars('styleOk', 'prof-styles', [
+    'Athlétique','Technique','Dynamique','Coordination','Équilibre',
+    'Compression','À doigts','Adhérence','Gainage','Lecture','Endurance','Morpho'
+  ]);
+
+  // --- Par couleur ---
+  renderProfColors();
+
+  // --- Historique ---
+  renderProfHisto();
+}
+
+function renderProfChart() {
+  const el = document.getElementById('prof-chart'); if(!el) return;
+  const last = historique.slice(0,10).reverse();
+  if(last.length===0){el.innerHTML='<div class="empty">Aucune séance enregistrée.</div>';return;}
+
+  const maxVal = Math.max(...last.map(h=>(h.ok||0)+(h.nok||0)), 1);
+  const W=300, H=80, pad=4, barW=Math.floor((W-pad*(last.length+1))/last.length);
+
+  let bars='', labels='', rates='';
+  last.forEach((h,i)=>{
+    const x = pad + i*(barW+pad);
+    const tot = (h.ok||0)+(h.nok||0);
+    const hOk = tot>0 ? Math.round((h.ok||0)/tot*(H-18)) : 0;
+    const hNok = tot>0 ? Math.round((h.nok||0)/tot*(H-18)) : 0;
+    const yBase = H-2;
+    bars += `<rect x="${x}" y="${yBase-hNok}" width="${barW}" height="${hNok}" fill="rgba(255,77,0,.35)" rx="2"/>`;
+    bars += `<rect x="${x}" y="${yBase-hOk-hNok}" width="${barW}" height="${hOk}" fill="rgba(22,163,74,.7)" rx="2"/>`;
+    const rate = tot>0 ? Math.round((h.ok||0)/tot*100) : 0;
+    rates += `<text x="${x+barW/2}" y="${yBase-hOk-hNok-3}" text-anchor="middle" font-size="7" fill="var(--ink3)">${tot>0?rate+'%':''}</text>`;
+    labels += `<text x="${x+barW/2}" y="${H}" text-anchor="middle" font-size="6.5" fill="var(--ink3)">${h.date.split(' ').slice(1).join(' ')}</text>`;
+  });
+
+  el.innerHTML = `<svg width="100%" viewBox="0 0 ${W} ${H+2}" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
+    ${bars}${rates}${labels}
+  </svg>
+  <div style="display:flex;gap:12px;margin-top:6px;font-size:11px;color:var(--ink3)">
+    <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:rgba(22,163,74,.7);border-radius:2px;display:inline-block"></span>Réussis</span>
+    <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:rgba(255,77,0,.35);border-radius:2px;display:inline-block"></span>Tentés</span>
+  </div>`;
+}
+
+function renderProfBars(field, containerId, allKeys) {
+  const el = document.getElementById(containerId); if(!el) return;
+  // Aggregate from historique
+  const agg = {};
+  historique.forEach(h=>{
+    Object.entries(h[field]||{}).forEach(([k,v])=>{
+      if(!agg[k]) agg[k]={ok:0,nok:0};
+      agg[k].ok += (v.ok||0); agg[k].nok += (v.nok||0);
+    });
+  });
+  const keys = allKeys.filter(k=>agg[k] && (agg[k].ok+agg[k].nok)>0);
+  if(keys.length===0){el.innerHTML='<div class="empty" style="font-size:12px;padding:8px 0">Pas encore de données — ajoute des blocs avec ces infos.</div>';return;}
+  // Sort by success rate desc
+  keys.sort((a,b)=>{
+    const ra=(agg[a].ok)/(agg[a].ok+agg[a].nok);
+    const rb=(agg[b].ok)/(agg[b].ok+agg[b].nok);
+    return rb-ra;
+  });
+  el.innerHTML = keys.map(k=>{
+    const tot = agg[k].ok+agg[k].nok;
+    const pct = Math.round(agg[k].ok/tot*100);
+    const color = pct>=70?'rgba(22,163,74,.75)':pct>=40?'rgba(255,165,0,.75)':'rgba(255,77,0,.65)';
+    return `<div style="margin-bottom:7px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
+        <span style="color:var(--ink);font-weight:500">${k}</span>
+        <span style="color:var(--ink3)">${agg[k].ok}/${tot} — <b style="color:var(--ink)">${pct}%</b></span>
+      </div>
+      <div style="background:var(--line);border-radius:4px;height:7px;overflow:hidden">
+        <div style="width:${pct}%;height:100%;background:${color};border-radius:4px;transition:.3s"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderProfColors() {
+  const el = document.getElementById('prof-colors'); if(!el) return;
+  // Use colorStats (cumulative) + per-session nok to get totals
+  const colorNok = {};
+  historique.forEach(h=>{
+    Object.entries(h.colorOk||{}).forEach(([c,v])=>{
+      if(!colorNok[c]) colorNok[c]=0;
+      colorNok[c] += (v.nok||0);
+    });
+  });
+  const allColors = Object.keys(colorStats).filter(c=>colorStats[c]>0);
+  if(allColors.length===0){el.innerHTML='<div class="empty" style="font-size:12px;padding:8px 0">Aucune donnée par couleur.</div>';return;}
+
+  const COLOR_NAMES = {
+    '#ef4444':'Rouge','#f97316':'Orange','#eab308':'Jaune','#22c55e':'Vert',
+    '#3b82f6':'Bleu','#8b5cf6':'Violet','#ec4899':'Rose','#ffffff':'Blanc',
+    '#000000':'Noir','#6b7280':'Gris','#854d0e':'Marron'
+  };
+  el.innerHTML = allColors.map(c=>{
+    const ok = colorStats[c]||0;
+    const nok = colorNok[c]||0;
+    const tot = ok+nok;
+    const pct = tot>0 ? Math.round(ok/tot*100) : 100;
+    const name = COLOR_NAMES[c] || c;
+    const isDark = ['#000000','#1e293b','#374151','#1f2937'].includes(c);
+    const textC = isDark?'#fff':'#000';
+    return `<div style="margin-bottom:7px">
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:3px">
+        <span style="display:flex;align-items:center;gap:6px">
+          <span style="width:14px;height:14px;border-radius:50%;background:${c};border:1.5px solid var(--line);display:inline-block"></span>
+          <span style="color:var(--ink);font-weight:500">${name}</span>
+        </span>
+        <span style="color:var(--ink3)">${ok}/${tot} — <b style="color:var(--ink)">${pct}%</b></span>
+      </div>
+      <div style="background:var(--line);border-radius:4px;height:7px;overflow:hidden">
+        <div style="width:${pct}%;height:100%;background:${c};border-radius:4px;transition:.3s"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderProfHisto() {
+  const el = document.getElementById('prof-histo'); if(!el) return;
+  if(historique.length===0){el.innerHTML='<div class="empty">Aucune séance enregistrée.</div>';return;}
+  el.innerHTML = historique.map((h,i)=>{
+    const tot=(h.ok||0)+(h.nok||0);
+    const pct=tot>0?Math.round((h.ok||0)/tot*100):0;
+    const color=pct>=70?'var(--green)':pct>=40?'#f97316':'var(--red)';
+    return `<div style="display:flex;align-items:center;gap:10px;padding:9px 0;${i>0?'border-top:1px solid var(--line)':''}">
+      <div style="width:36px;height:36px;border-radius:50%;background:var(--accent-bg);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:${color};flex-shrink:0">${pct>0?pct+'%':'—'}</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600;color:var(--ink)">${h.date}</div>
+        <div style="font-size:11px;color:var(--ink3);margin-top:1px">
+          <span style="color:var(--green)">✓ ${h.ok||0}</span>
+          <span style="margin:0 4px;color:var(--line)">|</span>
+          <span style="color:var(--red)">✗ ${h.nok||0}</span>
+          ${h.morphoTot>0?`<span style="margin:0 4px;color:var(--line)">|</span><span>Morpho: ${h.morphoOk||0}/${h.morphoTot}</span>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 async function savePseudo() {
@@ -3177,6 +3601,7 @@ function submitNewBloc() {
     morpho: bloc.morpho??null,
     date: bloc.date,
     added_by: bloc.addedBy,
+    actif: true,
   };
 
   // Ajouter localement immédiatement
