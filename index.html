@@ -2106,6 +2106,12 @@ function loadAll() {
     if (d.spraySessions)  spraySessions.push(...d.spraySessions);
     if (d.mapResults)     Object.assign(mapResults, d.mapResults);
     if (d.blocMedias)     Object.assign(blocMedias, d.blocMedias);
+    if (d.blocAvis)       Object.assign(blocAvis, d.blocAvis);
+    if (d.myAvis)         Object.assign(myAvis, d.myAvis);
+    if (d.mesResas)       mesResas.push(...d.mesResas);
+    if (d.userBlocs)      { d.userBlocs.forEach(b=>{ if(!BLOCS.find(x=>x.id===b.id)) BLOCS.push(b); }); }
+    if (d.mapResults)     Object.assign(mapResults, d.mapResults);
+    if (d.blocMedias)     Object.assign(blocMedias, d.blocMedias);
     if (d.userBlocs)      { d.userBlocs.forEach(b=>{ if(!BLOCS.find(x=>x.id===b.id)) BLOCS.push(b); }); }
     if (d.blocAvis)      Object.assign(blocAvis, d.blocAvis);
     if (d.myAvis)        Object.assign(myAvis, d.myAvis);
@@ -2668,6 +2674,9 @@ const ALL_BADGES = [
   {id:'bonne_note',name:'Populaire',desc:'Un de tes avis reçoit 5 likes',icon:'heart',col:'#dc2626',bg:'#fef2f2',condition:()=>false},
 ];
 let unlockedBadges = new Set();
+let blocAvis = {};
+let myAvis = {};
+let mesResas = [];
 
 const BADGE_ICONS = {
   sun:`<path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/><circle cx="12" cy="12" r="5"/>`,
