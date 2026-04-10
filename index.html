@@ -915,6 +915,14 @@ textarea{resize:none;height:62px;line-height:1.5}
         <div class="metric"><div class="metric-val" id="cs-taux">—</div><div class="metric-lbl">Taux réussite</div></div>
         <div class="metric"><div class="metric-val" id="cs-streak">0</div><div class="metric-lbl">Série jours</div></div>
       </div>
+      <div style="margin-bottom:12px">
+        <div style="font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">Note pour l'IA (optionnel)</div>
+        <textarea id="coaching-note" placeholder="Ex: j'ai du mal avec les toits, je veux progresser en dynamique, j'ai une compétition dans 3 semaines..." style="width:100%;font-size:13px;min-height:80px;resize:vertical;border-radius:var(--rs);border:1.5px solid var(--line);padding:10px 12px;font-family:var(--font);background:var(--white)"></textarea>
+      </div>
+      <div style="margin-bottom:12px">
+        <div style="font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">Note pour l'IA</div>
+        <textarea id="coaching-note" placeholder="Ex: j'ai du mal avec les toits, je veux progresser en dynamique, compét dans 3 semaines..." style="width:100%;font-size:13px;min-height:75px;resize:vertical;border-radius:var(--rs);border:1.5px solid var(--line);padding:10px 12px;font-family:var(--font);background:var(--white);box-sizing:border-box"></textarea>
+      </div>
       <button class="btn btn-primary" id="ai-coaching-btn" onclick="callClaudeCoaching('analyse')">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><path d="M18 2v4h4"/></svg>
         Analyser mes séances
@@ -999,6 +1007,11 @@ textarea{resize:none;height:62px;line-height:1.5}
         <div class="chip" onclick="filterSugg('outils',this)">Outils</div>
       </div>
       <div id="sugg-list"></div>
+    </div>
+    <div class="card" style="margin-top:0">
+      <div class="card-label">Note pour le coaching IA</div>
+      <textarea id="objectif-note" placeholder="Tes contraintes, tes priorités, tes prochains objectifs de grimpe... L'IA s'en servira pour personnaliser ton coaching." style="width:100%;font-size:13px;min-height:90px;resize:vertical;border-radius:var(--rs);border:1.5px solid var(--line2);padding:10px 12px;font-family:var(--font);background:var(--white);margin-bottom:8px"></textarea>
+      <button class="btn" style="width:auto;padding:8px 16px;margin:0;font-size:12px;color:var(--accent);border-color:var(--accent)" onclick="saveObjectifNote()">Sauver</button>
     </div>
   </div>
 
@@ -2444,6 +2457,10 @@ DONNÉES DU GRIMPEUR :
 - Objectifs atteints : ${objDone}
 - Dernières séances : ${historique.slice(0,3).map(s=>`${s.date}: ${s.ok}✓ ${s.nok}✗`).join(' | ') || 'Aucune'}
 
+Note personnelle du grimpeur : \${document.getElementById('coaching-note')?.value?.trim()||'Aucune note.'}
+
+Note personnelle : ${getCoachingNote()}
+
 Génère une analyse en JSON avec cette structure exacte (réponds UNIQUEMENT avec le JSON, sans markdown) :
 {
   "intro": "2-3 phrases d'analyse globale personnalisée et motivante",
@@ -3092,8 +3109,19 @@ function submitNewBloc() {
   checkBadge('first_avis');
   showToast('Bloc ' + id + ' ajouté !');
 
-  // Reset form after 2s
-  setTimeout(resetBlocForm, 2000);
+  // Revenir sur seance avec le secteur ouvert après 1.5s
+  setTimeout(()=>{
+    resetBlocForm();
+    showTab('seance');
+    // Rouvrir le secteur si on venait de la map
+    if(seanceSelZone){
+      setTimeout(()=>selectSeanceZone(seanceSelZone), 200);
+    } else {
+      // Ouvrir le secteur du bloc qu'on vient d'ajouter
+      setTimeout(()=>selectSeanceZone(bloc.secteur), 200);
+    }
+    renderSeanceOverlays();
+  }, 1500);
 }
 
 function resetBlocForm() {
@@ -3338,9 +3366,14 @@ function openBlocDetail(bloc){
     +(bloc.date?'<div style="font-size:11px;color:var(--ink3);margin-bottom:12px">Ouverture : '+bloc.date+'</div>':'')
 
     // Tags
-    +tags(bloc.inclinaisons,'Inclinaison')
-    +tags(bloc.styles,'Type de grimpe')
-    +tags(bloc.prises,'Prises')
+    // Tags techniques
+    +( (bloc.inclinaisons&&bloc.inclinaisons.length)||(bloc.styles&&bloc.styles.length)||(bloc.prises&&bloc.prises.length)
+      ? tags(bloc.inclinaisons,'Inclinaison')+tags(bloc.styles,'Type de grimpe')+tags(bloc.prises,'Prises')
+      : '<div style="font-size:12px;color:var(--ink3);background:var(--off);border-radius:var(--rs);padding:9px 12px;margin-bottom:12px;line-height:1.5">'
+        +'Pas encore de données détaillées pour ce bloc.<br>'
+        +'<span style="opacity:.7">Les ouvreurs peuvent en ajouter via <b>Ajouter un bloc</b>.</span>'
+        +'</div>'
+    )
 
     // Médias
     +'<div class="bloc-tag-group">'
@@ -3426,6 +3459,48 @@ function loginDemo() {
   showToast('Mode demo - donnees locales uniquement');
 }
 
+
+// ========== NOTES COACHING & OBJECTIFS ==========
+function saveObjectifNote(){
+  const note = document.getElementById('objectif-note')?.value?.trim()||'';
+  localStorage.setItem('abloc_objectif_note', note);
+  showToast('Note sauvee !');
+}
+
+function loadObjectifNote(){
+  const note = localStorage.getItem('abloc_objectif_note')||'';
+  const el = document.getElementById('objectif-note');
+  if(el) el.value = note;
+  const cn = document.getElementById('coaching-note');
+  if(cn && !cn.value && note) cn.value = note;
+}
+
+function getCoachingContext(){
+  const coachNote = document.getElementById('coaching-note')?.value?.trim()||'';
+  const objNote = localStorage.getItem('abloc_objectif_note')||'';
+  return [coachNote, objNote].filter(Boolean).join(' / ')||'Aucune note.';
+}
+
+
+// ========== NOTES COACHING ==========
+function saveObjectifNote(){
+  const v=document.getElementById('objectif-note')?.value||'';
+  localStorage.setItem('abloc_obj_note',v);
+  showToast('Note sauvee !');
+}
+function loadObjectifNote(){
+  const v=localStorage.getItem('abloc_obj_note')||'';
+  const el=document.getElementById('objectif-note');
+  if(el)el.value=v;
+  const cn=document.getElementById('coaching-note');
+  if(cn&&!cn.value&&v)cn.value=v;
+}
+function getCoachingNote(){
+  const cn=document.getElementById('coaching-note')?.value?.trim()||'';
+  const on=localStorage.getItem('abloc_obj_note')||'';
+  return cn||on||'Aucune note personnelle.';
+}
+
 // ========== INIT ==========
 // Auth check
 if(loadAuthState()) {
@@ -3439,6 +3514,7 @@ if(loadAuthState()) {
 }
 loadAll();
 initSeanceMap();
+loadObjectifNote();
 renderCircuits();
 renderHangProtocols();
 renderCampusExos();
