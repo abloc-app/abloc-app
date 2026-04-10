@@ -3102,7 +3102,8 @@ function submitNewBloc() {
   req.classList.remove('show');
 
   // Build bloc object
-  const id = newBlocData.secteur + String(BLOCS.filter(b=>b.secteur===newBlocData.secteur).length+1).padStart(2,'0');
+  const secteurCode = newBlocData.secteur.replace('Zone ','Z').replace(/\s/g,'');
+  const id = secteurCode + '_' + String(BLOCS.filter(b=>b.secteur===newBlocData.secteur).length+1).padStart(2,'0');
   const COLS = {jaune:'#fbbf24',orange:'#f97316',rose:'#ec4899',rouge:'#ef4444',bleu:'#3b82f6',vert:'#22c55e',noir:'#111827',blanc:'#9ca3af',mauve:'#8b5cf6',cyan:'#0ea5e9'};
   const bloc = {
     id,
@@ -3169,7 +3170,17 @@ function submitNewBloc() {
     resetBlocForm();
     showTab('seance');
     const zone = seanceSelZone || bloc.secteur;
-    setTimeout(()=>{ if(zone) selectSeanceZone(zone); renderSeanceOverlays(); }, 200);
+    setTimeout(()=>{
+      if(zone) {
+        selectSeanceZone(zone);
+        renderSeanceOverlays();
+        // Scroller jusqu'au panneau
+        setTimeout(()=>{
+          const zp = document.getElementById('seance-zone-panel');
+          if(zp) zp.scrollIntoView({behavior:'smooth', block:'start'});
+        }, 300);
+      }
+    }, 200);
   }, 1500);
 }
 
