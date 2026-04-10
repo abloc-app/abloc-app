@@ -1904,8 +1904,8 @@ function showToast(msg) {
 
 
 // ========== MAP ==========
-const MAP_ZONES_A = {"Zone 1": {"l": 13, "t": 77, "w": 20, "h": 11, "blocs": {"vert": 1, "orange": 2, "rose": 1, "noir": 1, "bleu": 1, "mauve": 1}, "date": "2026-03-10"}, "Zone 2": {"l": 35, "t": 68, "w": 15, "h": 13, "blocs": {"bleu": 1, "mauve": 3, "jaune": 1, "rouge": 1}, "date": "2026-03-13"}, "Zone 3": {"l": 32, "t": 52, "w": 12, "h": 12, "blocs": {}, "date": "2026-03-13"}, "Zone 4": {"l": 35, "t": 38, "w": 14, "h": 12, "blocs": {"vert": 1, "rose": 1, "noir": 1, "mauve": 1, "jaune": 1}, "date": "2026-03-13"}, "Zone 5": {"l": 38, "t": 22, "w": 16, "h": 14, "blocs": {"vert": 1, "orange": 2, "noir": 2, "bleu": 3, "jaune": 2, "rouge": 1}, "date": "2026-03-20"}, "Zone 6": {"l": 45, "t": 4, "w": 14, "h": 9, "blocs": {"rose": 1, "noir": 1, "bleu": 1}, "date": "2026-02-26"}, "Zone 7": {"l": 32, "t": 4, "w": 13, "h": 9, "blocs": {"vert": 1, "orange": 1, "rose": 1, "bleu": 1}, "date": "2026-02-03"}, "Zone 8": {"l": 15, "t": 4, "w": 17, "h": 9, "blocs": {"orange": 1, "bleu": 1, "mauve": 2}, "date": "2026-02-03"}, "Zone 9": {"l": 4, "t": 6, "w": 12, "h": 9, "blocs": {"noir": 1, "jaune": 1, "rouge": 1}, "date": "2026-02-03"}, "Zone 10": {"l": 2, "t": 18, "w": 12, "h": 16, "blocs": {"vert": 1, "orange": 2, "rose": 2}, "date": "2026-02-10"}, "Zone 11": {"l": 1, "t": 37, "w": 10, "h": 23, "blocs": {"noir": 3, "bleu": 3, "mauve": 2, "jaune": 1, "rouge": 1}, "date": "2026-02-20"}, "Zone 12": {"l": 12, "t": 61, "w": 13, "h": 11, "blocs": {"vert": 1, "orange": 1, "rose": 1, "noir": 1, "bleu": 2}, "date": "2026-03-24"}, "Zone 13": {"l": 22, "t": 62, "w": 12, "h": 11, "blocs": {"bleu": 1, "mauve": 1, "jaune": 1, "rouge": 1, "blanc": 1}, "date": "2026-03-24"}, "Zone 14": {"l": 24, "t": 48, "w": 13, "h": 12, "blocs": {"rose": 1, "bleu": 1, "rouge": 1}, "date": "2026-02-27"}, "Zone 15": {"l": 27, "t": 37, "w": 12, "h": 12, "blocs": {"vert": 1, "orange": 1, "noir": 1, "jaune": 1}, "date": "2026-02-27"}, "Zone 16": {"l": 17, "t": 21, "w": 11, "h": 11, "blocs": {"orange": 1, "bleu": 1, "mauve": 1, "jaune": 1}, "date": "2026-02-17"}, "Zone 17": {"l": 16, "t": 31, "w": 13, "h": 14, "blocs": {"vert": 1, "orange": 1, "rose": 1, "noir": 1, "bleu": 1, "mauve": 1, "rouge": 1}, "date": "2026-03-06"}};
-const MAP_ZONES_N = {"A": {"l": 56, "t": 27, "w": 24, "h": 12, "blocs": {"vert": 1, "rose": 1, "noir": 1, "jaune": 2, "rouge": 1}, "date": "2026-02-14"}, "B": {"l": 41, "t": 34, "w": 18, "h": 12, "blocs": {"rose": 1, "noir": 1, "bleu": 1, "mauve": 2, "jaune": 1}, "date": "2026-02-14"}, "C": {"l": 22, "t": 37, "w": 14, "h": 12, "blocs": {"jaune": 1, "blanc": 1}, "date": "2026-02-27"}, "D": {"l": 21, "t": 28, "w": 14, "h": 12, "blocs": {"orange": 1, "noir": 1, "bleu": 1, "mauve": 1, "jaune": 1}, "date": "2026-02-27"}, "E": {"l": 24, "t": 19, "w": 14, "h": 11, "blocs": {"orange": 1}, "date": "2026-02-27"}, "F": {"l": 14, "t": 11, "w": 19, "h": 12, "blocs": {"rose": 1, "noir": 1, "bleu": 1, "mauve": 1, "jaune": 1}, "date": "2026-03-03"}, "G": {"l": 5, "t": 44, "w": 11, "h": 18, "blocs": {"bleu": 1, "mauve": 1, "blanc": 1}, "date": "2026-02-25"}, "H": {"l": 7, "t": 54, "w": 11, "h": 13, "blocs": {"rose": 1, "noir": 1, "bleu": 1, "jaune": 1}, "date": "2026-02-25"}, "I": {"l": 8, "t": 65, "w": 18, "h": 12, "blocs": {"orange": 1, "rose": 1, "noir": 1}, "date": "2026-01-30"}, "J": {"l": 27, "t": 65, "w": 18, "h": 12, "blocs": {"noir": 1, "mauve": 1, "jaune": 1, "rouge": 1}, "date": "2026-02-25"}, "K": {"l": 45, "t": 65, "w": 19, "h": 12, "blocs": {"rose": 1, "noir": 3, "bleu": 3, "mauve": 2, "jaune": 2, "rouge": 1}, "date": "2026-02-06"}, "L": {"l": 62, "t": 66, "w": 15, "h": 11, "blocs": {}, "date": "\u2014"}, "M": {"l": 75, "t": 42, "w": 14, "h": 18, "blocs": {"vert": 1, "orange": 1, "rose": 2, "noir": 3, "bleu": 1, "mauve": 2}, "date": "2026-03-17"}};
+const MAP_ZONES_A = {"Zone 1": {"l": 13, "t": 77, "w": 20, "h": 11, "blocs": {}, "date": "2026-03-10"}, "Zone 2": {"l": 35, "t": 68, "w": 15, "h": 13, "blocs": {}, "date": "2026-03-13"}, "Zone 3": {"l": 32, "t": 52, "w": 12, "h": 12, "blocs": {}, "date": "2026-03-13"}, "Zone 4": {"l": 35, "t": 38, "w": 14, "h": 12, "blocs": {}, "date": "2026-03-13"}, "Zone 5": {"l": 38, "t": 22, "w": 16, "h": 14, "blocs": {}, "date": "2026-03-20"}, "Zone 6": {"l": 45, "t": 4, "w": 14, "h": 9, "blocs": {}, "date": "2026-02-26"}, "Zone 7": {"l": 32, "t": 4, "w": 13, "h": 9, "blocs": {}, "date": "2026-02-03"}, "Zone 8": {"l": 15, "t": 4, "w": 17, "h": 9, "blocs": {}, "date": "2026-02-03"}, "Zone 9": {"l": 4, "t": 6, "w": 12, "h": 9, "blocs": {}, "date": "2026-02-03"}, "Zone 10": {"l": 2, "t": 18, "w": 12, "h": 16, "blocs": {}, "date": "2026-02-10"}, "Zone 11": {"l": 1, "t": 37, "w": 10, "h": 23, "blocs": {}, "date": "2026-02-20"}, "Zone 12": {"l": 12, "t": 61, "w": 13, "h": 11, "blocs": {}, "date": "2026-03-24"}, "Zone 13": {"l": 22, "t": 62, "w": 12, "h": 11, "blocs": {}, "date": "2026-03-24"}, "Zone 14": {"l": 24, "t": 48, "w": 13, "h": 12, "blocs": {}, "date": "2026-02-27"}, "Zone 15": {"l": 27, "t": 37, "w": 12, "h": 12, "blocs": {}, "date": "2026-02-27"}, "Zone 16": {"l": 17, "t": 21, "w": 11, "h": 11, "blocs": {}, "date": "2026-02-17"}, "Zone 17": {"l": 16, "t": 31, "w": 13, "h": 14, "blocs": {}, "date": "2026-03-06"}};
+const MAP_ZONES_N = {"A": {"l": 56, "t": 27, "w": 24, "h": 12, "blocs": {}, "date": "2026-02-14"}, "B": {"l": 41, "t": 34, "w": 18, "h": 12, "blocs": {}, "date": "2026-02-14"}, "C": {"l": 22, "t": 37, "w": 14, "h": 12, "blocs": {}, "date": "2026-02-27"}, "D": {"l": 21, "t": 28, "w": 14, "h": 12, "blocs": {}, "date": "2026-02-27"}, "E": {"l": 24, "t": 19, "w": 14, "h": 11, "blocs": {}, "date": "2026-02-27"}, "F": {"l": 14, "t": 11, "w": 19, "h": 12, "blocs": {}, "date": "2026-03-03"}, "G": {"l": 5, "t": 44, "w": 11, "h": 18, "blocs": {}, "date": "2026-02-25"}, "H": {"l": 7, "t": 54, "w": 11, "h": 13, "blocs": {}, "date": "2026-02-25"}, "I": {"l": 8, "t": 65, "w": 18, "h": 12, "blocs": {}, "date": "2026-01-30"}, "J": {"l": 27, "t": 65, "w": 18, "h": 12, "blocs": {}, "date": "2026-02-25"}, "K": {"l": 45, "t": 65, "w": 19, "h": 12, "blocs": {}, "date": "2026-02-06"}, "L": {"l": 62, "t": 66, "w": 15, "h": 11, "blocs": {}, "date": "—"}, "M": {"l": 75, "t": 42, "w": 14, "h": 18, "blocs": {}, "date": "2026-03-17"}};
 const MAP_COULEUR_CSS = {"vert": "#4ade80", "orange": "#f97316", "rose": "#ec4899", "noir": "#94a3b8", "bleu": "#3b82f6", "mauve": "#a78bfa", "jaune": "#fbbf24", "rouge": "#ef4444", "blanc": "#e2e8f0"};
 const MAP_COULEUR_NAMES = {"vert": "Vert", "orange": "Orange", "rose": "Rose", "noir": "Noir", "bleu": "Bleu", "mauve": "Mauve", "jaune": "Jaune", "rouge": "Rouge", "blanc": "Blanc"};
 const MAP_COULEUR_BG = {
@@ -3457,7 +3457,15 @@ function openBlocDetail(bloc){
         :'')
     )+'</div></div>':'')
 
-    +'<button class="btn" onclick="closeBlocDetail()" style="margin-top:8px;color:var(--ink3)">Fermer</button>';
+    // Bouton supprimer uniquement pour les blocs utilisateur (pas les blocs map fixes)
+    +(bloc.id && bloc.addedBy
+      ? '<button class="btn" onclick="deleteUserBloc(''+bloc.id+'',''+bloc.secteur+'')" style="margin-top:8px;color:var(--red);border-color:var(--red)">🗑 Supprimer ce bloc</button>'
+      : ''
+    )
+    +(bloc.id && !bloc.mapKey && bloc.addedBy
+    ? '<button class="btn" onclick="deleteBlocDetail(''+bloc.id+'',''+bloc.couleur+'')" style="margin-top:6px;color:var(--red);border-color:var(--red)">🗑 Supprimer ce bloc</button>'
+    : '')
+  +'<button class="btn" onclick="closeBlocDetail()" style="margin-top:8px;color:var(--ink3)">Fermer</button>';
 
   document.getElementById('bloc-detail-overlay').classList.add('open');
 }
@@ -3492,6 +3500,53 @@ function deleteBlocMedia(mediaKey,type,idx){
   saveAll();
   showToast('Supprimé');
   if(seanceSelZone)selectSeanceZone(seanceSelZone);
+}
+
+
+function deleteUserBloc(id, secteur) {
+  if(!confirm('Supprimer ce bloc définitivement ?')) return;
+
+  // Supprimer du tableau local
+  const idx = BLOCS.findIndex(b => b.id === id);
+  if(idx >= 0) BLOCS.splice(idx, 1);
+
+  // Supprimer du localStorage
+  saveAll();
+
+  // Supprimer de Supabase si connecté
+  if(currentToken) {
+    supa.deleteBloc(id).catch(e => console.warn('Supabase delete error:', e));
+  }
+
+  // Fermer la fiche
+  closeBlocDetail();
+
+  // Rafraîchir le secteur
+  showToast('Bloc supprimé');
+  renderSeanceOverlays();
+  if(secteur) setTimeout(() => selectSeanceZone(secteur), 200);
+}
+
+
+function deleteBlocDetail(id, couleur) {
+  if(!confirm('Supprimer ce bloc définitivement ?')) return;
+  // Supprimer de BLOCS
+  const idx = BLOCS.findIndex(b => b.id === id);
+  if(idx >= 0) BLOCS.splice(idx, 1);
+  // Supprimer les résultats associés
+  const key = id + '|' + couleur;
+  delete results[key];
+  // Supprimer les médias associés
+  delete blocMedias[id];
+  // Supprimer dans Supabase si connecté
+  if(currentToken) {
+    supa.deleteBloc(id).catch(e => console.warn('Supabase delete error:', e));
+  }
+  saveAll();
+  closeBlocDetail();
+  renderSeanceOverlays();
+  if(seanceSelZone) selectSeanceZone(seanceSelZone);
+  showToast('Bloc supprimé');
 }
 
 function closeBlocDetail(){document.getElementById('bloc-detail-overlay').classList.remove('open');}
