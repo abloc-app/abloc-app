@@ -3103,7 +3103,7 @@ function submitNewBloc() {
 
   // Build bloc object
   const secteurCode = newBlocData.secteur.replace('Zone ','Z').replace(/\s/g,'');
-  const id = secteurCode + '_' + String(BLOCS.filter(b=>b.secteur===newBlocData.secteur).length+1).padStart(2,'0');
+  const id = secteurCode + '_' + String(BLOCS.filter(b=>b.secteur===newBlocData.secteur||b.secteur===newBlocData.secteur.replace('Zone ','')).length+1).padStart(2,'0');
   const COLS = {jaune:'#fbbf24',orange:'#f97316',rose:'#ec4899',rouge:'#ef4444',bleu:'#3b82f6',vert:'#22c55e',noir:'#111827',blanc:'#9ca3af',mauve:'#8b5cf6',cyan:'#0ea5e9'};
   const bloc = {
     id,
@@ -3169,7 +3169,8 @@ function submitNewBloc() {
   setTimeout(()=>{
     resetBlocForm();
     showTab('seance');
-    const zone = seanceSelZone || bloc.secteur;
+    const rawZone = seanceSelZone || bloc.secteur;
+    const zone = rawZone && /^\d+$/.test(rawZone) ? 'Zone '+rawZone : rawZone;
     setTimeout(()=>{
       if(zone) {
         selectSeanceZone(zone);
@@ -3236,7 +3237,7 @@ function renderSeanceOverlays(){
     const blocs=z.blocs||{};const total=Object.values(blocs).reduce((a,b)=>a+b,0);
     let done=0,tried=0;
     Object.entries(blocs).forEach(([col,n])=>{for(let i=1;i<=n;i++){const k='MAP|'+name+'|'+col+'|'+i;if(mapResults[k]==='ok')done++;else if(mapResults[k]==='nok')tried++;}});
-    const userB=BLOCS.filter(b=>b.secteur===name&&b.addedBy);
+    const userB=BLOCS.filter(b=>(b.secteur===name||b.secteur===name.replace('Zone ',''))&&b.addedBy);
     userB.forEach(b=>{const k=b.id+'|'+b.couleur;if(results[k]==='ok')done++;else if(results[k]==='nok')tried++;});
     const totalAll=total+userB.length;
     const div=document.createElement('div');div.className='zone-overlay';
@@ -3278,7 +3279,7 @@ function selectSeanceZone(name){
     }
   });
   // Blocs ouvreurs
-  BLOCS.filter(b=>b.secteur===name).forEach(b=>{
+  BLOCS.filter(b=>b.secteur===name||b.secteur===name.replace('Zone ','')).forEach(b=>{
     const key=b.id+'|'+b.couleur;
     const res=results[key]||'';
     const nom=b.id+' '+(CNAMES_S[b.couleur]||b.couleur);
