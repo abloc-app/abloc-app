@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -3030,6 +3031,19 @@ function selectBlocColor(nom, hex, el) {
 }
 
 // ── Secteur ──
+
+function switchAddBlocHall(hall, el) {
+  document.getElementById('secteur-grid-anc').style.display = hall==='ancienne'?'':'none';
+  document.getElementById('secteur-grid-nouv').style.display = hall==='nouvelle'?'':'none';
+  document.querySelectorAll('#addbloc-hall-anc, #addbloc-hall-nouv').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  // Reset secteur si on change de salle
+  newBlocData.secteur = null;
+  document.querySelectorAll('.secteur-btn').forEach(b=>b.classList.remove('sel'));
+  // Mémoriser la salle pour le bloc
+  newBlocData.hall = hall;
+}
+
 function selectSecteur(s, el) {
   document.querySelectorAll('.secteur-btn').forEach(e=>e.classList.remove('sel'));
   el.classList.add('sel');
@@ -3108,7 +3122,7 @@ function submitNewBloc() {
     couleur: bloc.couleur,
     col: bloc.col,
     secteur: bloc.secteur,
-    hall: seanceHall||'ancienne',
+    hall: newBlocData.hall||seanceHall||'ancienne',
     inclinaisons: bloc.inclinaisons,
     styles: bloc.styles,
     prises: bloc.prises,
@@ -3151,7 +3165,7 @@ function submitNewBloc() {
 }
 
 function resetBlocForm() {
-  newBlocData = {couleur:null,couleurHex:null,secteur:null,inclinaison:[],style:[],prise:[],cotation:'',ouvreur:'',note:''};
+  newBlocData = {couleur:null,couleurHex:null,secteur:null,hall:'ancienne',inclinaison:[],style:[],prise:[],cotation:'',ouvreur:'',note:''};
   document.querySelectorAll('#s-addbloc .color-opt').forEach(e=>e.classList.remove('sel'));
   document.querySelectorAll('#s-addbloc .secteur-btn').forEach(e=>e.classList.remove('sel'));
   document.querySelectorAll('#s-addbloc .tag-btn').forEach(e=>e.classList.remove('sel'));
