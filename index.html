@@ -3167,7 +3167,7 @@ function selectSeanceZone(name){
     for(let i=1;i<=n;i++){
       const key='MAP|'+name+'|'+col+'|'+i;const res=mapResults[key]||'';
       const bdata={nom:(CNAMES_S[col]||col)+' #'+i,couleur:col,col:CCOLS[col]||'#888',secteur:name,mapKey:key};
-      rows.push('<div class="bloc-row" style="cursor:pointer;padding:11px 16px;border-bottom:1px solid var(--line)" onclick="openBlocDetail('+JSON.stringify(bdata).replace(/"/g,\'&quot;\')+')">'
+      rows.push('<div class="bloc-row" style="cursor:pointer;padding:11px 16px;border-bottom:1px solid var(--line)" onclick="openBlocDetail('+encodeURIComponent(JSON.stringify(bdata))+')">'
         +'<div class="color-pill" style="background:'+(CCOLS[col]||'#888')+'"></div>'
         +'<div style="flex:1"><div class="bloc-id">'+(CNAMES_S[col]||col)+' #'+i+'</div></div>'
         +'<div style="display:flex;gap:6px;align-items:center">'
@@ -3181,7 +3181,7 @@ function selectSeanceZone(name){
     const key=b.id+'|'+b.couleur;const res=results[key]||'';
     const tags=[...(b.inclinaisons||[b.style||'']).filter(Boolean)].slice(0,2).join(', ');
     const bdata={id:b.id,nom:b.id+' '+(CNAMES_S[b.couleur]||b.couleur),couleur:b.couleur,col:b.col||CCOLS[b.couleur]||'#888',secteur:name,inclinaisons:b.inclinaisons||[],styles:b.styles||[],prises:b.prises||[],cotation:b.cotation||'',ouvreur:b.ouvreur||'',note:b.note||'',date:b.date||''};
-    rows.push('<div class="bloc-row" style="cursor:pointer;padding:11px 16px;border-bottom:1px solid var(--line)" onclick="openBlocDetail('+JSON.stringify(bdata).replace(/"/g,\'&quot;\')+')">'
+    rows.push('<div class="bloc-row" style="cursor:pointer;padding:11px 16px;border-bottom:1px solid var(--line)" onclick="openBlocDetail('+encodeURIComponent(JSON.stringify(bdata))+')">'
       +'<div class="color-pill" style="background:'+(b.col||CCOLS[b.couleur]||'#888')+'"></div>'
       +'<div style="flex:1"><div class="bloc-id">'+b.id+' '+(CNAMES_S[b.couleur]||b.couleur)+'</div>'
       +(tags||b.cotation?'<div class="bloc-sub">'+[tags,b.cotation].filter(Boolean).join(' &middot; ')+'</div>':'')+'</div>'
@@ -3222,6 +3222,7 @@ function openAddBlocFromZone(){
   setTimeout(()=>{if(seanceSelZone)document.querySelectorAll('.secteur-btn').forEach(b=>{if(b.textContent.trim()===seanceSelZone)b.click();});},100);
 }
 function openBlocDetail(bloc){
+  if(typeof bloc==='string')bloc=JSON.parse(decodeURIComponent(bloc));
   const tags=(arr,lbl)=>arr&&arr.length?'<div class="bloc-tag-group"><div class="bloc-tag-group-label">'+lbl+'</div><div class="bloc-tag-list">'+arr.map(t=>'<span class="bloc-tag">'+t+'</span>').join('')+'</div></div>':'';
   const m=blocMedias[bloc.id]||{};
   let media='';
