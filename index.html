@@ -548,7 +548,7 @@ textarea{resize:none;height:62px;line-height:1.5}
 .zone-overlay.zsel{border-color:var(--accent)!important;border-width:2.5px!important}
 .prof-empty{text-align:center;padding:20px;color:var(--ink3);font-size:13px}
 /* ── ADMIN DASHBOARD ── */
-.admin-wrap{position:fixed;inset:0;background:var(--bg);z-index:200;overflow-y:auto;padding:20px 16px}
+.admin-wrap{position:fixed;inset:0;background:var(--bg);z-index:9999;overflow-y:auto;padding:20px 16px}
 .admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--line)}
 .admin-title{font-family:var(--display);font-size:20px;font-weight:800;color:var(--ink)}
 .admin-title span{color:var(--accent)}
@@ -2970,7 +2970,9 @@ function isAdmin() {
 }
 
 function openAdmin() {
-  document.getElementById('admin-dashboard').style.display = 'block';
+  const el = document.getElementById('admin-dashboard');
+  el.style.display = 'block';
+  el.scrollTop = 0;
   loadAdminData();
 }
 function closeAdmin() {
@@ -2980,17 +2982,33 @@ function closeAdmin() {
 async function loadAdminData() {
   const errEl = document.getElementById('admin-err');
   errEl.style.display = 'none';
+  // Reset counters
+  ['adm-total','adm-ouvreurs','adm-alerts'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.textContent='…';
+  });
   try {
-    const data = await supa.req('/rest/v1/blocs?select=*&order=added_at.desc&limit=500','GET',null,currentToken);
+    // Essaie avec token d'abord, puis sans (clé anon + public policy)
+    let data = await supa.req('/rest/v1/blocs?select=*&order=added_at.desc&limit=500','GET',null,currentToken);
+    if(!Array.isArray(data)||data.length===0) {
+      // Fallback : sans token (public read policy)
+      data = await supa.req('/rest/v1/blocs?select=*&order=added_at.desc&limit=500','GET',null,null);
+    }
     if(!Array.isArray(data)) {
-      errEl.textContent = 'Erreur Supabase : ' + (data?.message||data?.error||JSON.stringify(data));
+      errEl.innerHTML = '⚠ Erreur Supabase : ' + (data?.message||data?.error||JSON.stringify(data))
+        + '<br><small>Exécute dans Supabase SQL : <code>CREATE POLICY "blocs_public_read" ON blocs FOR SELECT USING (true);</code></small>';
       errEl.style.display = 'block';
       return;
+    }
+    if(data.length===0) {
+      errEl.innerHTML = '⚠ Aucun bloc dans Supabase. Utilise le bouton <b>☁ Sync Supabase</b> dans ton profil.';
+      errEl.style.display = 'block';
+      // Render quand même pour afficher les sections vides
     }
     renderAdminDashboard(data);
   } catch(e) {
     errEl.textContent = 'Erreur réseau : ' + e.message;
     errEl.style.display = 'block';
+    console.error('Admin load error:', e);
   }
 }
 
@@ -3168,6 +3186,55 @@ function renderAdminTable(blocs) {
   }).join('');
 }
 
+// ========== ACTU FEED ==========
+function renderActuFeed() {
+  const el = document.getElementById('actu-feed');
+  if(!el) return;
+
+  // Build feed from local data
+  const items = [];
+
+  // Recent sessions
+  historique.slice(0,5).forEach(h => {
+    const tot = (h.ok||0)+(h.nok||0);
+    const pct = tot>0 ? Math.round((h.ok||0)/tot*100) : 0;
+    const pseudo = currentProfile?.pseudo || currentUser?.email?.split('@')[0] || 'Toi';
+    items.push({
+      icon: pct>=70?'🔥':pct>=40?'💪':'😤',
+      text: `<b>${pseudo}</b> — séance du ${h.date} : ${h.ok||0} blocs réussis sur ${tot} (${pct}%)`,
+      type: 'seance'
+    });
+  });
+
+  // Badges récents
+  if(unlockedBadges && unlockedBadges.size > 0) {
+    const BADGE_NAMES = {
+      first_seance:'Première séance',
+      '5_seances':'5 séances',
+      '10_seances':'10 séances',
+      '10_blocs':'10 blocs réussis',
+      objectif_done:'Objectif atteint'
+    };
+    [...unlockedBadges].slice(-3).forEach(b => {
+      items.push({icon:'🏅', text:`Badge débloqué : <b>${BADGE_NAMES[b]||b}</b>`, type:'badge'});
+    });
+  }
+
+  if(items.length === 0) {
+    el.innerHTML = `<div class="empty" style="padding:24px 0">
+      <div style="font-size:24px;margin-bottom:8px">👋</div>
+      Commence une séance pour voir ton activité ici.
+    </div>`;
+    return;
+  }
+
+  el.innerHTML = items.map(item => `
+    <div style="display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)">
+      <div style="font-size:20px;flex-shrink:0">${item.icon}</div>
+      <div style="font-size:13px;color:var(--ink);line-height:1.5">${item.text}</div>
+    </div>`).join('');
+}
+
 // ========== RANKING ==========
 let _rankingPeriod = 'month';
 
@@ -3325,8 +3392,10 @@ const supa = {
     const opts = {method, headers};
     if(body) opts.body = JSON.stringify(body);
     const res = await fetch(SUPA_URL+path, opts);
-    if(res.status===204||res.status===201) return {};
-    return res.json();
+    if(res.status===204) return {};
+    const json = await res.json();
+    if(!res.ok) return {error: json};
+    return json;
   },
   async signUp(email, password) {
     return this.req('/auth/v1/signup', 'POST', {email, password});
@@ -3537,36 +3606,49 @@ async function syncBlocsToSupabase() {
   const btn = document.getElementById('sync-btn');
   if(btn) { btn.disabled = true; btn.textContent = 'Sync en cours...'; }
 
-  let ok = 0, err = 0;
+  let ok = 0, errMsgs = [];
   for(const b of BLOCS) {
+    // Payload aligné sur le schéma Supabase — gère anciens blocs (style/incl string) et nouveaux (arrays)
+    const _toArr = v => Array.isArray(v)?v:(v?[v]:[]);
     const payload = {
       id: b.id,
-      couleur: b.couleur,
-      col: b.col||'',
-      secteur: b.secteur||'',
-      hall: b.hall||'ancienne',
-      inclinaisons: b.inclinaisons||[],
-      styles: b.styles||[],
-      prises: b.prises||[],
-      cotation: b.cotation||'',
-      ouvreur: b.ouvreur||'',
-      note: b.note||'',
+      couleur: b.couleur||null,
+      col: b.col||null,
+      secteur: b.secteur||null,
+      hall: b.hall||null,
+      inclinaisons: _toArr(b.inclinaisons||b.incl),
+      styles: _toArr(b.styles||b.style),
+      prises: _toArr(b.prises),
+      cotation: b.cotation||null,
+      ouvreur: b.ouvreur||null,
+      note: b.note||null,
       essais: b.essais||null,
-      etoiles: b.etoiles||0,
-      morpho: b.morpho??null,
+      etoiles: typeof b.etoiles==='number'?b.etoiles:0,
+      morpho: b.morpho===true?true:b.morpho===false?false:null,
       date: b.date||null,
-      added_by: b.addedBy||currentUser.id,
+      added_by: currentUser.id,
       actif: true,
     };
     try {
       const res = await supa.upsertBloc(payload, currentToken);
-      if(res && res.error) err++;
-      else ok++;
-    } catch(e) { err++; }
+      if(res && res.error) {
+        const msg = res.error?.message||res.error?.details||res.error?.hint||JSON.stringify(res.error);
+        errMsgs.push(b.id+': '+msg);
+        if(errMsgs.length<=2) console.error('Erreur bloc '+b.id, msg, '\nPayload:', JSON.stringify(payload));
+      } else {
+        if(ok===0) console.log('Premier bloc OK:', b.id, payload);
+        ok++;
+      }
+    } catch(e) { errMsgs.push(b.id+': '+e.message); }
   }
 
   if(btn) { btn.disabled = false; btn.textContent = '☁ Sync Supabase'; }
-  showToast(`Sync terminé : ${ok} blocs envoyés${err>0?' ('+err+' erreurs)':''} ✓`);
+  if(errMsgs.length > 0) {
+    console.error('Toutes les erreurs:', errMsgs);
+    showToast(ok+' ok, '+errMsgs.length+' erreurs — F12 pour détails');
+  } else {
+    showToast('Sync terminé : '+ok+' blocs envoyés ✓');
+  }
 }
 function renderProfile() {
   // --- Identité ---
