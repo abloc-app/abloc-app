@@ -3210,7 +3210,7 @@ function updateUserPill() {
 
 // ========== SYNC BLOCS → SUPABASE ==========
 async function syncBlocsToSupabase() {
-  if(!currentUser || !currentToken) { showToast('Connecte-toi d'abord !'); return; }
+  if(!currentUser || !currentToken) { showToast("Connecte-toi d'abord !"); return; }
   const btn = document.getElementById('sync-btn');
   if(btn) { btn.disabled = true; btn.textContent = 'Sync en cours...'; }
 
