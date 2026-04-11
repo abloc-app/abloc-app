@@ -548,26 +548,26 @@ textarea{resize:none;height:62px;line-height:1.5}
 .zone-overlay.zsel{border-color:var(--accent)!important;border-width:2.5px!important}
 .prof-empty{text-align:center;padding:20px;color:var(--ink3);font-size:13px}
 /* ── ADMIN DASHBOARD ── */
-.admin-wrap{position:fixed;inset:0;background:#0a0a0f;z-index:9999;overflow-y:auto;padding:20px 16px;color:#f0f0f5}
-.admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.07)}
-.admin-title{font-family:var(--display);font-size:20px;font-weight:800;color:#f0f0f5}
+.admin-wrap{position:fixed;inset:0;background:var(--bg);z-index:9999;overflow-y:auto;padding:20px 16px}
+.admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.admin-title{font-family:var(--display);font-size:20px;font-weight:800;color:var(--ink)}
 .admin-title span{color:var(--accent)}
 .admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
 .admin-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
-.admin-card{background:#13131a;border:1px solid rgba(255,255,255,.07);border-radius:var(--rs);padding:14px 16px;color:#f0f0f5}
-.admin-card-title{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:#55556a;margin-bottom:8px}
-.admin-big{font-family:var(--display);font-size:32px;font-weight:800;line-height:1;color:#f0f0f5}
-.admin-sub{font-size:11px;color:#55556a;margin-top:3px}
+.admin-card{background:var(--card-bg);border:1px solid var(--line);border-radius:var(--rs);padding:14px 16px}
+.admin-card-title{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--ink3);margin-bottom:8px}
+.admin-big{font-family:var(--display);font-size:32px;font-weight:800;line-height:1}
+.admin-sub{font-size:11px;color:var(--ink3);margin-top:3px}
 .admin-alert{padding:10px 12px;border-radius:8px;margin-bottom:8px;font-size:12px;border:1px solid transparent}
 .admin-alert-red{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.2);color:var(--ink)}
 .admin-alert-yellow{background:rgba(251,191,36,.06);border-color:rgba(251,191,36,.15);color:var(--ink)}
 .admin-alert-blue{background:rgba(59,130,246,.06);border-color:rgba(59,130,246,.15);color:var(--ink)}
-.admin-color-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;color:#f0f0f5}
-.admin-bar-wrap{flex:1;background:rgba(255,255,255,.07);border-radius:4px;height:7px;overflow:hidden}
+.admin-color-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.admin-bar-wrap{flex:1;background:var(--line);border-radius:4px;height:7px;overflow:hidden}
 .admin-bar-fill{height:100%;border-radius:4px;transition:width .4s}
 .admin-table{width:100%;border-collapse:collapse;font-size:11px}
-.admin-table th{text-align:left;padding:6px 8px;color:#55556a;font-size:10px;letter-spacing:.4px;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.07)}
-.admin-table td{padding:7px 8px;border-bottom:1px solid rgba(255,255,255,.04);color:#9090a8;vertical-align:middle}
+.admin-table th{text-align:left;padding:6px 8px;color:var(--ink3);font-size:10px;letter-spacing:.4px;text-transform:uppercase;border-bottom:1px solid var(--line)}
+.admin-table td{padding:7px 8px;border-bottom:1px solid rgba(255,255,255,.03);color:var(--ink2);vertical-align:middle}
 .admin-table tr:hover td{background:rgba(255,255,255,.03)}
 .zone-overlay.zdim{opacity:0.12}
 .zone-panel{background:var(--white);border-radius:var(--r);border:1.5px solid var(--line);box-shadow:var(--shadow-md);margin-top:10px;overflow:hidden;display:none}
@@ -1352,6 +1352,33 @@ textarea{resize:none;height:62px;line-height:1.5}
         <div class="tag-btn" onclick="toggleTag('prise','Bi-doigts',this)">•• Bi</div>
         <div class="tag-btn" onclick="toggleTag('prise','Volume',this)">▲ Volume</div>
         <div class="tag-btn" onclick="toggleTag('prise','Pied-main',this)">🦶 Pied-main</div>
+      </div>
+    </div>
+
+    <!-- TYPE DE MOUVEMENT (optionnel, multiple) -->
+    <div class="addbloc-section">
+      <div class="addbloc-section-title">Type de mouvement <span style="font-size:11px;color:var(--ink3);font-weight:400">— optionnel, plusieurs choix possibles</span></div>
+      <div class="tag-grid" id="mouvement-grid">
+        <div class="tag-btn" onclick="toggleTag('mouvement','Talon',this)">🦶 Talon</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Contre-pointe',this)">↙ Contre-pointe</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Départ assis',this)">🪑 Départ assis</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Quart externe',this)">↗ Quart externe</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Épaule',this)">💪 Épaule</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Pogo',this)">⚡ Pogo</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Inversée',this)">🙃 Inversée</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Lolotte',this)">🔄 Lolotte</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Drapeau',this)">🚩 Drapeau</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Campus',this)">🤸 Campus</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Lock-off',this)">🔒 Lock-off</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Croisé',this)">✂ Croisé</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Talon-pointe',this)">👟 Talon-pointe</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Réta',this)">↩ Réta</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Bascule',this)">⚖ Bascule</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Pivot hanche',this)">🌀 Pivot hanche</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Pied-main',this)">🤲 Pied-main</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Jeté',this)">🎯 Jeté</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Double dyno',this)">⚡⚡ Double dyno</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Run & jump',this)">🏃 Run & jump</div>
       </div>
     </div>
 
@@ -2679,87 +2706,94 @@ async function callClaudeCoaching(mode) {
   const objActifs = mesObjectifs.filter(o=>!o.done).map(o=>`${o.titre} (${o.lastPct||0}%)`).join(', ') || 'Aucun';
   const objDone = mesObjectifs.filter(o=>o.done).length;
 
+  // ── Contexte riche : séances détaillées ──
+  const seancesDetail = historique.slice(0,8).map(s=>{
+    const parts = [s.date+': '+s.ok+'✓ '+s.nok+'✗'];
+    if(s.inclOk && Object.keys(s.inclOk).length) {
+      const top = Object.entries(s.inclOk).sort((a,b)=>(b[1].ok||0)-(a[1].ok||0)).slice(0,3);
+      parts.push('Incl: '+top.map(([k,v])=>k+'('+( v.ok||0)+'/'+(( v.ok||0)+(v.nok||0))+')').join(', '));
+    }
+    if(s.styleOk && Object.keys(s.styleOk).length) {
+      const top = Object.entries(s.styleOk).sort((a,b)=>(b[1].ok||0)-(a[1].ok||0)).slice(0,3);
+      parts.push('Styles: '+top.map(([k,v])=>k+'('+(v.ok||0)+'/'+(( v.ok||0)+(v.nok||0))+')').join(', '));
+    }
+    return parts.join(' | ');
+  }).join('\n') || 'Aucune séance enregistrée.';
+
+  // ── Stats inclinaison et style cumulées ──
+  const inclStats = {}, styleStats = {};
+  historique.forEach(s=>{
+    Object.entries(s.inclOk||{}).forEach(([k,v])=>{ if(!inclStats[k])inclStats[k]={ok:0,tot:0}; inclStats[k].ok+=(v.ok||0); inclStats[k].tot+=(v.ok||0)+(v.nok||0); });
+    Object.entries(s.styleOk||{}).forEach(([k,v])=>{ if(!styleStats[k])styleStats[k]={ok:0,tot:0}; styleStats[k].ok+=(v.ok||0); styleStats[k].tot+=(v.ok||0)+(v.nok||0); });
+  });
+  const fmtStats = obj => Object.entries(obj).filter(([,v])=>v.tot>0).sort((a,b)=>a[1].ok/a[1].tot-b[1].ok/b[1].tot).map(([k,v])=>k+': '+Math.round(v.ok/v.tot*100)+'% ('+v.ok+'/'+v.tot+')').join(', ') || 'Pas de données';
+  const worstIncl = Object.entries(inclStats).filter(([,v])=>v.tot>=2).sort((a,b)=>a[1].ok/a[1].tot-b[1].ok/b[1].tot).slice(0,3).map(([k])=>k).join(', ');
+  const worstStyle = Object.entries(styleStats).filter(([,v])=>v.tot>=2).sort((a,b)=>a[1].ok/a[1].tot-b[1].ok/b[1].tot).slice(0,3).map(([k])=>k).join(', ');
+
+  // ── Blocs de la salle ──
+  const blocsDispos = BLOCS.slice(0,40).map(b=>
+    '['+b.id+'] '+b.couleur+(b.cotation?' '+b.cotation:'')+' | '+(b.inclinaisons||[b.incl||'']).join('+')+' | '+(b.styles||[b.style||'']).join('+')+' | '+(Array.isArray(b.prises)?b.prises:[b.prises||'']).join('+')+(b.mouvements&&b.mouvements.length?' | mvt:'+b.mouvements.join('+'):'')
+  ).join('\n');
+
+  const notePerso = getCoachingNote();
+
+  const ctx = 'PROFIL GRIMPEUR :\n'
+    +'- Niveau : '+niveau+'\n'
+    +'- Séances totales : '+historique.length+'\n'
+    +'- Taux de réussite global : '+tauxGlobal+'%\n'
+    +'- Blocs réussis / ratés : '+totalOk+' / '+totalNok+'\n\n'
+    +'STATS PAR COULEUR :\n'+(colorSummary||'Pas de données')+'\n\n'
+    +'STATS PAR INCLINAISON :\n'+fmtStats(inclStats)+'\n\n'
+    +'STATS PAR STYLE DE GRIMPE :\n'+fmtStats(styleStats)+'\n\n'
+    +'POINTS FAIBLES :\n'
+    +'- Inclinaisons : '+(worstIncl||'données insuffisantes')+'\n'
+    +'- Styles : '+(worstStyle||'données insuffisantes')+'\n'
+    +'- Couleurs : '+(worstColors||'données insuffisantes')+'\n\n'
+    +'OUTILS : '+toolsUsed+'\n'
+    +'OBJECTIFS ACTIFS : '+objActifs+'\n'
+    +'OBJECTIFS ATTEINTS : '+objDone+'\n\n'
+    +'HISTORIQUE 8 DERNIÈRES SÉANCES :\n'+seancesDetail+'\n\n'
+    +'BLOCS DISPONIBLES EN SALLE (ID | couleur cotation | inclinaison | style | prises | mouvements) :\n'+(blocsDispos||'Non disponible')+'\n\n'
+    +'NOTE GRIMPEUR : '+(notePerso||'Aucune');
+
   const PROMPTS = {
-    analyse: `Tu es un coach d'escalade expert bienveillant et direct. Analyse les données de ce grimpeur et génère un coaching personnalisé structuré.
+    analyse: "Tu es un coach escalade de bloc expert, bienveillant et direct.\n\n"
+      +ctx+"\n\n"
+      +"Reponds UNIQUEMENT avec ce JSON (sans markdown) :\n"
+      +"{"
+      +'  \"intro\": \"2-3 phrases analyse globale personnalisee avec donnees concretes\",'
+      +'  \"positif\": \"1 point fort precis avec donnees\",'
+      +'  \"amelioration\": \"1 point faible prioritaire concret (inclinaison/style precis)\",'
+      +'  \"conseil_seance\": \"1 conseil precis pour la prochaine seance, cite les IDs des blocs recommandes\"'
+      +"}",
 
-DONNÉES DU GRIMPEUR :
-- Niveau déclaré : ${niveau}
-- Nombre de séances : ${historique.length}
-- Taux de réussite global : ${tauxGlobal}%
-- Réussis / Ratés total : ${totalOk} / ${totalNok}
-- Répartition par couleur : ${colorSummary || 'Pas encore de données'}
-- Outils utilisés : ${toolsUsed}
-- Objectifs actifs : ${objActifs}
-- Objectifs atteints : ${objDone}
-- Dernières séances : ${historique.slice(0,3).map(s=>`${s.date}: ${s.ok}✓ ${s.nok}✗`).join(' | ') || 'Aucune'}
+    points: "Tu es un coach escalade de bloc expert. Analyse les points faibles.\n\n"
+      +ctx+"\n\n"
+      +"Genere une analyse en 4-5 phrases : inclinaisons/styles faibles, patterns dans les seances, exercices a travailler, blocs de la salle a cibler (cite leurs IDs). Tutoie le grimpeur, sois tres concret.",
 
-Note personnelle du grimpeur : \${document.getElementById('coaching-note')?.value?.trim()||'Aucune note.'}
+    semaine: "Tu es un coach escalade de bloc expert. Genere un plan de semaine personnalise.\n\n"
+      +ctx+"\n\n"
+      +"Pour chaque seance, recommande des blocs precis (par ID) qui correspondent au focus.\n\n"
+      +"Reponds UNIQUEMENT avec ce JSON :\n"
+      +'{"lundi":{"titre":"...","focus":"...","exercices":"...","blocs_recommandes":"ex: A01 (dalle technique)"},'
+      +'"mardi":{"titre":"Repos actif","focus":"recuperation","exercices":"etirements","blocs_recommandes":""},'
+      +'"mercredi":{"titre":"...","focus":"...","exercices":"...","blocs_recommandes":"..."},'
+      +'"jeudi":{"titre":"Repos","focus":"recuperation","exercices":"mobilite","blocs_recommandes":""},'
+      +'"vendredi":{"titre":"...","focus":"...","exercices":"...","blocs_recommandes":"..."},'
+      +'"samedi":{"titre":"...","focus":"...","exercices":"...","blocs_recommandes":"..."},'
+      +'"dimanche":{"titre":"Repos complet","focus":"recuperation","exercices":"","blocs_recommandes":""}}',
 
-Note personnelle : ${getCoachingNote()}
-
-Génère une analyse en JSON avec cette structure exacte (réponds UNIQUEMENT avec le JSON, sans markdown) :
-{
-  "intro": "2-3 phrases d'analyse globale personnalisée et motivante",
-  "positif": "1 point fort concret basé sur les données",
-  "amelioration": "1 point à améliorer concret et actionnable",
-  "conseil_seance": "1 conseil précis pour la prochaine séance"
-}`,
-
-    points: `Tu es un coach d'escalade expert. Analyse les points faibles de ce grimpeur.
-
-DONNÉES :
-- Niveau : ${niveau}
-- Couleurs difficiles : ${worstColors || 'Pas encore de données'}
-- Répartition par couleur : ${colorSummary || 'Pas encore de données'}
-- Outils : ${toolsUsed}
-- Séances totales : ${historique.length}
-
-Génère une recommandation ciblée en 3-4 phrases sur les points faibles identifiés et comment les travailler. Sois très concret : cite les couleurs problématiques, propose des exercices spécifiques à l'escalade de bloc. Tutoie le grimpeur.`,
-
-    semaine: `Tu es un coach d'escalade expert. Génère un plan de la semaine personnalisé.
-
-PROFIL :
-- Niveau : ${niveau}
-- Taux de réussite : ${tauxGlobal}%
-- Points faibles (couleurs) : ${worstColors || 'à évaluer'}
-- Outils disponibles : ${toolsUsed}
-- Objectifs : ${objActifs}
-
-Génère un plan 7 jours en JSON (réponds UNIQUEMENT avec le JSON) :
-{
-  "lundi": {"titre": "...", "focus": "...", "exercices": "..."},
-  "mardi": {"titre": "Repos", "focus": "récupération", "exercices": "étirements"},
-  "mercredi": {"titre": "...", "focus": "...", "exercices": "..."},
-  "jeudi": {"titre": "Repos", "focus": "récupération", "exercices": "mobilité"},
-  "vendredi": {"titre": "...", "focus": "...", "exercices": "..."},
-  "samedi": {"titre": "...", "focus": "...", "exercices": "..."},
-  "dimanche": {"titre": "Repos complet", "focus": "récupération", "exercices": ""}
-}`,
-
-    plan: `Tu es un coach d'escalade expert. Génère un programme structuré sur 4 semaines.
-
-PROFIL :
-- Niveau : ${niveau}
-- Taux global : ${tauxGlobal}%
-- Points faibles : ${worstColors || 'variés'}
-- Outils : ${toolsUsed}
-- Objectifs : ${objActifs}
-
-Génère un programme 4 semaines en JSON (réponds UNIQUEMENT avec le JSON) :
-{
-  "semaine1": {
-    "focus": "...",
-    "objectif": "...",
-    "sessions": [
-      {"jour": "Lundi", "type": "...", "description": "..."},
-      {"jour": "Mercredi", "type": "...", "description": "..."},
-      {"jour": "Vendredi", "type": "...", "description": "..."}
-    ]
-  },
-  "semaine2": { "focus": "...", "objectif": "...", "sessions": [...] },
-  "semaine3": { "focus": "...", "objectif": "...", "sessions": [...] },
-  "semaine4": { "focus": "Récupération active", "objectif": "Consolider les acquis", "sessions": [...] }
-}`
+    plan: "Tu es un coach escalade de bloc expert. Genere un programme 4 semaines progressif.\n\n"
+      +ctx+"\n\n"
+      +"Pour chaque session, recommande des blocs precis (IDs) de la salle. Adapte la progression.\n\n"
+      +"Reponds UNIQUEMENT avec ce JSON :\n"
+      +'{"semaine1":{"focus":"...","objectif":"...","sessions":['
+      +'{"jour":"Lundi","type":"...","description":"...","blocs":"IDs + explication"},'
+      +'{"jour":"Mercredi","type":"...","description":"...","blocs":"..."},'
+      +'{"jour":"Vendredi","type":"...","description":"...","blocs":"..."}]},'
+      +'"semaine2":{"focus":"...","objectif":"...","sessions":[...]},'
+      +'"semaine3":{"focus":"...","objectif":"...","sessions":[...]},'
+      +'"semaine4":{"focus":"Recuperation active","objectif":"Consolider les acquis","sessions":[...]}}'
   };
 
   try {
@@ -2820,6 +2854,7 @@ Génère un programme 4 semaines en JSON (réponds UNIQUEMENT avec le JSON) :
             <div class="coach-day-name">${DAY_LABELS[day]||day}</div>
             <div class="coach-day-title">${d.titre}</div>
             <div class="coach-day-sub">${d.focus}${d.exercices?' — '+d.exercices:''}</div>
+            ${d.blocs_recommandes?`<div style="font-size:10px;margin-top:4px;color:var(--accent);opacity:.85">🧗 ${d.blocs_recommandes}</div>`:''}
           </div>`).join('');
         const wt = document.getElementById('coach-week-text');
         if(wt) wt.textContent = 'Plan généré par IA en fonction de ton profil et tes points faibles.';
@@ -2852,6 +2887,7 @@ Génère un programme 4 semaines en JSON (réponds UNIQUEMENT avec le JSON) :
                   <div class="ws-content">
                     <div class="ws-title">${s.jour} — ${s.type}</div>
                     <div class="ws-desc">${s.description}</div>
+                    ${s.blocs?`<div style="font-size:10px;color:var(--accent);margin-top:3px">🧗 ${s.blocs}</div>`:''}
                   </div>
                 </div>`).join('')}
             </div>
@@ -3863,6 +3899,7 @@ let newBlocData = {
   inclinaison: [],
   style: [],
   prise: [],
+  mouvement: [],
   cotation: '',
   ouvreur: '',
   note: '',
@@ -3895,7 +3932,7 @@ function switchAddBlocHall(hall, el) {
 }
 
 function selectEssais(val, el) {
-  document.querySelectorAll('#essais-btns .tag-btn').forEach(b=>b.classList.remove('sel'));
+  document.querySelectorAll('#essais-btns .tag-btn, #mouvement-grid .tag-btn').forEach(b=>b.classList.remove('sel'));
   if(newBlocData.essais===val){newBlocData.essais=null;}
   else{el.classList.add('sel');newBlocData.essais=val;}
 }
@@ -3977,8 +4014,10 @@ function submitNewBloc() {
     secteur: newBlocData.secteur,
     // Multi-tags stored as arrays
     inclinaisons: [...newBlocData.inclinaison],
+    mouvements: [...newBlocData.mouvement],
     styles: [...newBlocData.style],
     prises: [...newBlocData.prise],
+    mouvements: [...newBlocData.mouvement],
     // Legacy single fields for compatibility
     style: newBlocData.inclinaison[0] || 'Mixte',
     incl: '',
@@ -4013,6 +4052,7 @@ function submitNewBloc() {
     date: bloc.date,
     added_by: bloc.addedBy,
     actif: true,
+    mouvements: bloc.mouvements||[],
   };
 
   // Ajouter localement immédiatement
@@ -4058,7 +4098,7 @@ function submitNewBloc() {
 }
 
 function resetBlocForm() {
-  newBlocData = {couleur:null,couleurHex:null,secteur:null,hall:'ancienne',inclinaison:[],style:[],prise:[],cotation:'',ouvreur:'',note:'',essais:null,etoiles:0,morpho:null};
+  newBlocData = {couleur:null,couleurHex:null,secteur:null,hall:'ancienne',inclinaison:[],style:[],prise:[],mouvement:[],cotation:'',ouvreur:'',note:'',essais:null,etoiles:0,morpho:null};
   document.querySelectorAll('#addbloc-hall-anc, #addbloc-hall-nouv').forEach(b=>b.classList.remove('active'));
   document.getElementById('addbloc-hall-anc')?.classList.add('active');
   document.querySelectorAll('#essais-btns .tag-btn').forEach(b=>b.classList.remove('sel'));
@@ -4336,7 +4376,7 @@ function openBlocDetail(bloc){
     // Tags
     // Tags techniques
     +( (bloc.inclinaisons&&bloc.inclinaisons.length)||(bloc.styles&&bloc.styles.length)||(bloc.prises&&bloc.prises.length)
-      ? tags(bloc.inclinaisons,'Inclinaison')+tags(bloc.styles,'Type de grimpe')+tags(bloc.prises,'Prises')
+      ? tags(bloc.inclinaisons,'Inclinaison')+tags(bloc.styles,'Type de grimpe')+tags(bloc.prises,'Prises')+(bloc.mouvements&&bloc.mouvements.length?tags(bloc.mouvements,'Type de mouvement'):'')
       : '<div style="font-size:12px;color:var(--ink3);background:var(--off);border-radius:var(--rs);padding:9px 12px;margin-bottom:12px;line-height:1.5">'
         +'Pas encore de données détaillées pour ce bloc.<br>'
         +'<span style="opacity:.7">Les ouvreurs peuvent en ajouter via <b>Ajouter un bloc</b>.</span>'
