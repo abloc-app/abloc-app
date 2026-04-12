@@ -681,6 +681,18 @@ textarea{resize:none;height:62px;line-height:1.5}
 .bloc-tag-list{display:flex;flex-wrap:wrap;gap:5px}
 .bloc-tag{padding:5px 11px;border-radius:20px;font-size:12px;font-weight:600;background:var(--off);color:var(--ink2);border:1px solid var(--line)}
 
+/* ── HISTORIQUE OUVERTURES ───────────────────────────── */
+.arch-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.arch-item:last-child{border-bottom:none}
+.arch-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.arch-info{flex:1;min-width:0}
+.arch-name{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:1px}
+.arch-meta{font-size:11px;color:var(--ink3)}
+.arch-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;margin-left:6px}
+.arch-badge-add{background:var(--green-bg);color:var(--green)}
+.arch-badge-rm{background:var(--red-bg);color:var(--red)}
+.arch-date{font-size:10px;color:var(--ink3);white-space:nowrap;font-weight:500}
+.arch-month{font-size:10px;font-weight:700;color:var(--ink3);letter-spacing:.5px;text-transform:uppercase;padding:10px 0 5px;border-bottom:1px solid var(--line);margin-bottom:2px}
 </style>
 </head>
 <body>
@@ -894,6 +906,17 @@ textarea{resize:none;height:62px;line-height:1.5}
       <thead><tr><th>ID</th><th>Couleur</th><th>Secteur</th><th>Cotation</th><th>Styles</th><th>Inclinaisons</th><th>Morpho</th><th>Ouvreur</th><th>★</th></tr></thead>
       <tbody id="adm-table-body"></tbody>
     </table></div>
+  </div>
+
+  <!-- Historique des ouvertures -->
+  <div class="admin-card" style="margin-bottom:30px">
+    <div class="admin-card-title" style="margin-bottom:12px">📅 Historique des ouvertures</div>
+    <div style="display:flex;gap:6px;margin-bottom:12px">
+      <button onclick="filterArchive('all',this)" style="padding:5px 12px;border-radius:20px;border:1.5px solid var(--ink);background:var(--ink);color:#fff;font-size:11px;font-weight:600;cursor:pointer" id="arch-btn-all">Tout</button>
+      <button onclick="filterArchive('added',this)" style="padding:5px 12px;border-radius:20px;border:1.5px solid var(--line2);background:var(--white);color:var(--ink2);font-size:11px;font-weight:600;cursor:pointer" id="arch-btn-added">↑ Ajoutés</button>
+      <button onclick="filterArchive('removed',this)" style="padding:5px 12px;border-radius:20px;border:1.5px solid var(--line2);background:var(--white);color:var(--ink2);font-size:11px;font-weight:600;cursor:pointer" id="arch-btn-removed">↓ Retirés</button>
+    </div>
+    <div id="archive-list"><div class="empty">Aucun historique — les blocs ajoutés et retirés apparaîtront ici.</div></div>
   </div>
 </div>
 
@@ -1854,6 +1877,7 @@ let filterCouleur = 'all';
 let filterCirc = 'all';
 let filterSuggType = 'all';
 let niveau = 'intermediaire';
+let blocsArchive = []; // {id, couleur, col, secteur, cotation, ouvreur, action, ts, dateStr}
 let mesObjectifs = [];
 let historique = [];
 let moonData = {};
@@ -2776,7 +2800,7 @@ function saveAll() {
       blocMedias,
       userBlocs: BLOCS.filter(b=>b.addedBy), // user-added blocs
       blocAvis, myAvis, unlockedBadges: [...unlockedBadges], mesResas: [...mesResas],
-      profilGrimpeur,
+      profilGrimpeur, blocsArchive,
     };
     localStorage.setItem(LS_KEY, JSON.stringify(data));
   } catch(e) { console.warn('Save failed', e); }
@@ -2817,6 +2841,7 @@ function loadAll() {
     if (d.unlockedBadges) d.unlockedBadges.forEach(b=>unlockedBadges.add(b));
     if (d.profilGrimpeur) Object.assign(profilGrimpeur, d.profilGrimpeur);
     if (d.mesResas)      d.mesResas.forEach(r=>mesResas.add(r));
+    if (d.blocsArchive)  blocsArchive.push(...d.blocsArchive);
     if (d.circuits) {
       d.circuits.forEach(saved => {
         const c = CIRCUITS.find(x=>x.id===saved.id);
@@ -4923,6 +4948,7 @@ function submitNewBloc() {
 
   // Ajouter localement immédiatement
   BLOCS.push(bloc);
+  archiveBloc(bloc, 'added');
   saveAll();
 
   // Puis sauvegarder dans Supabase
@@ -5352,7 +5378,9 @@ function deleteBlocMedia(mediaKey,type,idx){
 
 function deleteUserBloc(id, secteur) {
   if(!confirm('Supprimer ce bloc définitivement ?')) return;
-
+  // Archiver avant suppression
+  const b = BLOCS.find(x=>x.id===id);
+  if(b) archiveBloc(b, 'removed');
   // Supprimer du tableau local
   const idx = BLOCS.findIndex(b => b.id === id);
   if(idx >= 0) BLOCS.splice(idx, 1);
@@ -5380,6 +5408,9 @@ function deleteUserBloc(id, secteur) {
 
 function deleteBlocDetail(id, couleur) {
   if(!confirm('Supprimer ce bloc définitivement ?')) return;
+  // Archiver avant suppression
+  const b = BLOCS.find(x=>x.id===id);
+  if(b) archiveBloc(b, 'removed');
   // Supprimer de BLOCS
   const idx = BLOCS.findIndex(b => b.id === id);
   if(idx >= 0) BLOCS.splice(idx, 1);
@@ -5787,6 +5818,79 @@ renderHangProtocols();
 renderCampusExos();
 renderActuFeed();
 checkAllBadges();
+
+// ========== HISTORIQUE DES OUVERTURES ==========
+function archiveBloc(bloc, action) {
+  const now = new Date();
+  blocsArchive.unshift({
+    id:       bloc.id,
+    couleur:  bloc.couleur || '',
+    col:      bloc.col || '#888',
+    secteur:  bloc.secteur || '?',
+    cotation: bloc.cotation || '',
+    ouvreur:  bloc.ouvreur || '',
+    action,   // 'added' | 'removed'
+    ts:       now.getTime(),
+    dateStr:  now.toLocaleDateString('fr-FR', {day:'numeric', month:'short', year:'numeric'}),
+    monthKey: now.toLocaleDateString('fr-FR', {month:'long', year:'numeric'}),
+  });
+  if (blocsArchive.length > 300) blocsArchive = blocsArchive.slice(0, 300);
+  // saveAll() sera appelé juste après par le code appelant
+}
+
+let _archiveFilter = 'all';
+
+function filterArchive(filter, el) {
+  _archiveFilter = filter;
+  ['all','added','removed'].forEach(f => {
+    const btn = document.getElementById('arch-btn-'+f);
+    if (!btn) return;
+    if (f === filter) {
+      btn.style.background = 'var(--ink)'; btn.style.color = '#fff'; btn.style.borderColor = 'var(--ink)';
+    } else {
+      btn.style.background = 'var(--white)'; btn.style.color = 'var(--ink2)'; btn.style.borderColor = 'var(--line2)';
+    }
+  });
+  renderArchiveList();
+}
+
+function renderArchiveList() {
+  const el = document.getElementById('archive-list');
+  if (!el) return;
+
+  const items = _archiveFilter === 'all'
+    ? blocsArchive
+    : blocsArchive.filter(b => b.action === _archiveFilter);
+
+  if (!items.length) {
+    el.innerHTML = '<div class="empty">Aucun historique pour ce filtre.</div>';
+    return;
+  }
+
+  // Grouper par mois
+  const groups = {};
+  items.forEach(b => {
+    const key = b.monthKey || 'Inconnu';
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(b);
+  });
+
+  el.innerHTML = Object.entries(groups).map(([month, blocs]) => `
+    <div class="arch-month">${month}</div>
+    ${blocs.map(b => `
+      <div class="arch-item">
+        <div class="arch-dot" style="background:${b.col}"></div>
+        <div class="arch-info">
+          <div class="arch-name">
+            ${b.id}${b.couleur ? ' · '+b.couleur : ''}${b.cotation ? ' ('+b.cotation+')' : ''}
+            <span class="arch-badge ${b.action==='added'?'arch-badge-add':'arch-badge-rm'}">${b.action==='added'?'↑ Ajouté':'↓ Retiré'}</span>
+          </div>
+          <div class="arch-meta">Secteur ${b.secteur}${b.ouvreur?' · '+b.ouvreur:''}</div>
+        </div>
+        <div class="arch-date">${b.dateStr||''}</div>
+      </div>`).join('')}
+  `).join('');
+}
 
 </script>
 </body>
