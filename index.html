@@ -67,7 +67,7 @@ body{font-family:var(--font);background:var(--off);color:var(--ink);-webkit-font
 
 /* ── SCREEN ───────────────────────────────────────────────────────── */
 .screen{flex:1;overflow-y:auto;padding:16px 16px calc(130px + env(safe-area-inset-bottom));scroll-behavior:smooth}
-.sc{display:none}.sc.active{display:block}
+.sc{display:none}.sc.active{display:block;min-height:100%}
 
 /* ── TAB BAR ──────────────────────────────────────────────────────── */
 .tabbar{
@@ -2092,6 +2092,10 @@ function showTab(t) {
   }
   if(t==='community'){renderAnnonces();requestAnimationFrame(()=>document.getElementById('s-community')?.scrollIntoView({block:'start',behavior:'instant'}));}
   if(t==='profile'){renderProfile();}
+  if(t==='addbloc'){
+    document.getElementById('bloc-detail-overlay')?.classList.remove('open');
+    const zp=document.getElementById('seance-zone-panel');if(zp)zp.style.display='none';
+  }
 }
 
 function showSub(t) {
@@ -5580,6 +5584,10 @@ function closeSeanceZone(){
   renderSeanceOverlays();
 }
 function openAddBlocFromZone(){
+  // Close any séance overlays that might block scroll
+  document.getElementById('bloc-detail-overlay')?.classList.remove('open');
+  const zp = document.getElementById('seance-zone-panel');
+  if(zp) zp.style.display='none';
   showTab('addbloc');
   setTimeout(()=>{
     if(seanceSelZone){
