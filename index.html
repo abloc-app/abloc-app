@@ -982,6 +982,42 @@ textarea{resize:none;height:62px;line-height:1.5}
   </div>
 </div>
 
+<!-- FEEDBACK MODAL -->
+<div id="feedback-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;align-items:flex-end;justify-content:center">
+  <div style="background:var(--white);border-radius:20px 20px 0 0;width:100%;max-width:430px;padding:24px 20px calc(24px + env(safe-area-inset-bottom));max-height:85vh;overflow-y:auto">
+    <div style="font-family:var(--display);font-size:18px;font-weight:700;color:var(--ink);margin-bottom:6px">💬 Feedback</div>
+    <div style="font-size:13px;color:var(--ink3);margin-bottom:16px">Partage ton ressenti, signale un bug ou propose une idée. Chaque retour compte !</div>
+
+    <!-- Type -->
+    <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Type</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px" id="feedback-type-chips">
+      <div class="chip sel" onclick="selectFeedbackType('bug',this)">🐛 Bug</div>
+      <div class="chip" onclick="selectFeedbackType('idee',this)">💡 Idée</div>
+      <div class="chip" onclick="selectFeedbackType('avis',this)">⭐ Avis général</div>
+      <div class="chip" onclick="selectFeedbackType('autre',this)">💬 Autre</div>
+    </div>
+
+    <!-- Note -->
+    <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Note globale</div>
+    <div style="display:flex;gap:6px;margin-bottom:16px" id="feedback-stars">
+      <span onclick="selectFeedbackStar(1)" style="font-size:28px;cursor:pointer;opacity:.3">★</span>
+      <span onclick="selectFeedbackStar(2)" style="font-size:28px;cursor:pointer;opacity:.3">★</span>
+      <span onclick="selectFeedbackStar(3)" style="font-size:28px;cursor:pointer;opacity:.3">★</span>
+      <span onclick="selectFeedbackStar(4)" style="font-size:28px;cursor:pointer;opacity:.3">★</span>
+      <span onclick="selectFeedbackStar(5)" style="font-size:28px;cursor:pointer;opacity:.3">★</span>
+    </div>
+
+    <!-- Message -->
+    <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Message</div>
+    <textarea id="feedback-text" placeholder="Décris le bug, ton idée, ou ton ressenti..." style="width:100%;min-height:100px;padding:12px;border-radius:10px;border:1.5px solid var(--line2);background:var(--bg);color:var(--ink);font-size:14px;font-family:var(--font);resize:vertical;box-sizing:border-box;margin-bottom:16px"></textarea>
+
+    <div style="display:flex;gap:8px">
+      <button class="btn" style="flex:1;margin:0;color:var(--ink3)" onclick="closeFeedback()">Annuler</button>
+      <button id="feedback-send-btn" class="btn btn-primary" style="flex:2;margin:0" onclick="sendFeedback()">Envoyer 🚀</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOPBAR -->
 <div class="topbar">
   <div>
@@ -1157,6 +1193,10 @@ textarea{resize:none;height:62px;line-height:1.5}
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Dashboard ouvreurs
       </button>
     </div>
+    <!-- Feedback -->
+    <button class="btn" style="margin-top:12px;font-size:12px;color:var(--ink3);border-color:var(--line2)" onclick="openFeedback()">
+      💬 Donner un feedback sur l'app
+    </button>
   </div>
 
 </div>
@@ -4803,6 +4843,80 @@ async function doLogin() {
 }
 
 // ── Logout ──
+// ========== FEEDBACK ==========
+let _feedbackType = 'bug';
+let _feedbackStar = 0;
+
+function openFeedback() {
+  _feedbackType = 'bug';
+  _feedbackStar = 0;
+  document.getElementById('feedback-text').value = '';
+  document.querySelectorAll('#feedback-type-chips .chip').forEach((c,i)=>c.classList.toggle('sel',i===0));
+  document.querySelectorAll('#feedback-stars span').forEach(s=>s.style.opacity='.3');
+  const ov = document.getElementById('feedback-overlay');
+  ov.style.display = 'flex';
+}
+
+function closeFeedback() {
+  document.getElementById('feedback-overlay').style.display = 'none';
+}
+
+function selectFeedbackType(type, el) {
+  _feedbackType = type;
+  document.querySelectorAll('#feedback-type-chips .chip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function selectFeedbackStar(n) {
+  _feedbackStar = n;
+  document.querySelectorAll('#feedback-stars span').forEach((s,i)=>{
+    s.style.opacity = i < n ? '1' : '.3';
+    s.style.color = i < n ? 'var(--yellow)' : 'var(--ink3)';
+  });
+}
+
+async function sendFeedback() {
+  const text = document.getElementById('feedback-text').value.trim();
+  if(!text){showToast('Écris un message !');return;}
+  const btn = document.getElementById('feedback-send-btn');
+  btn.disabled = true;
+  btn.textContent = 'Envoi…';
+  try {
+    const pseudo = currentProfile?.pseudo || currentUser?.email || 'anonyme';
+    const typeLabel = {bug:'🐛 Bug',idee:'💡 Idée',avis:'⭐ Avis général',autre:'💬 Autre'}[_feedbackType] || _feedbackType;
+    const noteLabel = _feedbackStar ? '★'.repeat(_feedbackStar) + '☆'.repeat(5-_feedbackStar) : 'non noté';
+    const payload = {
+      pseudo,
+      type: _feedbackType,
+      note: _feedbackStar || null,
+      message: text,
+      created_at: new Date().toISOString()
+    };
+    // Save to Supabase
+    await supa.req('/rest/v1/feedbacks', 'POST', payload, currentToken);
+    // Send email via FormSubmit (free, no signup)
+    await fetch('https://formsubmit.co/ajax/lionel.grauribes@gmail.com', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','Accept':'application/json'},
+      body: JSON.stringify({
+        _subject: `[À Bloc] Feedback ${typeLabel} — ${pseudo}`,
+        Utilisateur: pseudo,
+        Type: typeLabel,
+        Note: noteLabel,
+        Message: text,
+        Date: new Date().toLocaleString('fr-FR')
+      })
+    });
+    closeFeedback();
+    showToast('Merci pour ton feedback ! 🙏');
+  } catch(e) {
+    showToast('Erreur envoi — réessaie');
+    console.error(e);
+  }
+  btn.disabled = false;
+  btn.textContent = 'Envoyer 🚀';
+}
+
 async function doLogout() {
   if(currentToken) await supa.signOut(currentToken).catch(()=>{});
   clearAuthState();
