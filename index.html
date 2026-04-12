@@ -692,74 +692,6 @@ textarea{resize:none;height:62px;line-height:1.5}
 </div>
 
 <!-- ══════ PROFILE SCREEN ══════ -->
-<div class="sc" id="s-profile">
-
-  <!-- Identité -->
-  <div class="profile-panel">
-    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
-      <div id="profile-avatar" style="width:54px;height:54px;border-radius:50%;background:var(--accent-bg);color:var(--accent);font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0"></div>
-      <div style="flex:1">
-        <div style="font-family:var(--display);font-size:18px;font-weight:700;color:var(--ink)" id="profile-name">—</div>
-        <div style="font-size:13px;color:var(--ink3)" id="profile-email">—</div>
-      </div>
-      <button class="btn" style="width:auto;padding:7px 12px;margin:0;font-size:12px;color:var(--red);border-color:var(--red)" onclick="doLogout()">Déco</button>
-    </div>
-    <div style="display:flex;gap:8px">
-      <input type="text" id="profile-pseudo-input" placeholder="Pseudo" style="flex:1;padding:9px 13px;font-size:14px">
-      <button class="btn btn-primary" style="width:auto;padding:9px 16px;margin:0;font-size:13px" onclick="savePseudo()">Sauver</button>
-    </div>
-    <button id="sync-btn" class="btn" style="margin-top:10px;font-size:12px;color:var(--accent);border-color:var(--accent);display:none" onclick="syncBlocsToSupabase()">
-      ☁ Synchroniser les blocs vers Supabase
-    </button>
-    <div id="admin-btn-wrap" style="display:none;margin-top:8px">
-      <button class="btn btn-primary" style="font-size:12px" onclick="openAdmin()">
-        🛠 Dashboard ouvreurs
-      </button>
-    </div>
-  </div>
-
-  <!-- Stats globales -->
-  <div class="card">
-    <div class="card-label">Mes stats globales</div>
-    <div class="metrics" style="margin-bottom:0" id="prof-metrics">
-      <div class="metric"><div class="metric-val" id="prof-seances">0</div><div class="metric-lbl">Séances</div></div>
-      <div class="metric"><div class="metric-val" id="prof-reussis">0</div><div class="metric-lbl">Réussis</div></div>
-      <div class="metric"><div class="metric-val" id="prof-taux">—</div><div class="metric-lbl">Réussite</div></div>
-      <div class="metric"><div class="metric-val" id="prof-badges">0</div><div class="metric-lbl">Badges</div></div>
-    </div>
-  </div>
-
-  <!-- Progression séances -->
-  <div class="card">
-    <div class="card-label">Progression (10 dernières séances)</div>
-    <div id="prof-chart" style="margin-top:8px"></div>
-  </div>
-
-  <!-- Par inclinaison -->
-  <div class="card">
-    <div class="card-label">Score par inclinaison</div>
-    <div id="prof-incl" style="margin-top:8px"></div>
-  </div>
-
-  <!-- Par style de grimpe -->
-  <div class="card">
-    <div class="card-label">Score par style de grimpe</div>
-    <div id="prof-styles" style="margin-top:8px"></div>
-  </div>
-
-  <!-- Par niveau/couleur -->
-  <div class="card">
-    <div class="card-label">Score par niveau</div>
-    <div id="prof-colors" style="margin-top:8px"></div>
-  </div>
-
-  <!-- Historique des séances -->
-  <div class="card">
-    <div class="card-label">Historique des séances</div>
-    <div id="prof-histo" style="margin-top:4px"></div>
-  </div>
-
-</div>
 
 
 <!-- ADMIN DASHBOARD (overlay) -->
@@ -842,6 +774,138 @@ textarea{resize:none;height:62px;line-height:1.5}
 </div>
 
 <div class="screen">
+
+  <!-- ══════ PROFIL ══════ -->
+<div class="sc" id="s-profile">
+
+  <!-- Identité -->
+  <div class="profile-panel">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+      <div id="profile-avatar" style="width:54px;height:54px;border-radius:50%;background:var(--accent-bg);color:var(--accent);font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0"></div>
+      <div style="flex:1">
+        <div style="font-family:var(--display);font-size:18px;font-weight:700;color:var(--ink)" id="profile-name">—</div>
+        <div style="font-size:13px;color:var(--ink3)" id="profile-email">—</div>
+      </div>
+      <button class="btn" style="width:auto;padding:7px 12px;margin:0;font-size:12px;color:var(--red);border-color:var(--red)" onclick="doLogout()">Déco</button>
+    </div>
+    <div style="display:flex;gap:8px">
+      <input type="text" id="profile-pseudo-input" placeholder="Pseudo" style="flex:1;padding:9px 13px;font-size:14px">
+      <button class="btn btn-primary" style="width:auto;padding:9px 16px;margin:0;font-size:13px" onclick="savePseudo()">Sauver</button>
+    </div>
+    <button id="sync-btn" class="btn" style="margin-top:10px;font-size:12px;color:var(--accent);border-color:var(--accent);display:none" onclick="syncBlocsToSupabase()">
+      ☁ Synchroniser les blocs vers Supabase
+    </button>
+    <div id="admin-btn-wrap" style="display:none;margin-top:8px">
+      <button class="btn btn-primary" style="font-size:12px" onclick="openAdmin()">
+        🛠 Dashboard ouvreurs
+      </button>
+    </div>
+  </div>
+
+  <!-- Profil grimpeur -->
+  <div class="card">
+    <div class="card-label" style="margin-bottom:14px">Mon profil grimpeur</div>
+
+    <!-- Physique -->
+    <div style="font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">Physique</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+      <div>
+        <div style="font-size:11px;color:var(--ink3);margin-bottom:4px">Taille (cm)</div>
+        <input type="number" id="prof-taille" placeholder="175" min="130" max="220" style="width:100%;padding:8px 10px;border-radius:8px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-size:14px;box-sizing:border-box">
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--ink3);margin-bottom:4px">Poids (kg)</div>
+        <input type="number" id="prof-poids" placeholder="70" min="40" max="150" style="width:100%;padding:8px 10px;border-radius:8px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-size:14px;box-sizing:border-box">
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--ink3);margin-bottom:4px">Âge</div>
+        <input type="number" id="prof-age" placeholder="30" min="10" max="80" style="width:100%;padding:8px 10px;border-radius:8px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-size:14px;box-sizing:border-box">
+      </div>
+    </div>
+    <div style="margin-bottom:12px">
+      <div style="font-size:11px;color:var(--ink3);margin-bottom:4px">Ape index (envergure − taille, ex: +3 ou -2)</div>
+      <input type="number" id="prof-ape" placeholder="+0" min="-20" max="20" style="width:100%;padding:8px 10px;border-radius:8px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-size:14px;box-sizing:border-box">
+    </div>
+
+    <!-- Pratique -->
+    <div style="font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;margin-top:4px">Pratique</div>
+    <div style="margin-bottom:10px">
+      <div style="font-size:11px;color:var(--ink3);margin-bottom:6px">Ancienneté en escalade</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px" id="prof-anciennete-chips">
+        <div class="chip" onclick="selectProfChip('anciennete','debutant',this)">Débutant</div>
+        <div class="chip" onclick="selectProfChip('anciennete','1-3ans',this)">1–3 ans</div>
+        <div class="chip" onclick="selectProfChip('anciennete','3-5ans',this)">3–5 ans</div>
+        <div class="chip" onclick="selectProfChip('anciennete','+5ans',this)">+5 ans</div>
+      </div>
+    </div>
+    <div style="margin-bottom:10px">
+      <div style="font-size:11px;color:var(--ink3);margin-bottom:6px">Fréquence d'entraînement</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px" id="prof-frequence-chips">
+        <div class="chip" onclick="selectProfChip('frequence','1x',this)">1x / sem</div>
+        <div class="chip" onclick="selectProfChip('frequence','2-3x',this)">2–3x / sem</div>
+        <div class="chip" onclick="selectProfChip('frequence','4x+',this)">4x+ / sem</div>
+      </div>
+    </div>
+    <div style="margin-bottom:10px">
+      <div style="font-size:11px;color:var(--ink3);margin-bottom:6px">Pratique hors salle</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px" id="prof-outdoor-chips">
+        <div class="chip" onclick="selectProfChip('outdoor','falaise',this)">🪨 Falaise</div>
+        <div class="chip" onclick="selectProfChip('outdoor','competition',this)">🏆 Compétition</div>
+        <div class="chip" onclick="selectProfChip('outdoor','speed',this)">⚡ Speed</div>
+        <div class="chip" onclick="selectProfChip('outdoor','aucun',this)">Salle uniquement</div>
+      </div>
+    </div>
+
+    <!-- Blessures -->
+    <div style="font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;margin-top:4px">Blessures / contraintes</div>
+    <textarea id="prof-blessures" placeholder="Ex: poulie A2 gauche en rééducation, douleur épaule droite chronique..." rows="2" style="width:100%;padding:8px 10px;border-radius:8px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-size:13px;font-family:var(--font);resize:none;box-sizing:border-box;margin-bottom:12px"></textarea>
+
+    <button class="btn btn-primary" onclick="saveProfil()" style="width:100%;margin-bottom:0">Sauvegarder mon profil</button>
+  </div>
+
+  <!-- Stats globales -->
+  <div class="card">
+    <div class="card-label">Mes stats globales</div>
+    <div class="metrics" style="margin-bottom:0" id="prof-metrics">
+      <div class="metric"><div class="metric-val" id="prof-seances">0</div><div class="metric-lbl">Séances</div></div>
+      <div class="metric"><div class="metric-val" id="prof-reussis">0</div><div class="metric-lbl">Réussis</div></div>
+      <div class="metric"><div class="metric-val" id="prof-taux">—</div><div class="metric-lbl">Réussite</div></div>
+      <div class="metric"><div class="metric-val" id="prof-badges">0</div><div class="metric-lbl">Badges</div></div>
+    </div>
+  </div>
+
+  <!-- Progression séances -->
+  <div class="card">
+    <div class="card-label">Progression (10 dernières séances)</div>
+    <div id="prof-chart" style="margin-top:8px"></div>
+  </div>
+
+  <!-- Par inclinaison -->
+  <div class="card">
+    <div class="card-label">Score par inclinaison</div>
+    <div id="prof-incl" style="margin-top:8px"></div>
+  </div>
+
+  <!-- Par style de grimpe -->
+  <div class="card">
+    <div class="card-label">Score par style de grimpe</div>
+    <div id="prof-styles" style="margin-top:8px"></div>
+  </div>
+
+  <!-- Par niveau/couleur -->
+  <div class="card">
+    <div class="card-label">Score par niveau</div>
+    <div id="prof-colors" style="margin-top:8px"></div>
+  </div>
+
+  <!-- Historique des séances -->
+  <div class="card">
+    <div class="card-label">Historique des séances</div>
+    <div id="prof-histo" style="margin-top:4px"></div>
+  </div>
+
+</div>
+
 
   <!-- ══════ COMMUNAUTÉ ══════ -->
   <div class="sc" id="s-community">
@@ -1488,6 +1552,9 @@ textarea{resize:none;height:62px;line-height:1.5}
     <button class="btn" onclick="showTab('seance')" style="margin-top:6px">← Retour</button>
   </div>
 
+
+  <!-- ══════ PROFIL ══════ -->
+
 </div><!-- /screen -->
 
 <!-- TAB BAR -->
@@ -1612,6 +1679,8 @@ let monthScore = 0;  // score cumulé du mois en cours
 let yearScore  = 0;  // score cumulé de l'année en cours
 let scoreMonthKey = ''; // ex: "2026-04"
 let scoreYearKey  = ''; // ex: "2026"
+// Profil grimpeur physique
+let profilGrimpeur = {taille:null,poids:null,age:null,ape:null,anciennete:null,frequence:null,outdoor:[],blessures:''};
 
 // Poids par couleur de bloc (pondération niveau)
 const BLOC_WEIGHTS = {
@@ -2439,6 +2508,7 @@ function saveAll() {
       blocMedias,
       userBlocs: BLOCS.filter(b=>b.addedBy), // user-added blocs
       blocAvis, myAvis, unlockedBadges: [...unlockedBadges], mesResas: [...mesResas],
+      profilGrimpeur,
     };
     localStorage.setItem(LS_KEY, JSON.stringify(data));
   } catch(e) { console.warn('Save failed', e); }
@@ -2477,6 +2547,7 @@ function loadAll() {
     if (d.blocAvis)      Object.assign(blocAvis, d.blocAvis);
     if (d.myAvis)        Object.assign(myAvis, d.myAvis);
     if (d.unlockedBadges) d.unlockedBadges.forEach(b=>unlockedBadges.add(b));
+    if (d.profilGrimpeur) Object.assign(profilGrimpeur, d.profilGrimpeur);
     if (d.mesResas)      d.mesResas.forEach(r=>mesResas.add(r));
     if (d.circuits) {
       d.circuits.forEach(saved => {
@@ -2851,8 +2922,23 @@ async function callClaudeCoaching(mode) {
 
   const notePerso = getCoachingNote();
 
+  // Profil physique
+  const pg = profilGrimpeur;
+  const apeStr = pg.ape!=null ? (pg.ape>=0?'+':'')+pg.ape+'cm' : 'non renseigné';
+  const profilPhysique = [
+    pg.taille ? 'Taille: '+pg.taille+'cm' : null,
+    pg.poids  ? 'Poids: '+pg.poids+'kg' : null,
+    pg.age    ? 'Âge: '+pg.age+' ans' : null,
+    pg.ape!=null ? 'Ape index: '+apeStr : null,
+    pg.anciennete ? 'Ancienneté: '+pg.anciennete : null,
+    pg.frequence  ? 'Fréquence: '+pg.frequence+'/semaine' : null,
+    pg.outdoor?.length ? 'Pratique hors salle: '+pg.outdoor.join(', ') : null,
+    pg.blessures  ? 'Blessures/contraintes: '+pg.blessures : null,
+  ].filter(Boolean).join('\n- ') || 'Non renseigné';
+
   const ctx = 'PROFIL GRIMPEUR :\n'
     +'- Niveau : '+niveau+'\n'
+    +'- '+profilPhysique+'\n'
     +'- Séances totales : '+historique.length+'\n'
     +'- Taux de réussite global : '+tauxGlobal+'%\n'
     +'- Blocs réussis / ratés : '+totalOk+' / '+totalNok+'\n\n'
@@ -4146,6 +4232,60 @@ async function syncBlocsToSupabase() {
     showToast('Sync terminé : '+ok+' blocs envoyés ✓');
   }
 }
+function selectProfChip(field, val, el) {
+  if(field === 'outdoor') {
+    // Multi-select
+    el.classList.toggle('active');
+    const all = document.querySelectorAll('#prof-outdoor-chips .chip');
+    profilGrimpeur.outdoor = [...all].filter(c=>c.classList.contains('active')).map(c=>c.dataset.val||c.textContent.trim());
+  } else {
+    // Single select
+    const container = el.closest('[id]');
+    container.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+    el.classList.add('active');
+    profilGrimpeur[field] = val;
+  }
+}
+
+function saveProfil() {
+  profilGrimpeur.taille = parseInt(document.getElementById('prof-taille')?.value)||null;
+  profilGrimpeur.poids  = parseInt(document.getElementById('prof-poids')?.value)||null;
+  profilGrimpeur.age    = parseInt(document.getElementById('prof-age')?.value)||null;
+  profilGrimpeur.ape    = parseInt(document.getElementById('prof-ape')?.value)||null;
+  profilGrimpeur.blessures = document.getElementById('prof-blessures')?.value?.trim()||'';
+  saveAll();
+  showToast('Profil sauvegardé ✓');
+}
+
+function loadProfilUI() {
+  const p = profilGrimpeur;
+  const set = (id, val) => { const el=document.getElementById(id); if(el&&val!=null) el.value=val; };
+  set('prof-taille', p.taille);
+  set('prof-poids', p.poids);
+  set('prof-age', p.age);
+  set('prof-ape', p.ape);
+  set('prof-blessures', p.blessures);
+  // Chips anciennete
+  if(p.anciennete) {
+    document.querySelectorAll('#prof-anciennete-chips .chip').forEach(c=>{
+      c.classList.toggle('active', c.textContent.trim()===({debutant:'Débutant','1-3ans':'1–3 ans','3-5ans':'3–5 ans','+5ans':'+5 ans'}[p.anciennete]||''));
+    });
+  }
+  // Chips frequence
+  if(p.frequence) {
+    document.querySelectorAll('#prof-frequence-chips .chip').forEach(c=>{
+      c.classList.toggle('active', c.textContent.trim()===({'1x':'1x / sem','2-3x':'2–3x / sem','4x+':'4x+ / sem'}[p.frequence]||''));
+    });
+  }
+  // Chips outdoor (multi)
+  if(p.outdoor?.length) {
+    document.querySelectorAll('#prof-outdoor-chips .chip').forEach(c=>{
+      const label = c.textContent.trim();
+      c.classList.toggle('active', p.outdoor.some(o=>label.includes(o)||o.includes(label)));
+    });
+  }
+}
+
 function renderProfile() {
   // --- Identité ---
   const pseudo = currentProfile?.pseudo || currentUser?.email?.split('@')[0] || '—';
@@ -4171,6 +4311,7 @@ function renderProfile() {
   const elR=document.getElementById('prof-reussis'); if(elR) elR.textContent=totalReussis;
   const elT=document.getElementById('prof-taux'); if(elT) elT.textContent=taux;
   const elB=document.getElementById('prof-badges'); if(elB) elB.textContent=unlockedBadges?.size||0;
+  loadProfilUI();
 
   // --- Graphique progression (SVG barres) ---
   renderProfChart();
@@ -5073,7 +5214,7 @@ async function startGuidedSession() {
 
   const blocsDispos = BLOCS.filter(b=>!seanceHall||b.hall===seanceHall).slice(0,50).map(b=>'['+b.id+'] '+b.couleur+(b.cotation?' '+b.cotation:'')+' | '+((b.inclinaisons||[]).join('+')||b.style||'')+' | '+((b.styles||[]).join('+')||b.style||'')+' | sec:'+b.secteur).join('\n');
 
-  const prompt = 'Tu es un coach escalade de bloc expert et bienveillant. Le grimpeur est en séance MAINTENANT.\n\nPROFIL :\n- Niveau : '+niveau+'\n- Taux réussite global : '+tauxGlobal+'% ('+totalOk+' ok / '+totalNok+' ratés)\n- Points faibles — Inclinaisons : '+(worstIncl||'insuffisant')+' | Styles : '+(worstStyle||'insuffisant')+' | Couleurs : '+(worstColors||'insuffisant')+'\n- Historique : '+historique.length+' séances\n\nSÉANCE EN COURS :\n- Blocs réussis : '+okNow+', blocs ratés : '+nokNow+'\n- Hall actuel : '+(seanceHall||'non défini')+'\n- Blocs guidés déjà travaillés : '+guidedDone+'\n\nBLOCS DISPONIBLES (ID | couleur cotation | inclinaison | style | secteur) :\n'+(blocsDispos||'Non disponible')+'\n\nRecommande 3 à 4 blocs précis à travailler MAINTENANT. Cible les points faibles. Pour chaque bloc, explique POURQUOI en 1 phrase courte (max 12 mots).\n\nRéponds UNIQUEMENT avec ce JSON (sans markdown) :\n{"message":"1-2 phrases de coaching motivant et personnalisé","blocs":[{"id":"BLOC_ID","couleur":"couleur","cotation":"cotation ou vide","why":"pourquoi ce bloc en 1 phrase"}]}';
+  const prompt = 'Tu es un coach escalade de bloc expert et bienveillant. Le grimpeur est en séance MAINTENANT.\n\nPROFIL :\n- Niveau : '+niveau+'\n- '+profilPhysique+'\n- Taux réussite global : '+tauxGlobal+'% ('+totalOk+' ok / '+totalNok+' ratés)\n- Points faibles — Inclinaisons : '+(worstIncl||'insuffisant')+' | Styles : '+(worstStyle||'insuffisant')+' | Couleurs : '+(worstColors||'insuffisant')+'\n- Historique : '+historique.length+' séances\n\nSÉANCE EN COURS :\n- Blocs réussis : '+okNow+', blocs ratés : '+nokNow+'\n- Hall actuel : '+(seanceHall||'non défini')+'\n- Blocs guidés déjà travaillés : '+guidedDone+'\n\nBLOCS DISPONIBLES (ID | couleur cotation | inclinaison | style | secteur) :\n'+(blocsDispos||'Non disponible')+'\n\nRecommande 3 à 4 blocs précis à travailler MAINTENANT. Cible les points faibles. Pour chaque bloc, explique POURQUOI en 1 phrase courte (max 12 mots).\n\nRéponds UNIQUEMENT avec ce JSON (sans markdown) :\n{"message":"1-2 phrases de coaching motivant et personnalisé","blocs":[{"id":"BLOC_ID","couleur":"couleur","cotation":"cotation ou vide","why":"pourquoi ce bloc en 1 phrase"}]}';
 
   try {
     const res = await fetch('/.netlify/functions/coaching', {
