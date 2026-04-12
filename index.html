@@ -4881,21 +4881,15 @@ async function sendFeedback() {
   const btn = document.getElementById('feedback-send-btn');
   btn.disabled = true;
   btn.textContent = 'Envoi…';
+
+  const pseudo = currentProfile?.pseudo || currentUser?.email || 'anonyme';
+  const typeLabel = {bug:'🐛 Bug',idee:'💡 Idée',avis:'⭐ Avis général',autre:'💬 Autre'}[_feedbackType] || _feedbackType;
+  const noteLabel = _feedbackStar ? '★'.repeat(_feedbackStar) + '☆'.repeat(5-_feedbackStar) : 'non noté';
+
+  // Email via FormSubmit (indépendant de Supabase)
+  let sent = false;
   try {
-    const pseudo = currentProfile?.pseudo || currentUser?.email || 'anonyme';
-    const typeLabel = {bug:'🐛 Bug',idee:'💡 Idée',avis:'⭐ Avis général',autre:'💬 Autre'}[_feedbackType] || _feedbackType;
-    const noteLabel = _feedbackStar ? '★'.repeat(_feedbackStar) + '☆'.repeat(5-_feedbackStar) : 'non noté';
-    const payload = {
-      pseudo,
-      type: _feedbackType,
-      note: _feedbackStar || null,
-      message: text,
-      created_at: new Date().toISOString()
-    };
-    // Save to Supabase
-    await supa.req('/rest/v1/feedbacks', 'POST', payload, currentToken);
-    // Send email via FormSubmit (free, no signup)
-    await fetch('https://formsubmit.co/ajax/lionel.grauribes@gmail.com', {
+    const res = await fetch('https://formsubmit.co/ajax/lionel.grauribes@gmail.com', {
       method: 'POST',
       headers: {'Content-Type':'application/json','Accept':'application/json'},
       body: JSON.stringify({
@@ -4907,12 +4901,19 @@ async function sendFeedback() {
         Date: new Date().toLocaleString('fr-FR')
       })
     });
-    closeFeedback();
-    showToast('Merci pour ton feedback ! 🙏');
-  } catch(e) {
-    showToast('Erreur envoi — réessaie');
-    console.error(e);
-  }
+    if(res.ok) sent = true;
+  } catch(e) { console.warn('FormSubmit error:', e); }
+
+  // Sauvegarde Supabase (optionnelle, ne bloque pas)
+  try {
+    await supa.req('/rest/v1/feedbacks', 'POST', {
+      pseudo, type: _feedbackType, note: _feedbackStar||null, message: text,
+      created_at: new Date().toISOString()
+    }, currentToken);
+  } catch(e) { console.warn('Supabase feedback error:', e); }
+
+  closeFeedback();
+  showToast(sent ? 'Merci pour ton feedback ! 🙏' : 'Feedback reçu, merci !');
   btn.disabled = false;
   btn.textContent = 'Envoyer 🚀';
 }
