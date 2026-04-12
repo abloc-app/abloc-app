@@ -208,7 +208,14 @@ body{font-family:var(--font);background:var(--off);color:var(--ink);-webkit-font
 .guided-loading{text-align:center;padding:18px;color:var(--ink3);font-size:13px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .g-spin{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:5px}
-.btn-guided{background:linear-gradient(135deg,var(--accent-bg),#fff3ee);border:1.5px solid #ffd5c2;color:var(--accent);margin-bottom:6px}
+.guided-banner{background:linear-gradient(135deg,var(--accent) 0%,#e05a00 100%);border-radius:var(--r);padding:14px 16px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:opacity .15s;user-select:none}
+.guided-banner:active{opacity:.85}
+.guided-banner-icon{width:40px;height:40px;background:rgba(255,255,255,.18);border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.guided-banner-text{flex:1;min-width:0}
+.guided-banner-title{font-family:var(--display);font-size:14px;font-weight:700;color:#fff;margin-bottom:2px}
+.guided-banner-sub{font-size:12px;color:rgba(255,255,255,.8);font-weight:500;line-height:1.4}
+.guided-banner-arrow{width:22px;height:22px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.btn-guided{background:linear-gradient(135deg,var(--accent-bg),#fff3ee);border:1.5px solid #ffd5c2;color:var(--accent);margin-bottom:6px;display:none}
 .btn-guided:active{background:var(--accent-bg)}
 
 /* ── TAGS ─────────────────────────────────────────────────────────── */
@@ -483,7 +490,26 @@ textarea{resize:none;height:62px;line-height:1.5}
 }
 .auth-screen.hidden{display:none}
 
-/* ── ONBOARDING ─────────────────────────────────────── */
+/* ── WOW MOMENT POST-SÉANCE ──────────────────────────── */
+.wow-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:800;display:flex;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .3s;pointer-events:none}
+.wow-overlay.open{opacity:1;pointer-events:all}
+.wow-sheet{background:var(--white);border-radius:24px 24px 0 0;width:100%;max-width:430px;overflow:hidden;transform:translateY(100%);transition:transform .4s cubic-bezier(.4,0,.2,1)}
+.wow-overlay.open .wow-sheet{transform:translateY(0)}
+.wow-header{background:var(--accent);padding:32px 24px 24px;text-align:center}
+.wow-header-label{font-size:11px;font-weight:700;color:rgba(255,255,255,.7);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.wow-header-score{font-family:var(--display);font-size:48px;font-weight:800;color:#fff;letter-spacing:-2px;line-height:1}
+.wow-header-sub{font-size:14px;color:rgba(255,255,255,.8);margin-top:4px}
+.wow-stats{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--line)}
+.wow-stat{padding:16px 8px;text-align:center}
+.wow-stat+.wow-stat{border-left:1px solid var(--line)}
+.wow-stat-val{font-family:var(--display);font-size:22px;font-weight:800;color:var(--ink)}
+.wow-stat-lbl{font-size:10px;color:var(--ink3);margin-top:2px;letter-spacing:.3px}
+.wow-badge-row{display:flex;align-items:center;gap:12px;padding:14px 20px;background:#f0fdf4;border-bottom:1px solid #bbf7d0}
+.wow-badge-icon{width:40px;height:40px;border-radius:12px;background:#22c55e;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.wow-ai-box{padding:16px 20px;border-bottom:1px solid var(--line)}
+.wow-ai-label{font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.5px;margin-bottom:6px}
+.wow-ai-text{font-size:13px;color:var(--ink2);line-height:1.55}
+.wow-actions{padding:16px 20px 32px;display:flex;flex-direction:column;gap:8px}
 .onb-screen{position:fixed;inset:0;background:#f7f6f4;z-index:1000;display:flex;flex-direction:column;overflow:hidden}
 .onb-screen.hidden{display:none}
 .onb-slides{display:flex;transition:transform .4s cubic-bezier(.4,0,.2,1);flex:1}
@@ -1090,9 +1116,21 @@ textarea{resize:none;height:62px;line-height:1.5}
     </div>
 
     <!-- Séance guidée IA -->
-    <button class="btn btn-guided" onclick="toggleGuidedSession()" id="btn-open-guided">
-      <span>✦</span> Séance guidée IA
-    </button>
+    <div class="guided-banner" id="btn-open-guided" onclick="toggleGuidedSession()" role="button">
+      <div class="guided-banner-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 8v4l3 3"/>
+        </svg>
+      </div>
+      <div class="guided-banner-text">
+        <div class="guided-banner-title">Séance guidée IA</div>
+        <div class="guided-banner-sub">Blocs recommandés selon ton niveau &amp; objectifs</div>
+      </div>
+      <div class="guided-banner-arrow">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+    </div>
     <div id="guided-session-panel">
       <div class="guided-header">
         <div class="guided-title"><div class="ai-pulse"></div>Coach IA — Séance guidée</div>
@@ -1691,6 +1729,48 @@ textarea{resize:none;height:62px;line-height:1.5}
     <span>Profil</span>
   </button>
 </div>
+<!-- ══════ WOW MOMENT POST-SÉANCE ══════ -->
+<div class="wow-overlay" id="wow-overlay">
+  <div class="wow-sheet">
+    <div class="wow-header">
+      <div class="wow-header-label">Séance terminée</div>
+      <div class="wow-header-score" id="wow-score">0</div>
+      <div class="wow-header-sub" id="wow-sub">blocs réussis aujourd'hui</div>
+    </div>
+    <div class="wow-stats">
+      <div class="wow-stat">
+        <div class="wow-stat-val" id="wow-taux">—</div>
+        <div class="wow-stat-lbl">Réussite</div>
+      </div>
+      <div class="wow-stat">
+        <div class="wow-stat-val" id="wow-delta">—</div>
+        <div class="wow-stat-lbl">vs dernière fois</div>
+      </div>
+      <div class="wow-stat">
+        <div class="wow-stat-val" id="wow-total">—</div>
+        <div class="wow-stat-lbl">Total blocs mois</div>
+      </div>
+    </div>
+    <div class="wow-badge-row" id="wow-badge-row" style="display:none">
+      <div class="wow-badge-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:#15803d;letter-spacing:.3px">Badge débloqué !</div>
+        <div style="font-size:14px;font-weight:600;color:var(--ink)" id="wow-badge-name">—</div>
+      </div>
+    </div>
+    <div class="wow-ai-box">
+      <div class="wow-ai-label">Coaching IA</div>
+      <div class="wow-ai-text" id="wow-ai-text">Analyse en cours...</div>
+    </div>
+    <div class="wow-actions">
+      <button class="btn btn-primary" style="margin:0" onclick="closeWow('coaching')">Voir mon coaching complet</button>
+      <button class="btn" style="margin:0;color:var(--ink3);border-color:var(--line)" onclick="closeWow('seance')">Retour à la séance</button>
+    </div>
+  </div>
+</div>
+
 </div><!-- /app -->
 
 <div class="bloc-detail-overlay" id="bloc-detail-overlay" onclick="if(event.target===this)closeBlocDetail()">
@@ -2043,8 +2123,85 @@ function finirSeance() {
   document.getElementById('cnt-obj-touch').textContent=0;
   document.getElementById('obj-seance-panel').style.display='none';
   checkBadge('first_seance'); checkBadge('5_seances'); checkBadge('10_seances'); checkBadge('10_blocs');
-  showTab('coaching');
-  showToast('Séance enregistrée !');
+  showWowMoment(ok, nok, _sessionScore);
+}
+
+// ========== WOW MOMENT POST-SÉANCE ==========
+async function showWowMoment(ok, nok, sessionScore) {
+  // Stats
+  const taux = ok+nok>0 ? Math.round(ok/(ok+nok)*100) : 0;
+  const prev = historique[1]; // séance précédente (on vient d'unshift la nouvelle)
+  const delta = prev ? ok - prev.ok : null;
+  const deltaStr = delta === null ? '—' : (delta >= 0 ? '+'+delta : ''+delta);
+  const deltaColor = delta === null ? 'var(--ink)' : delta >= 0 ? '#22c55e' : '#ef4444';
+
+  // Total blocs ce mois
+  const now = new Date();
+  const mois = now.toLocaleDateString('fr-FR', {month:'short'});
+
+  document.getElementById('wow-score').textContent = ok;
+  document.getElementById('wow-sub').textContent = ok > 1 ? 'blocs réussis aujourd\'hui' : 'bloc réussi aujourd\'hui';
+  document.getElementById('wow-taux').textContent = taux + '%';
+  const deltaEl = document.getElementById('wow-delta');
+  deltaEl.textContent = deltaStr;
+  deltaEl.style.color = deltaColor;
+  document.getElementById('wow-total').textContent = totalReussis;
+
+  // Badge débloqué ce jour
+  const newBadge = [...unlockedBadges].find(b => {
+    const badge = ALL_BADGES.find(x => x.id === b);
+    return badge && badge.condition && badge.condition();
+  });
+  const badgeRow = document.getElementById('wow-badge-row');
+  const badgeJustUnlocked = [...unlockedBadges].find(id => {
+    const b = ALL_BADGES.find(x => x.id === id);
+    return b && b.condition && b.condition() && historique.length <= 1;
+  });
+  if(newBadge && historique.length === 1) {
+    const badge = ALL_BADGES.find(x => x.id === newBadge);
+    if(badge) {
+      document.getElementById('wow-badge-name').textContent = badge.name;
+      badgeRow.style.display = 'flex';
+    }
+  }
+
+  // Ouvrir l'overlay
+  const overlay = document.getElementById('wow-overlay');
+  overlay.classList.add('open');
+
+  // Message IA court
+  const aiEl = document.getElementById('wow-ai-text');
+  try {
+    const pg = profilGrimpeur;
+    const profilCtx = [
+      'Niveau: '+niveau,
+      pg.taille ? pg.taille+'cm' : null,
+      pg.frequence ? pg.frequence+'/sem' : null,
+    ].filter(Boolean).join(', ');
+
+    const prompt = 'Tu es un coach escalade bienveillant. Le grimpeur vient de terminer une séance : '+ok+' blocs réussis, '+nok+' ratés, taux '+taux+'%. Profil : '+profilCtx+'. Total séances : '+historique.length+'. '+(delta!==null?'Par rapport à sa dernière séance : '+(delta>=0?'+'+ delta:delta)+' blocs.':'')+' Écris UN message de coaching en 1-2 phrases maximum, direct, motivant et personnalisé. Tutoie-le. Pas de JSON, juste le texte.';
+    const res = await fetch('/.netlify/functions/coaching', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:120,messages:[{role:'user',content:prompt}]})
+    });
+    const data = await res.json();
+    const text = (data.content?.[0]?.text||'').trim();
+    if(text) aiEl.textContent = text;
+    else aiEl.textContent = 'Belle séance ! Continue comme ça.';
+  } catch(e) {
+    aiEl.textContent = ok >= 5 ? 'Excellente séance ! Tu progresses bien.' : 'Bonne séance. Chaque bloc compte !';
+  }
+}
+
+function closeWow(dest) {
+  const overlay = document.getElementById('wow-overlay');
+  overlay.classList.remove('open');
+  setTimeout(() => {
+    // Reset badge row
+    document.getElementById('wow-badge-row').style.display = 'none';
+    if(dest === 'coaching') showTab('coaching');
+  }, 300);
 }
 
 // ========== MOONBOARD ==========
@@ -3239,11 +3396,6 @@ async function callClaudeCoaching(mode) {
     };
     if(btn) btn.innerHTML = btnTexts[mode]||'Générer';
   }
-}
-
-function renderCoaching() {
-  renderCoachStats();
-  renderColorBars();
 }
 
 // ========== BADGES ==========
@@ -5284,13 +5436,16 @@ let guidedResults = {};
 
 function toggleGuidedSession() {
   const panel = document.getElementById('guided-session-panel');
+  const banner = document.getElementById('btn-open-guided');
   const isOpen = panel.classList.contains('open');
   if(isOpen) {
     panel.classList.remove('open');
     guidedSessionActive = false;
+    if(banner) banner.style.display = '';
   } else {
     panel.classList.add('open');
     guidedSessionActive = true;
+    if(banner) banner.style.display = 'none';
     if(guidedBlocs.length === 0) startGuidedSession();
   }
 }
