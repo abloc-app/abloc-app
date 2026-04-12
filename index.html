@@ -5327,6 +5327,18 @@ async function startGuidedSession() {
 
   const blocsDispos = BLOCS.filter(b=>!seanceHall||b.hall===seanceHall).slice(0,50).map(b=>'['+b.id+'] '+b.couleur+(b.cotation?' '+b.cotation:'')+' | '+((b.inclinaisons||[]).join('+')||b.style||'')+' | '+((b.styles||[]).join('+')||b.style||'')+' | sec:'+b.secteur).join('\n');
 
+  // Profil physique
+  const pg = profilGrimpeur;
+  const profilPhysique = [
+    pg.taille ? 'Taille: '+pg.taille+'cm' : null,
+    pg.poids  ? 'Poids: '+pg.poids+'kg' : null,
+    pg.age    ? 'Âge: '+pg.age+' ans' : null,
+    pg.ape!=null ? 'Ape index: '+(pg.ape>=0?'+':'')+pg.ape+'cm' : null,
+    pg.anciennete ? 'Ancienneté: '+pg.anciennete : null,
+    pg.frequence  ? 'Fréquence: '+pg.frequence+'/sem' : null,
+    pg.blessures  ? 'Blessures: '+pg.blessures : null,
+  ].filter(Boolean).join(', ') || 'Non renseigné';
+
   const prompt = 'Tu es un coach escalade de bloc expert et bienveillant. Le grimpeur est en séance MAINTENANT.\n\nPROFIL :\n- Niveau : '+niveau+'\n- '+profilPhysique+'\n- Taux réussite global : '+tauxGlobal+'% ('+totalOk+' ok / '+totalNok+' ratés)\n- Points faibles — Inclinaisons : '+(worstIncl||'insuffisant')+' | Styles : '+(worstStyle||'insuffisant')+' | Couleurs : '+(worstColors||'insuffisant')+'\n- Historique : '+historique.length+' séances\n\nSÉANCE EN COURS :\n- Blocs réussis : '+okNow+', blocs ratés : '+nokNow+'\n- Hall actuel : '+(seanceHall||'non défini')+'\n- Blocs guidés déjà travaillés : '+guidedDone+'\n\nBLOCS DISPONIBLES (ID | couleur cotation | inclinaison | style | secteur) :\n'+(blocsDispos||'Non disponible')+'\n\nRecommande 3 à 4 blocs précis à travailler MAINTENANT. Cible les points faibles. Pour chaque bloc, explique POURQUOI en 1 phrase courte (max 12 mots).\n\nRéponds UNIQUEMENT avec ce JSON (sans markdown) :\n{"message":"1-2 phrases de coaching motivant et personnalisé","blocs":[{"id":"BLOC_ID","couleur":"couleur","cotation":"cotation ou vide","why":"pourquoi ce bloc en 1 phrase"}]}';
 
   try {
