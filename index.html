@@ -180,6 +180,35 @@ body{font-family:var(--font);background:var(--off);color:var(--ink);min-height:1
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
 .ai-text{font-size:13px;color:var(--ink);line-height:1.65;font-weight:500}
 
+/* ── SÉANCE GUIDÉE IA ── */
+#guided-session-panel{background:var(--white);border-radius:var(--r);border:1.5px solid #ffd5c2;box-shadow:var(--shadow-md);margin-bottom:12px;overflow:hidden;display:none}
+#guided-session-panel.open{display:block}
+.guided-header{background:linear-gradient(135deg,var(--accent-bg),#fff8f5);padding:11px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffd5c2}
+.guided-title{font-family:var(--display);font-size:14px;font-weight:700;color:var(--accent);display:flex;align-items:center;gap:6px}
+.guided-body{padding:12px 14px}
+.guided-message{font-size:13px;color:var(--ink);line-height:1.6;font-weight:500;margin-bottom:10px}
+.guided-blocs{display:flex;flex-direction:column;gap:7px;margin-bottom:10px}
+.guided-bloc-card{display:flex;align-items:center;gap:10px;padding:9px 11px;background:var(--off);border-radius:var(--rs);border:1px solid var(--line);cursor:pointer;transition:background .15s}
+.guided-bloc-card:active{background:var(--off2)}
+.guided-bloc-dot{width:8px;height:38px;border-radius:4px;flex-shrink:0}
+.guided-bloc-info{flex:1;min-width:0}
+.guided-bloc-id{font-family:var(--display);font-size:13px;font-weight:700;color:var(--ink)}
+.guided-bloc-why{font-size:11px;color:var(--ink3);margin-top:2px;font-weight:500;line-height:1.4}
+.guided-bloc-btns{display:flex;gap:4px;flex-shrink:0}
+.g-btn{padding:5px 9px;border-radius:20px;border:1.5px solid var(--line2);font-size:12px;cursor:pointer;background:var(--white);color:var(--ink3);font-weight:700;transition:all .15s;line-height:1}
+.g-btn:active{transform:scale(.92)}
+.g-btn.ok{background:var(--green-bg);border-color:var(--green);color:var(--green)}
+.g-btn.nok{background:var(--red-bg);border-color:var(--red);color:var(--red)}
+.guided-actions{display:flex;gap:8px;margin-top:2px}
+.guided-refresh{flex:1;padding:10px;border-radius:var(--rs);border:1.5px solid #ffd5c2;background:var(--accent-bg);color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s}
+.guided-refresh:active{transform:scale(.98)}
+.guided-close-btn{padding:6px 11px;border-radius:var(--rxs);border:1.5px solid var(--line2);background:var(--white);color:var(--ink3);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font)}
+.guided-loading{text-align:center;padding:18px;color:var(--ink3);font-size:13px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.g-spin{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:5px}
+.btn-guided{background:linear-gradient(135deg,var(--accent-bg),#fff3ee);border:1.5px solid #ffd5c2;color:var(--accent);margin-bottom:6px}
+.btn-guided:active{background:var(--accent-bg)}
+
 /* ── TAGS ─────────────────────────────────────────────────────────── */
 .tag{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;margin-right:4px;margin-bottom:4px}
 .tag-indoor{background:var(--green-bg);color:var(--green)}
@@ -813,6 +842,20 @@ textarea{resize:none;height:62px;line-height:1.5}
     <div class="hall-tabs">
       <button class="hall-tab active" onclick="switchSeanceHall('ancienne',this)">Ancienne salle</button>
       <button class="hall-tab" onclick="switchSeanceHall('nouvelle',this)">Nouvelle salle</button>
+    </div>
+
+    <!-- Séance guidée IA -->
+    <button class="btn btn-guided" onclick="toggleGuidedSession()" id="btn-open-guided">
+      <span>✦</span> Séance guidée IA
+    </button>
+    <div id="guided-session-panel">
+      <div class="guided-header">
+        <div class="guided-title"><div class="ai-pulse"></div>Coach IA — Séance guidée</div>
+        <button onclick="toggleGuidedSession()" style="background:none;border:none;font-size:20px;color:var(--accent);cursor:pointer;line-height:1;padding:0">×</button>
+      </div>
+      <div class="guided-body" id="guided-body">
+        <div class="guided-loading">Lance la séance guidée pour démarrer !</div>
+      </div>
     </div>
     <div style="display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;margin-bottom:8px;scrollbar-width:none" id="seance-color-filters"></div>
     <div class="map-note" id="seance-map-note" style="margin-bottom:8px">Tape un secteur pour voir ses blocs</div>
@@ -1788,6 +1831,13 @@ function finirSeance() {
     }, currentToken).catch(()=>{});
   }
   results={};
+
+  // Réinitialiser la séance guidée
+  guidedBlocs=[];guidedResults={};guidedSessionActive=false;
+  const gp=document.getElementById('guided-session-panel');
+  if(gp)gp.classList.remove('open');
+  const gb=document.getElementById('guided-body');
+  if(gb)gb.innerHTML='<div class="guided-loading">Lance la séance guidée pour démarrer !</div>';
 
   renderBlocs();
   document.getElementById('cnt-ok').textContent=0;
@@ -4767,6 +4817,129 @@ function setBlocMorpho(val, id) {
   saveAll();
   document.querySelectorAll('#bd-essais-btns').length; // force refresh
   openBlocDetail(bloc);
+}
+
+
+
+// ========== SÉANCE GUIDÉE IA ==========
+let guidedSessionActive = false;
+let guidedBlocs = [];
+let guidedResults = {};
+
+function toggleGuidedSession() {
+  const panel = document.getElementById('guided-session-panel');
+  const isOpen = panel.classList.contains('open');
+  if(isOpen) {
+    panel.classList.remove('open');
+    guidedSessionActive = false;
+  } else {
+    panel.classList.add('open');
+    guidedSessionActive = true;
+    if(guidedBlocs.length === 0) startGuidedSession();
+  }
+}
+
+async function startGuidedSession() {
+  const body = document.getElementById('guided-body');
+  if(!body) return;
+  body.innerHTML = '<div class="guided-loading"><span class="g-spin"></span>L\'IA analyse ton profil...</div>';
+
+  const totalOk = historique.reduce((a,s)=>a+s.ok,0);
+  const totalNok = historique.reduce((a,s)=>a+s.nok,0);
+  const tauxGlobal = totalOk+totalNok>0?Math.round(totalOk/(totalOk+totalNok)*100):0;
+
+  const COULEURS = ['jaune','orange','rose','rouge','bleu','vert','noir','blanc','mauve'];
+  const colorStats = {};
+  COULEURS.forEach(c=>{colorStats[c]={ok:0,total:0};});
+  Object.entries(results).forEach(([key,val])=>{
+    const col = key.split('|')[1];
+    if(col && colorStats[col]){colorStats[col].total++;if(val==='ok')colorStats[col].ok++;}
+  });
+
+  const inclStats = {}, styleStats = {};
+  historique.forEach(s=>{
+    Object.entries(s.inclOk||{}).forEach(([k,v])=>{ if(!inclStats[k])inclStats[k]={ok:0,tot:0}; inclStats[k].ok+=(v.ok||0); inclStats[k].tot+=(v.ok||0)+(v.nok||0); });
+    Object.entries(s.styleOk||{}).forEach(([k,v])=>{ if(!styleStats[k])styleStats[k]={ok:0,tot:0}; styleStats[k].ok+=(v.ok||0); styleStats[k].tot+=(v.ok||0)+(v.nok||0); });
+  });
+  const worstIncl = Object.entries(inclStats).filter(([,v])=>v.tot>=2).sort((a,b)=>a[1].ok/a[1].tot-b[1].ok/b[1].tot).slice(0,3).map(([k])=>k).join(', ');
+  const worstStyle = Object.entries(styleStats).filter(([,v])=>v.tot>=2).sort((a,b)=>a[1].ok/a[1].tot-b[1].ok/b[1].tot).slice(0,3).map(([k])=>k).join(', ');
+  const worstColors = COULEURS.filter(c=>colorStats[c].total>=2).sort((a,b)=>colorStats[a].ok/colorStats[a].total-colorStats[b].ok/colorStats[b].total).slice(0,3).join(', ');
+
+  const okNow = Object.values(results).filter(v=>v==='ok').length;
+  const nokNow = Object.values(results).filter(v=>v==='nok').length;
+  const guidedDone = Object.entries(guidedResults).map(([id,r])=>id+':'+r).join(', ')||'aucun encore';
+
+  const blocsDispos = BLOCS.filter(b=>!seanceHall||b.hall===seanceHall).slice(0,50).map(b=>'['+b.id+'] '+b.couleur+(b.cotation?' '+b.cotation:'')+' | '+((b.inclinaisons||[]).join('+')||b.style||'')+' | '+((b.styles||[]).join('+')||b.style||'')+' | sec:'+b.secteur).join('\n');
+
+  const prompt = 'Tu es un coach escalade de bloc expert et bienveillant. Le grimpeur est en séance MAINTENANT.\n\nPROFIL :\n- Niveau : '+niveau+'\n- Taux réussite global : '+tauxGlobal+'% ('+totalOk+' ok / '+totalNok+' ratés)\n- Points faibles — Inclinaisons : '+(worstIncl||'insuffisant')+' | Styles : '+(worstStyle||'insuffisant')+' | Couleurs : '+(worstColors||'insuffisant')+'\n- Historique : '+historique.length+' séances\n\nSÉANCE EN COURS :\n- Blocs réussis : '+okNow+', blocs ratés : '+nokNow+'\n- Hall actuel : '+(seanceHall||'non défini')+'\n- Blocs guidés déjà travaillés : '+guidedDone+'\n\nBLOCS DISPONIBLES (ID | couleur cotation | inclinaison | style | secteur) :\n'+(blocsDispos||'Non disponible')+'\n\nRecommande 3 à 4 blocs précis à travailler MAINTENANT. Cible les points faibles. Pour chaque bloc, explique POURQUOI en 1 phrase courte (max 12 mots).\n\nRéponds UNIQUEMENT avec ce JSON (sans markdown) :\n{"message":"1-2 phrases de coaching motivant et personnalisé","blocs":[{"id":"BLOC_ID","couleur":"couleur","cotation":"cotation ou vide","why":"pourquoi ce bloc en 1 phrase"}]}';
+
+  try {
+    const res = await fetch('/.netlify/functions/coaching', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]})
+    });
+    const data = await res.json();
+    const text = (data.content?.[0]?.text||'').trim();
+    const parsed = JSON.parse(text.replace(/```json|```/g,'').trim());
+    guidedBlocs = parsed.blocs || [];
+    renderGuidedSession(parsed.message, guidedBlocs);
+  } catch(e) {
+    body.innerHTML = '<div class="guided-loading" style="color:var(--red)">Erreur de connexion. Réessaie.</div><div class="guided-actions"><button class="guided-refresh" onclick="startGuidedSession()">↺ Réessayer</button></div>';
+  }
+}
+
+function renderGuidedSession(message, blocs) {
+  const body = document.getElementById('guided-body');
+  if(!body) return;
+  const blocsHtml = blocs.map(b => {
+    const blocData = BLOCS.find(x=>x.id===b.id);
+    const col = blocData?.col || '#888';
+    const res = guidedResults[b.id];
+    return '<div class="guided-bloc-card" onclick="goToGuidedBloc(\''+b.id+'\')">'
+      +'<div class="guided-bloc-dot" style="background:'+col+'"></div>'
+      +'<div class="guided-bloc-info">'
+      +'<div class="guided-bloc-id">'+b.id+' <span style="font-size:11px;font-weight:500;color:var(--ink3)">'+b.couleur+(b.cotation?' '+b.cotation:'')+'</span></div>'
+      +'<div class="guided-bloc-why">'+b.why+'</div>'
+      +'</div>'
+      +'<div class="guided-bloc-btns" onclick="event.stopPropagation()">'
+      +'<button class="g-btn '+(res==='ok'?'ok':'')+'" onclick="setGuidedResult(\''+b.id+'\',\'ok\',this)">✓</button>'
+      +'<button class="g-btn '+(res==='nok'?'nok':'')+'" onclick="setGuidedResult(\''+b.id+'\',\'nok\',this)">✗</button>'
+      +'</div></div>';
+  }).join('');
+
+  body.innerHTML = '<div class="guided-message">'+message+'</div><div class="guided-blocs">'+blocsHtml+'</div><div class="guided-actions"><button class="guided-refresh" onclick="startGuidedSession()"><span>↺</span> Nouveaux blocs</button></div>';
+}
+
+function setGuidedResult(blocId, result, btn) {
+  const prev = guidedResults[blocId];
+  if(prev === result) {
+    delete guidedResults[blocId];
+    const card = btn.closest('.guided-bloc-card');
+    card.querySelectorAll('.g-btn').forEach(b=>b.classList.remove('ok','nok'));
+    return;
+  }
+  guidedResults[blocId] = result;
+  const card = btn.closest('.guided-bloc-card');
+  card.querySelectorAll('.g-btn').forEach(b=>b.classList.remove('ok','nok'));
+  btn.classList.add(result);
+  const bloc = BLOCS.find(b=>b.id===blocId);
+  if(bloc) {
+    const key = blocId+'|'+bloc.couleur;
+    results[key] = result;
+    updateSeanceCounts();
+    updateObjSeanceBars();
+    saveAll();
+    if(seanceSelZone) selectSeanceZone(seanceSelZone);
+    renderSeanceOverlays();
+  }
+}
+
+function goToGuidedBloc(blocId) {
+  const bloc = BLOCS.find(b=>b.id===blocId);
+  if(!bloc) return;
+  const zone = /^\d+$/.test(bloc.secteur)?'Zone '+bloc.secteur:bloc.secteur;
+  if(zone) selectSeanceZone(zone);
 }
 
 
