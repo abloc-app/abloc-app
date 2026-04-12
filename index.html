@@ -613,6 +613,8 @@ textarea{resize:none;height:62px;line-height:1.5}
 
 /* ── AJOUT BLOC ──────────────────────────────────────── */
 .addbloc-screen{padding-bottom:100px}
+#s-addbloc{position:fixed;inset:0;background:var(--off);z-index:500;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 16px calc(100px + env(safe-area-inset-bottom));display:none}
+#s-addbloc.open{display:block}
 .addbloc-section{margin-bottom:18px}
 .addbloc-section-title{font-family:var(--display);font-size:13px;font-weight:700;color:var(--ink);letter-spacing:-.2px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
 .addbloc-section-title .req{color:var(--accent);font-size:10px;font-weight:700}
@@ -1668,7 +1670,7 @@ textarea{resize:none;height:62px;line-height:1.5}
   </div><!-- end s-coaching -->
 
   <!-- ══════ AJOUTER UN BLOC ══════ -->
-  <div class="sc" id="s-addbloc">
+  <div id="s-addbloc">
     <div class="addbloc-success" id="addbloc-success">
       <div class="addbloc-success-title">Bloc ajouté !</div>
       <div class="addbloc-success-sub" id="addbloc-success-sub"></div>
@@ -2059,6 +2061,17 @@ function switchCoachSubTab(tab, el) {
 }
 
 function showTab(t) {
+  // Addbloc is a fixed overlay — handle separately
+  if(t==='addbloc'){
+    document.getElementById('bloc-detail-overlay')?.classList.remove('open');
+    const zp=document.getElementById('seance-zone-panel');if(zp)zp.style.display='none';
+    document.getElementById('s-addbloc').classList.add('open');
+    document.getElementById('s-addbloc').scrollTop=0;
+    document.getElementById('main-title').textContent='Ajouter un bloc';
+    return;
+  }
+  // Close addbloc overlay if open
+  document.getElementById('s-addbloc').classList.remove('open');
   document.querySelectorAll('.sc').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
   document.getElementById('s-'+t).classList.add('active');
@@ -2095,10 +2108,6 @@ function showTab(t) {
   }
   if(t==='community'){renderAnnonces();requestAnimationFrame(()=>document.getElementById('s-community')?.scrollIntoView({block:'start',behavior:'instant'}));}
   if(t==='profile'){renderProfile();}
-  if(t==='addbloc'){
-    document.getElementById('bloc-detail-overlay')?.classList.remove('open');
-    const zp=document.getElementById('seance-zone-panel');if(zp)zp.style.display='none';
-  }
 }
 
 function showSub(t) {
