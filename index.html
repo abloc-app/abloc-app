@@ -649,7 +649,7 @@ textarea{resize:none;height:62px;line-height:1.5}
 .zone-overlay.zsel{border-color:var(--accent)!important;border-width:2.5px!important}
 .prof-empty{text-align:center;padding:20px;color:var(--ink3);font-size:13px}
 /* ── ADMIN DASHBOARD ── */
-.admin-wrap{position:fixed;inset:0;background:var(--bg);z-index:9999;overflow-y:auto;padding:20px 16px}
+.admin-wrap{position:fixed;inset:0;background:var(--off);z-index:9999;overflow-y:auto;padding:20px 16px}
 .admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--line)}
 .admin-title{font-family:var(--display);font-size:20px;font-weight:800;color:var(--ink)}
 .admin-title span{color:var(--accent)}
@@ -960,6 +960,14 @@ textarea{resize:none;height:62px;line-height:1.5}
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><path d="M18 2v4h4"/></svg>
         Analyser
       </button>
+    </div>
+    <div style="margin-bottom:12px">
+      <div style="font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Clé API Anthropic</div>
+      <input id="adm-api-key" type="password" placeholder="sk-ant-..." autocomplete="off"
+        style="width:100%;padding:8px 12px;border-radius:8px;border:1.5px solid var(--line2);background:var(--white);color:var(--ink);font-size:12px;font-family:monospace;box-sizing:border-box"
+        oninput="localStorage.setItem('adm_api_key',this.value)"
+        value="">
+      <div style="font-size:10px;color:var(--ink3);margin-top:4px">Stockée localement uniquement. Obtenir sur <a href="https://console.anthropic.com" target="_blank" style="color:var(--accent)">console.anthropic.com</a></div>
     </div>
     <div id="adm-ai-tabs" style="display:flex;gap:6px;margin-bottom:12px;display:none">
       <button onclick="showAdminAITab('ouvreurs',this)" class="adm-ai-tab adm-ai-tab-active" style="padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;border:1.5px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer">Ouvreurs</button>
@@ -3834,6 +3842,10 @@ function openAdmin() {
   const el = document.getElementById('admin-dashboard');
   el.style.display = 'block';
   el.scrollTop = 0;
+  // Restaurer la clé API sauvegardée
+  const savedKey = localStorage.getItem('adm_api_key');
+  const keyInput = document.getElementById('adm-api-key');
+  if(savedKey && keyInput) keyInput.value = savedKey;
   loadAdminData();
 }
 function closeAdmin() {
@@ -3949,10 +3961,23 @@ Génère deux sections de recommandations CONCRÈTES et ACTIONNABLES, en te basa
 
 Format : utilise des bullet points courts (max 15 mots chacun), pas de blabla introductif. Commence directement par les recommandations.`;
 
+  const apiKey = document.getElementById('adm-api-key')?.value?.trim() || localStorage.getItem('adm_api_key') || '';
+  if(!apiKey) {
+    document.getElementById('adm-ai-result').innerHTML = `<div style="color:var(--amber);font-size:13px;padding:12px;background:var(--amber-bg);border-radius:8px">⚠ Entre ta clé API Anthropic dans le champ ci-dessus pour utiliser cette fonctionnalité.</div>`;
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><path d="M18 2v4h4"/></svg> Analyser';
+    return;
+  }
+
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
