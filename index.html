@@ -4652,8 +4652,11 @@ const supa = {
     const opts = {method, headers};
     if(body) opts.body = JSON.stringify(body);
     const res = await fetch(SUPA_URL+path, opts);
-    if(res.status===204) return {};
-    const json = await res.json();
+    if(res.status===204 || res.status===201) return {};
+    const text = await res.text();
+    if(!text) return {};
+    let json;
+    try { json = JSON.parse(text); } catch(e) { return res.ok ? {} : {error:{message:text}}; }
     if(!res.ok) return {error: json};
     return json;
   },
