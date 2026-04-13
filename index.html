@@ -2003,25 +2003,28 @@ textarea{resize:none;height:62px;line-height:1.5}
 <script>
 
 // ========== DATA ==========
+// Helper : garantit qu'une valeur est toujours un tableau (robustesse blocs legacy)
+function toArr(v) { return Array.isArray(v) ? v : (v ? [v] : []); }
+
 const BLOCS = [
-  {id:'A01',couleur:'jaune',col:'#fbbf24',secteur:'A',style:'Dalle',incl:'-5°',prises:'Réglettes'},
-  {id:'A02',couleur:'orange',col:'#f97316',secteur:'A',style:'Vertical',incl:'0°',prises:'Crimps'},
-  {id:'A03',couleur:'rouge',col:'#ef4444',secteur:'A',style:'Dévers',incl:'30°',prises:'Pinces'},
-  {id:'A04',couleur:'bleu',col:'#3b82f6',secteur:'A',style:'Dalle',incl:'-10°',prises:'Volumes'},
-  {id:'B01',couleur:'jaune',col:'#fbbf24',secteur:'B',style:'Vertical',incl:'0°',prises:'Crimps'},
-  {id:'B02',couleur:'orange',col:'#f97316',secteur:'B',style:'Dévers',incl:'20°',prises:'Réglettes'},
-  {id:'B03',couleur:'vert',col:'#22c55e',secteur:'B',style:'Dalle',incl:'-5°',prises:'Réglettes'},
-  {id:'B04',couleur:'rouge',col:'#ef4444',secteur:'B',style:'Dévers',incl:'45°',prises:'Pinces'},
-  {id:'C01',couleur:'bleu',col:'#3b82f6',secteur:'C',style:'Vertical',incl:'5°',prises:'Crimps'},
-  {id:'C02',couleur:'vert',col:'#22c55e',secteur:'C',style:'Dalle',incl:'-5°',prises:'Volumes'},
-  {id:'C03',couleur:'jaune',col:'#fbbf24',secteur:'C',style:'Dévers',incl:'15°',prises:'Réglettes'},
-  {id:'C04',couleur:'orange',col:'#f97316',secteur:'C',style:'Vertical',incl:'0°',prises:'Crimps'},
-  {id:'D01',couleur:'rouge',col:'#ef4444',secteur:'D',style:'Dévers',incl:'55°',prises:'Pinces'},
-  {id:'D02',couleur:'bleu',col:'#3b82f6',secteur:'D',style:'Vertical',incl:'10°',prises:'Volumes'},
-  {id:'D03',couleur:'vert',col:'#22c55e',secteur:'D',style:'Dalle',incl:'-8°',prises:'Réglettes'},
-  {id:'D04',couleur:'orange',col:'#f97316',secteur:'D',style:'Dévers',incl:'25°',prises:'Crimps'},
-  {id:'D05',couleur:'noir',col:'#1e293b',secteur:'D',style:'Dévers',incl:'60°',prises:'Pinces'},
-  {id:'D06',couleur:'blanc',col:'#e2e8f0',secteur:'D',style:'Vertical',incl:'5°',prises:'Volumes'},
+  {id:'A01',couleur:'jaune',col:'#fbbf24',secteur:'A',hall:'nouvelle',style:'Dalle',incl:'-5°',prises:'Réglettes'},
+  {id:'A02',couleur:'orange',col:'#f97316',secteur:'A',hall:'nouvelle',style:'Vertical',incl:'0°',prises:'Crimps'},
+  {id:'A03',couleur:'rouge',col:'#ef4444',secteur:'A',hall:'nouvelle',style:'Dévers',incl:'30°',prises:'Pinces'},
+  {id:'A04',couleur:'bleu',col:'#3b82f6',secteur:'A',hall:'nouvelle',style:'Dalle',incl:'-10°',prises:'Volumes'},
+  {id:'B01',couleur:'jaune',col:'#fbbf24',secteur:'B',hall:'nouvelle',style:'Vertical',incl:'0°',prises:'Crimps'},
+  {id:'B02',couleur:'orange',col:'#f97316',secteur:'B',hall:'nouvelle',style:'Dévers',incl:'20°',prises:'Réglettes'},
+  {id:'B03',couleur:'vert',col:'#22c55e',secteur:'B',hall:'nouvelle',style:'Dalle',incl:'-5°',prises:'Réglettes'},
+  {id:'B04',couleur:'rouge',col:'#ef4444',secteur:'B',hall:'nouvelle',style:'Dévers',incl:'45°',prises:'Pinces'},
+  {id:'C01',couleur:'bleu',col:'#3b82f6',secteur:'C',hall:'nouvelle',style:'Vertical',incl:'5°',prises:'Crimps'},
+  {id:'C02',couleur:'vert',col:'#22c55e',secteur:'C',hall:'nouvelle',style:'Dalle',incl:'-5°',prises:'Volumes'},
+  {id:'C03',couleur:'jaune',col:'#fbbf24',secteur:'C',hall:'nouvelle',style:'Dévers',incl:'15°',prises:'Réglettes'},
+  {id:'C04',couleur:'orange',col:'#f97316',secteur:'C',hall:'nouvelle',style:'Vertical',incl:'0°',prises:'Crimps'},
+  {id:'D01',couleur:'rouge',col:'#ef4444',secteur:'D',hall:'nouvelle',style:'Dévers',incl:'55°',prises:'Pinces'},
+  {id:'D02',couleur:'bleu',col:'#3b82f6',secteur:'D',hall:'nouvelle',style:'Vertical',incl:'10°',prises:'Volumes'},
+  {id:'D03',couleur:'vert',col:'#22c55e',secteur:'D',hall:'nouvelle',style:'Dalle',incl:'-8°',prises:'Réglettes'},
+  {id:'D04',couleur:'orange',col:'#f97316',secteur:'D',hall:'nouvelle',style:'Dévers',incl:'25°',prises:'Crimps'},
+  {id:'D05',couleur:'noir',col:'#1e293b',secteur:'D',hall:'nouvelle',style:'Dévers',incl:'60°',prises:'Pinces'},
+  {id:'D06',couleur:'blanc',col:'#e2e8f0',secteur:'D',hall:'nouvelle',style:'Vertical',incl:'5°',prises:'Volumes'},
 ];
 
 const MOON_PROBLEMS = [
@@ -4136,7 +4139,7 @@ function renderAdminTopBlocs(blocs) {
       <div style="width:4px;height:28px;border-radius:2px;background:${c?.hex||'#555'};flex-shrink:0"></div>
       <div style="flex:1;min-width:0">
         <div style="font-size:12px;font-weight:600;color:var(--ink)">${b.id}</div>
-        <div style="font-size:10px;color:var(--ink3)">${(b.styles||[]).slice(0,2).join(' · ')||'—'}${b.cotation?' · '+b.cotation:''}</div>
+        <div style="font-size:10px;color:var(--ink3)">${(Array.isArray(b.styles)?b.styles:[b.style||'']).filter(Boolean).slice(0,2).join(' · ')||'—'}${b.cotation?' · '+b.cotation:''}</div>
       </div>
       <div>
         <div style="color:var(--yellow);font-size:13px">${'★'.repeat(b.etoiles||0)}</div>
@@ -4173,8 +4176,8 @@ function renderAdminTable(blocs) {
       <td><span style="display:inline-flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:${c?.hex||'#555'}"></span>${b.couleur||'—'}</span></td>
       <td>${b.secteur||'—'}</td>
       <td>${b.cotation||'—'}</td>
-      <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${(b.styles||[]).join(', ')||'—'}</td>
-      <td style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${(b.inclinaisons||[]).join(', ')||'—'}</td>
+      <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${(Array.isArray(b.styles)?b.styles:[b.style||'']).filter(Boolean).join(', ')||'—'}</td>
+      <td style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${(Array.isArray(b.inclinaisons)?b.inclinaisons:[b.incl||'']).filter(Boolean).join(', ')||'—'}</td>
       <td style="color:${b.morpho?'var(--yellow)':'var(--ink3)'}">${b.morpho?'⚠ Oui':'Non'}</td>
       <td>${b.ouvreur||'—'}</td>
       <td style="color:var(--yellow)">${b.etoiles?'★'.repeat(b.etoiles):'—'}</td>
@@ -5371,10 +5374,12 @@ function selectBlocColor(nom, hex, el) {
 // ── Secteur ──
 
 function switchAddBlocHall(hall, el) {
-  document.getElementById('secteur-grid-anc').style.display = hall==='ancienne'?'':'none';
-  document.getElementById('secteur-grid-nouv').style.display = hall==='nouvelle'?'':'none';
+  const gridAnc = document.getElementById('secteur-grid-anc');
+  const gridNouv = document.getElementById('secteur-grid-nouv');
+  if(gridAnc) gridAnc.style.display = hall==='ancienne'?'':'none';
+  if(gridNouv) gridNouv.style.display = hall==='nouvelle'?'':'none';
   document.querySelectorAll('#addbloc-hall-anc, #addbloc-hall-nouv').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
+  if(el) el.classList.add('active');
   // Reset secteur si on change de salle
   newBlocData.secteur = null;
   document.querySelectorAll('.secteur-btn').forEach(b=>b.classList.remove('sel'));
@@ -5532,7 +5537,7 @@ function submitNewBloc() {
   // Revenir sur la séance avec le bon secteur après 1.5s
   // Capturer zone et hall AVANT le reset
   const savedZone = seanceSelZone || bloc.secteur;
-  const savedHall = newBlocData.hall || seanceHall || 'ancienne';
+  const savedHall = seanceHall || newBlocData.hall || 'ancienne';
   setTimeout(()=>{
     resetBlocForm();
     showTab('seance');
@@ -5685,16 +5690,16 @@ function selectSeanceZone(name){
     const key=b.id+'|'+b.couleur;
     const res=results[key]||'';
     const nom=b.id+' '+(CNAMES_S[b.couleur]||b.couleur);
-    const tags=[...(b.inclinaisons||[b.style||'']).filter(Boolean)].slice(0,2).join(', ');
+    const tags=toArr(b.inclinaisons).filter(Boolean).slice(0,2).join(', ') || (b.style||'');
     rows.push(
       '<div class="bloc-row" style="cursor:pointer;padding:11px 16px;border-bottom:1px solid var(--line)"'
       +' data-bloc-id="'+b.id+'" data-bloc-nom="'+nom+'" data-bloc-col="'+(b.col||CCOLS[b.couleur]||'#888')+'"'
       +' data-bloc-couleur="'+b.couleur+'" data-bloc-secteur="'+name+'"'
       +' data-bloc-cotation="'+(b.cotation||'')+'" data-bloc-ouvreur="'+(b.ouvreur||'')+'"'
       +' data-bloc-date="'+(b.date||'')+'" data-bloc-note="'+(b.note||'').replace(/"/g,'&quot;')+'"'
-      +' data-bloc-incl="'+(b.inclinaisons||[]).join('|')+'"'
-      +' data-bloc-styles="'+(b.styles||[]).join('|')+'"'
-      +' data-bloc-prises="'+(b.prises||[]).join('|')+'"'
+      +' data-bloc-incl="'+(Array.isArray(b.inclinaisons)?b.inclinaisons:[b.incl||'']).filter(Boolean).join('|')+'"'
+      +' data-bloc-styles="'+(Array.isArray(b.styles)?b.styles:[b.style||'']).filter(Boolean).join('|')+'"'
+      +' data-bloc-prises="'+(Array.isArray(b.prises)?b.prises:[b.prises_legacy||b.prises||'']).filter(Boolean).join('|')+'"'
       +' onclick="onBlocRowClick(this)">'
       +'<div class="color-pill" style="background:'+(b.col||CCOLS[b.couleur]||'#888')+'"></div>'
       +'<div style="flex:1"><div class="bloc-id">'+nom+'</div>'
@@ -5785,6 +5790,8 @@ function openAddBlocFromZone(){
   document.getElementById('bloc-detail-overlay')?.classList.remove('open');
   const zp = document.getElementById('seance-zone-panel');
   if(zp) zp.style.display='none';
+  // Transmettre la salle courante au formulaire d'ajout
+  newBlocData.hall = seanceHall || 'ancienne';
   showTab('addbloc');
   setTimeout(()=>{
     if(seanceSelZone){
@@ -6096,7 +6103,7 @@ async function startGuidedSession() {
   const nokNow = Object.values(results).filter(v=>v==='nok').length;
   const guidedDone = Object.entries(guidedResults).map(([id,r])=>id+':'+r).join(', ')||'aucun encore';
 
-  const blocsDispos = BLOCS.filter(b=>!seanceHall||b.hall===seanceHall).slice(0,50).map(b=>'['+b.id+'] '+b.couleur+(b.cotation?' '+b.cotation:'')+' | '+((b.inclinaisons||[]).join('+')||b.style||'')+' | '+((b.styles||[]).join('+')||b.style||'')+' | sec:'+b.secteur).join('\n');
+  const blocsDispos = BLOCS.filter(b=>!seanceHall||b.hall===seanceHall).slice(0,50).map(b=>'['+b.id+'] '+b.couleur+(b.cotation?' '+b.cotation:'')+' | '+(toArr(b.inclinaisons).join('+')||b.style||'')+' | '+(toArr(b.styles).join('+')||b.style||'')+' | sec:'+b.secteur).join('\n');
 
   // Profil physique
   const pg = profilGrimpeur;
