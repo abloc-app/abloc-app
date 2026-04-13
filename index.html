@@ -4792,10 +4792,25 @@ function loadAuthState() {
   } catch(e) { return false; }
 }
 
-function saveAuthState(user, token, expires_at) {
+function saveAuthState(user, token, expires_at, refresh_token) {
   currentUser = user;
   currentToken = token;
-  localStorage.setItem('bloc_auth', JSON.stringify({user, token, expires_at}));
+  localStorage.setItem('bloc_auth', JSON.stringify({user, token, expires_at, refresh_token}));
+}
+
+async function refreshSession() {
+  try {
+    const saved = localStorage.getItem('bloc_auth');
+    if(!saved) return false;
+    const {refresh_token} = JSON.parse(saved);
+    if(!refresh_token) return false;
+    const res = await supa.req('/auth/v1/token?grant_type=refresh_token', 'POST', {refresh_token});
+    if(res.access_token) {
+      saveAuthState(res.user, res.access_token, res.expires_at, res.refresh_token);
+      return true;
+    }
+    return false;
+  } catch(e) { return false; }
 }
 
 function clearAuthState() {
@@ -4838,7 +4853,7 @@ async function doRegister() {
     // Auto sign-in after register
     const loginRes = await supa.signIn(email, pass);
     if(loginRes.access_token) {
-      saveAuthState(loginRes.user, loginRes.access_token, loginRes.expires_at);
+      saveAuthState(loginRes.user, loginRes.access_token, loginRes.expires_at, loginRes.refresh_token);
       // Save pseudo
       await supa.upsertProfile(loginRes.user.id, {pseudo}, loginRes.access_token);
       currentProfile = {id: loginRes.user.id, pseudo};
@@ -4867,7 +4882,7 @@ async function doLogin() {
   try {
     const res = await supa.signIn(email, pass);
     if(res.error||!res.access_token){ errEl.textContent=translateError(res.error?.message||'Erreur'); errEl.className='auth-error show'; return; }
-    saveAuthState(res.user, res.access_token, res.expires_at);
+    saveAuthState(res.user, res.access_token, res.expires_at, res.refresh_token);
     // Load profile
     currentProfile = await supa.getProfile(res.user.id, res.access_token);
     onAuthSuccess();
@@ -5008,6 +5023,16 @@ async function syncBlocsToSupabase() {
   if(!currentUser || !currentToken) { showToast("Connecte-toi d'abord !"); return; }
   const btn = document.getElementById('sync-btn');
   if(btn) { btn.disabled = true; btn.textContent = 'Sync en cours...'; }
+
+  // Rafraîchir le token si expiré
+  const saved = localStorage.getItem('bloc_auth');
+  if(saved) {
+    const {expires_at} = JSON.parse(saved);
+    if(Date.now()/1000 > (expires_at - 60)) {
+      const ok = await refreshSession();
+      if(!ok) { showToast('Session expirée — reconnecte-toi'); if(btn){btn.disabled=false;btn.textContent='☁ Sync Supabase';} return; }
+    }
+  }
 
   let ok = 0, errMsgs = [];
   for(const b of BLOCS) {
