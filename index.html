@@ -516,7 +516,7 @@ textarea{resize:none;height:62px;line-height:1.5}
 .wow-ai-label{font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.5px;margin-bottom:6px}
 .wow-ai-text{font-size:13px;color:var(--ink2);line-height:1.55}
 .wow-actions{padding:16px 20px 32px;display:flex;flex-direction:column;gap:8px}
-.onb-screen{position:fixed;inset:0;background:#f7f6f4;z-index:1000;display:flex;flex-direction:column;overflow:hidden}
+.onb-screen{position:fixed;inset:0;background:#f7f6f4;z-index:10000;display:flex;flex-direction:column;overflow:hidden}
 .onb-screen.hidden{display:none}
 .onb-slides{display:flex;transition:transform .4s cubic-bezier(.4,0,.2,1);flex:1}
 .onb-slide{min-width:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:60px 28px 24px;box-sizing:border-box;background:#f7f6f4}
@@ -1807,6 +1807,14 @@ textarea{resize:none;height:62px;line-height:1.5}
         <div class="tag-btn" onclick="toggleTag('style','Lecture',this)">👁 Lecture</div>
         <div class="tag-btn" onclick="toggleTag('style','Endurance',this)">🔄 Endurance</div>
         <div class="tag-btn" onclick="toggleTag('style','Morpho',this)">📏 Morpho</div>
+        <div class="tag-btn" onclick="toggleTag('style','Cruxy',this)">🔑 Cruxy</div>
+        <div class="tag-btn" onclick="toggleTag('style','Mobilité',this)">🧘 Mobilité</div>
+        <div class="tag-btn" onclick="toggleTag('style','Low %',this)">🎲 Low %</div>
+        <div class="tag-btn" onclick="toggleTag('style','Scary/Mental',this)">🧠 Scary/Mental</div>
+        <div class="tag-btn" onclick="toggleTag('style','Rando/Smooth',this)">🌊 Rando/Smooth</div>
+        <div class="tag-btn" onclick="toggleTag('style','Style compét',this)">🏆 Style compét</div>
+        <div class="tag-btn" onclick="toggleTag('style','Traversée',this)">↔️ Traversée</div>
+        <div class="tag-btn" onclick="toggleTag('style','Sensation',this)">✨ Sensation</div>
       </div>
     </div>
 
@@ -1816,16 +1824,18 @@ textarea{resize:none;height:62px;line-height:1.5}
       <div class="tag-grid" id="prise-grid">
         <div class="tag-btn" onclick="toggleTag('prise','Sloper',this)">◔ Sloper</div>
         <div class="tag-btn" onclick="toggleTag('prise','Réglette',this)">— Réglette</div>
+        <div class="tag-btn" onclick="toggleTag('prise','Microcrimp',this)">▪ Microcrimp</div>
         <div class="tag-btn" onclick="toggleTag('prise','Pocket',this)">○ Pocket</div>
-        <div class="tag-btn" onclick="toggleTag('prise','Pince',this)">✌ Pince</div>
+        <div class="tag-btn" onclick="toggleTag('prise','Grosse pince',this)">✌ Grosse pince</div>
+        <div class="tag-btn" onclick="toggleTag('prise','Micro pince',this)">🤌 Micro pince</div>
         <div class="tag-btn" onclick="toggleTag('prise','Jug',this)">🤙 Jug</div>
         <div class="tag-btn" onclick="toggleTag('prise','Bac',this)">□ Bac</div>
-        <div class="tag-btn" onclick="toggleTag('prise','Crimp',this)">➕ Crimp</div>
         <div class="tag-btn" onclick="toggleTag('prise','Gaston',this)">↔ Gaston</div>
         <div class="tag-btn" onclick="toggleTag('prise','Mono',this)">• Mono</div>
         <div class="tag-btn" onclick="toggleTag('prise','Bi-doigts',this)">•• Bi</div>
         <div class="tag-btn" onclick="toggleTag('prise','Volume',this)">▲ Volume</div>
         <div class="tag-btn" onclick="toggleTag('prise','Pied-main',this)">🦶 Pied-main</div>
+        <div class="tag-btn" onclick="toggleTag('prise','Porte',this)">🚪 Porte</div>
       </div>
     </div>
 
@@ -1835,6 +1845,9 @@ textarea{resize:none;height:62px;line-height:1.5}
       <div class="tag-grid" id="mouvement-grid">
         <div class="tag-btn" onclick="toggleTag('mouvement','Talon',this)">🦶 Talon</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Contre-pointe',this)">↙ Contre-pointe</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Petit pied',this)">🦶 Petit pied</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Changement de pied',this)">🔄 Chgt de pied</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Changement de main',this)">✋ Chgt de main</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Départ assis',this)">🪑 Départ assis</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Quart externe',this)">↗ Quart externe</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Épaule',this)">💪 Épaule</div>
@@ -1842,6 +1855,7 @@ textarea{resize:none;height:62px;line-height:1.5}
         <div class="tag-btn" onclick="toggleTag('mouvement','Inversée',this)">🙃 Inversée</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Lolotte',this)">🔄 Lolotte</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Drapeau',this)">🚩 Drapeau</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','En opposition',this)">↔ En opposition</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Campus',this)">🤸 Campus</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Lock-off',this)">🔒 Lock-off</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Croisé',this)">✂ Croisé</div>
@@ -1849,7 +1863,6 @@ textarea{resize:none;height:62px;line-height:1.5}
         <div class="tag-btn" onclick="toggleTag('mouvement','Réta',this)">↩ Réta</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Bascule',this)">⚖ Bascule</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Pivot hanche',this)">🌀 Pivot hanche</div>
-        <div class="tag-btn" onclick="toggleTag('mouvement','Pied-main',this)">🤲 Pied-main</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Jeté',this)">🎯 Jeté</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Double dyno',this)">⚡⚡ Double dyno</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Run & jump',this)">🏃 Run & jump</div>
@@ -6228,11 +6241,17 @@ const ONB_STEPS = 6;
 function showOnboarding() {
   document.getElementById('onb-screen').classList.remove('hidden');
   document.getElementById('auth-screen').classList.add('hidden');
+  // Masquer topbar et tabbar pendant l'onboarding
+  document.querySelector('.topbar') && (document.querySelector('.topbar').style.display='none');
+  document.querySelector('.tabbar') && (document.querySelector('.tabbar').style.display='none');
   onbGoTo(0);
 }
 
 function hideOnboarding() {
   document.getElementById('onb-screen').classList.add('hidden');
+  // Restaurer topbar et tabbar
+  document.querySelector('.topbar') && (document.querySelector('.topbar').style.display='');
+  document.querySelector('.tabbar') && (document.querySelector('.tabbar').style.display='');
 }
 
 function onbGoTo(step) {
