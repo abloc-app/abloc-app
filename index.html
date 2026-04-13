@@ -5011,7 +5011,8 @@ async function syncBlocsToSupabase() {
   if(btn) { btn.disabled = false; btn.textContent = '☁ Sync Supabase'; }
   if(errMsgs.length > 0) {
     console.error('Toutes les erreurs:', errMsgs);
-    showToast(ok+' ok, '+errMsgs.length+' erreurs — F12 pour détails');
+    const firstErr = (errMsgs[0]||'').slice(0,80);
+    showToast(ok+' ok, '+errMsgs.length+' err: '+firstErr);
   } else {
     showToast('Sync terminé : '+ok+' blocs envoyés ✓');
   }
