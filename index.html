@@ -5530,13 +5530,20 @@ function submitNewBloc() {
   showToast('Bloc ' + id + ' ajouté !');
 
   // Revenir sur la séance avec le bon secteur après 1.5s
+  // Capturer zone et hall AVANT le reset
+  const savedZone = seanceSelZone || bloc.secteur;
+  const savedHall = newBlocData.hall || seanceHall || 'ancienne';
   setTimeout(()=>{
     resetBlocForm();
     showTab('seance');
-    const rawZone = seanceSelZone || bloc.secteur;
+    const rawZone = savedZone;
     const zone = rawZone && /^\d+$/.test(rawZone) ? 'Zone '+rawZone : rawZone;
     setTimeout(()=>{
       if(zone) {
+        // Assurer qu'on est sur le bon hall avant de sélectionner la zone
+        if(savedHall !== seanceHall) {
+          switchSeanceHall(savedHall);
+        }
         selectSeanceZone(zone);
         renderSeanceOverlays();
         // Scroller jusqu'au panneau
@@ -5583,7 +5590,9 @@ function switchSeanceHall(hall,el){
   document.getElementById('seance-wrap-anc').style.display=hall==='ancienne'?'block':'none';
   document.getElementById('seance-wrap-nouv').style.display=hall==='nouvelle'?'block':'none';
   document.getElementById('seance-zone-panel').style.display='none';
-  document.querySelectorAll('.hall-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
+  document.querySelectorAll('.hall-tab').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  else { const tabs=document.querySelectorAll('.hall-tab'); tabs[hall==='ancienne'?0:1]?.classList.add('active'); }
   renderSeanceOverlays();renderSeanceColorFilters();
 }
 function renderSeanceColorFilters(){
