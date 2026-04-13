@@ -182,7 +182,7 @@ body{font-family:var(--font);background:var(--off);color:var(--ink);-webkit-font
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
 .ai-text{font-size:13px;color:var(--ink);line-height:1.65;font-weight:500}
 
-/* ── SÉANCE GUIDÉE IA ── */
+/* ── SÉANCE GUIDÉE ── */
 #guided-session-panel{background:var(--white);border-radius:var(--r);border:1.5px solid #ffd5c2;box-shadow:var(--shadow-md);margin-bottom:12px;overflow:hidden;display:none}
 #guided-session-panel.open{display:block}
 .guided-header{background:linear-gradient(135deg,var(--accent-bg),#fff8f5);padding:11px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffd5c2}
@@ -567,7 +567,7 @@ textarea{resize:none;height:62px;line-height:1.5}
 .profile-panel{background:var(--white);border-radius:var(--r);border:1.5px solid var(--line);box-shadow:var(--shadow-md);padding:16px 18px;margin-bottom:12px}
 
 
-/* ── COACHING IA ENRICHI ─────────────────────────────── */
+/* ── COACHING ENRICHI ─────────────────────────────── */
 .coach-tabs{display:flex;gap:0;margin-bottom:16px;background:var(--off);border-radius:var(--rs);padding:3px}
 .coach-tab{flex:1;padding:8px 4px;text-align:center;font-size:11px;font-weight:700;cursor:pointer;border-radius:6px;border:none;background:transparent;color:var(--ink2);transition:all .15s;font-family:var(--font);letter-spacing:.2px}
 .coach-tab.active{background:var(--white);color:var(--accent);box-shadow:var(--shadow)}
@@ -770,7 +770,7 @@ textarea{resize:none;height:62px;line-height:1.5}
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="var(--accent)" stroke="none"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>
       </div>
       <div class="onb-title">Ton objectif<br>principal ?</div>
-      <div class="onb-sub">L'IA adaptera son coaching</div>
+      <div class="onb-sub">Le coaching s'adaptera</div>
       <div class="onb-chips" id="onb-objectif-chips">
         <div class="onb-chip" onclick="onbSelectChip('objectif','progresser',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:middle;margin-right:4px"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>Progresser</div>
         <div class="onb-chip" onclick="onbSelectChip('objectif','performer',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:middle;margin-right:4px"><path d="M6 9H4.5a2.5 2.5 0 000 5H6"/><path d="M18 9h1.5a2.5 2.5 0 010 5H18"/><path d="M8 9h8v7a4 4 0 01-8 0V9z"/></svg>Performer</div>
@@ -952,10 +952,10 @@ textarea{resize:none;height:62px;line-height:1.5}
     </table></div>
   </div>
 
-  <!-- Analyse IA ouvreurs/gérants -->
+  <!-- Analyse ouvreurs/gérants -->
   <div class="admin-card" style="margin-bottom:14px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <div class="admin-card-title" style="margin-bottom:0">✦ Analyse IA — Recommandations salle</div>
+      <div class="admin-card-title" style="margin-bottom:0">✦ Analyse — Recommandations salle</div>
       <button id="adm-ai-btn" onclick="callAdminAI()" style="padding:7px 14px;border-radius:20px;background:var(--accent);color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><path d="M18 2v4h4"/></svg>
         Analyser
@@ -1275,7 +1275,7 @@ textarea{resize:none;height:62px;line-height:1.5}
       <button class="hall-tab" onclick="switchSeanceHall('nouvelle',this)">Nouvelle salle</button>
     </div>
 
-    <!-- Séance guidée IA -->
+    <!-- Séance guidée -->
     <div class="guided-banner" id="btn-open-guided" onclick="toggleGuidedSession()" role="button">
       <div class="guided-banner-icon">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round">
@@ -1284,7 +1284,7 @@ textarea{resize:none;height:62px;line-height:1.5}
         </svg>
       </div>
       <div class="guided-banner-text">
-        <div class="guided-banner-title">Séance guidée IA</div>
+        <div class="guided-banner-title">Séance guidée</div>
         <div class="guided-banner-sub">Blocs recommandés selon ton niveau &amp; objectifs</div>
       </div>
       <div class="guided-banner-arrow">
@@ -1293,7 +1293,7 @@ textarea{resize:none;height:62px;line-height:1.5}
     </div>
     <div id="guided-session-panel">
       <div class="guided-header">
-        <div class="guided-title"><div class="ai-pulse"></div>Coach IA — Séance guidée</div>
+        <div class="guided-title"><div class="ai-pulse"></div>Coach — Séance guidée</div>
         <button onclick="toggleGuidedSession()" style="background:none;border:none;font-size:20px;color:var(--accent);cursor:pointer;line-height:1;padding:0">×</button>
       </div>
       <div class="guided-body" id="guided-body">
@@ -1344,7 +1344,7 @@ textarea{resize:none;height:62px;line-height:1.5}
   <!-- ══════ OUTILS ══════ -->
   <div class="sc" id="s-outils">
     <div class="ai-bubble">
-      <div class="ai-label"><div class="ai-pulse"></div>Coaching IA — Outils</div>
+      <div class="ai-label"><div class="ai-pulse"></div>Coaching — Outils</div>
       <div class="ai-text" id="outils-ai-reco">Logge tes sessions pour recevoir des recommandations personnalisées.</div>
     </div>
     <div class="outil-card" onclick="showSub('moonboard')">
@@ -1452,11 +1452,9 @@ textarea{resize:none;height:62px;line-height:1.5}
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
         <div class="card-label" style="margin-bottom:0">Protocoles recommandés</div>
         <button id="hang-ai-btn" onclick="generateHangProtocols()" style="padding:6px 12px;border-radius:20px;background:var(--accent);color:#fff;border:none;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><path d="M18 2v4h4"/></svg>
-          IA
-        </button>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><path d="M18 2v4h4"/></svg> Auto</button>
       </div>
-      <div id="hang-protocols"><div class="empty" style="font-size:12px">Appuie sur <strong>IA</strong> pour des protocoles adaptés à ton profil.</div></div>
+      <div id="hang-protocols"><div class="empty" style="font-size:12px">Appuie sur <strong> Auto</strong> pour des protocoles adaptés à ton profil.</div></div>
     </div>
     <div class="card" id="hang-form" style="display:none">
       <div class="card-label">Logger — <span id="hang-proto-name" style="color:var(--accent);text-transform:none"></span></div>
@@ -1481,11 +1479,9 @@ textarea{resize:none;height:62px;line-height:1.5}
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
         <div class="card-label" style="margin-bottom:0">Exercices recommandés</div>
         <button id="campus-ai-btn" onclick="generateCampusExos()" style="padding:6px 12px;border-radius:20px;background:var(--accent);color:#fff;border:none;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><path d="M18 2v4h4"/></svg>
-          IA
-        </button>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><path d="M18 2v4h4"/></svg> Auto</button>
       </div>
-      <div id="campus-exos"><div class="empty" style="font-size:12px">Appuie sur <strong>IA</strong> pour des exercices adaptés à ton profil.</div></div>
+      <div id="campus-exos"><div class="empty" style="font-size:12px">Appuie sur <strong> Auto</strong> pour des exercices adaptés à ton profil.</div></div>
     </div>
     <div class="card">
       <div class="card-label">Logger une session</div>
@@ -1567,7 +1563,7 @@ textarea{resize:none;height:62px;line-height:1.5}
     <!-- ── ANALYSE ── -->
     <div class="coach-section active" id="cs-analyse">
       <div class="ai-bubble" id="coach-ai-bubble">
-        <div class="ai-label"><div class="ai-pulse"></div>Coaching IA — Analyse</div>
+        <div class="ai-label"><div class="ai-pulse"></div>Coaching — Analyse</div>
         <div class="ai-text" id="coach-main-text">Lance ton analyse pour recevoir un coaching personnalisé basé sur tes séances.</div>
       </div>
       <div id="coach-insights"></div>
@@ -1577,7 +1573,7 @@ textarea{resize:none;height:62px;line-height:1.5}
         <div class="metric"><div class="metric-val" id="cs-streak">0</div><div class="metric-lbl">Série jours</div></div>
       </div>
       <div style="margin-bottom:12px">
-        <div style="font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">Note pour l'IA (optionnel)</div>
+        <div style="font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">Note (optionnel)</div>
         <textarea id="coaching-note" placeholder="Ex: j'ai du mal avec les toits, je veux progresser en dynamique, j'ai une compétition dans 3 semaines..." style="width:100%;font-size:13px;min-height:80px;resize:vertical;border-radius:var(--rs);border:1.5px solid var(--line);padding:10px 12px;font-family:var(--font);background:var(--white);box-sizing:border-box"></textarea>
       </div>
       <button class="btn btn-primary" id="ai-coaching-btn" onclick="callClaudeCoaching('analyse')">
@@ -1597,7 +1593,7 @@ textarea{resize:none;height:62px;line-height:1.5}
         <div id="coach-style-bars"></div>
       </div>
       <div class="ai-bubble">
-        <div class="ai-label"><div class="ai-pulse"></div>Recommandation IA</div>
+        <div class="ai-label"><div class="ai-pulse"></div>Recommandation</div>
         <div class="ai-text" id="coach-weakness-text">Lance l'analyse pour obtenir des recommandations ciblées.</div>
       </div>
       <button class="btn btn-primary" id="ai-weakness-btn" onclick="callClaudeCoaching('points')">
@@ -1610,7 +1606,7 @@ textarea{resize:none;height:62px;line-height:1.5}
     <div class="coach-section" id="cs-semaine">
       <div class="coach-plan-week" id="coach-week-plan"></div>
       <div class="ai-bubble">
-        <div class="ai-label"><div class="ai-pulse"></div>Plan IA personnalisé</div>
+        <div class="ai-label"><div class="ai-pulse"></div>Plan personnalisé</div>
         <div class="ai-text" id="coach-week-text">Lance la génération pour obtenir ton plan de la semaine.</div>
       </div>
       <button class="btn btn-primary" id="ai-week-btn" onclick="callClaudeCoaching('semaine')">
@@ -1644,7 +1640,7 @@ textarea{resize:none;height:62px;line-height:1.5}
         <div class="lv" id="lv-a" onclick="setNiveau('avance')">Avancé<br><span style="font-size:10px;font-weight:500;opacity:.7">Mauve / Jaune</span></div>
         <div class="lv" id="lv-e" onclick="setNiveau('expert')">Expert<br><span style="font-size:10px;font-weight:500;opacity:.7">Rouge / Blanc</span></div>
       </div>
-      <div class="ai-bubble" style="margin-bottom:0"><div class="ai-label"><div class="ai-pulse"></div>Coaching IA</div><div class="ai-text" id="niveau-msg">Niveau intermédiaire — tu as les bases solides. Structure ta progression !</div></div>
+      <div class="ai-bubble" style="margin-bottom:0"><div class="ai-label"><div class="ai-pulse"></div>Coaching</div><div class="ai-text" id="niveau-msg">Niveau intermédiaire — tu as les bases solides. Structure ta progression !</div></div>
     </div>
     <div class="card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
@@ -1654,7 +1650,7 @@ textarea{resize:none;height:62px;line-height:1.5}
       <div id="mes-obj-list"><div class="empty">Aucun objectif — appuie sur + Ajouter.</div></div>
     </div>
     <div class="card" id="sugg-panel">
-      <div class="card-label" style="margin-bottom:10px">Suggestions IA</div>
+      <div class="card-label" style="margin-bottom:10px">Suggestions</div>
       <div class="chips">
         <div class="chip active" onclick="filterSugg('all',this)">Tous</div>
         <div class="chip" onclick="filterSugg('ct',this)">Court terme</div>
@@ -1666,7 +1662,7 @@ textarea{resize:none;height:62px;line-height:1.5}
       <div id="sugg-list"></div>
     </div>
     <div class="card" style="margin-top:0">
-      <div class="card-label">Note pour le coaching IA</div>
+      <div class="card-label">Note pour le coaching</div>
       <textarea id="objectif-note" placeholder="Tes contraintes, tes priorités, tes prochains objectifs de grimpe... L'IA s'en servira pour personnaliser ton coaching." style="width:100%;font-size:13px;min-height:90px;resize:vertical;border-radius:var(--rs);border:1.5px solid var(--line2);padding:10px 12px;font-family:var(--font);background:var(--white);margin-bottom:8px"></textarea>
       <button class="btn" style="width:auto;padding:8px 16px;margin:0;font-size:12px;color:var(--accent);border-color:var(--accent)" onclick="saveObjectifNote()">Sauver</button>
     </div>
@@ -1751,7 +1747,11 @@ textarea{resize:none;height:62px;line-height:1.5}
         <button class="secteur-btn" onclick="selectSecteur('F',this)">F</button>
         <button class="secteur-btn" onclick="selectSecteur('G',this)">G</button>
         <button class="secteur-btn" onclick="selectSecteur('H',this)">H</button>
+        <button class="secteur-btn" onclick="selectSecteur('I',this)">I</button>
+        <button class="secteur-btn" onclick="selectSecteur('J',this)">J</button>
+        <button class="secteur-btn" onclick="selectSecteur('K',this)">K</button>
         <button class="secteur-btn" onclick="selectSecteur('M',this)">M</button>
+        <button class="secteur-btn" onclick="selectSecteur('N',this)">N</button>
         <button class="secteur-btn" onclick="selectSecteur('Kids',this)" style="font-size:10px">Kids</button>
         <button class="secteur-btn" onclick="selectSecteur('1',this)">1</button>
         <button class="secteur-btn" onclick="selectSecteur('2',this)">2</button>
@@ -1815,6 +1815,7 @@ textarea{resize:none;height:62px;line-height:1.5}
         <div class="tag-btn" onclick="toggleTag('style','Style compét',this)">🏆 Style compét</div>
         <div class="tag-btn" onclick="toggleTag('style','Traversée',this)">↔️ Traversée</div>
         <div class="tag-btn" onclick="toggleTag('style','Sensation',this)">✨ Sensation</div>
+        <div class="tag-btn" onclick="toggleTag('style','Fissure',this)">🪨 Fissure</div>
       </div>
     </div>
 
@@ -1983,7 +1984,7 @@ textarea{resize:none;height:62px;line-height:1.5}
       </div>
     </div>
     <div class="wow-ai-box">
-      <div class="wow-ai-label">Coaching IA</div>
+      <div class="wow-ai-label">Coaching</div>
       <div class="wow-ai-text" id="wow-ai-text">Analyse en cours...</div>
     </div>
     <div class="wow-actions">
@@ -2403,7 +2404,7 @@ async function showWowMoment(ok, nok, sessionScore) {
   const overlay = document.getElementById('wow-overlay');
   overlay.classList.add('open');
 
-  // Message IA court
+  // Message court
   const aiEl = document.getElementById('wow-ai-text');
   try {
     const pg = profilGrimpeur;
@@ -2546,7 +2547,7 @@ Réponds UNIQUEMENT avec ce JSON (sans markdown) :
     el.innerHTML = `<div style="color:var(--red);font-size:12px">Erreur : ${e.message}</div>`;
   }
   btn.disabled = false;
-  btn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><path d="M18 2v4h4"/></svg> IA';
+  btn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><path d="M18 2v4h4"/></svg> Auto';
 }
 
 function selectAIHangProto(i) {
@@ -2561,7 +2562,7 @@ function selectAIHangProto(i) {
 function renderHangProtocols() {
   // Called on tab open — show empty state if no AI protos yet
   if(!window._aiHangProtos) {
-    document.getElementById('hang-protocols').innerHTML = '<div class="empty" style="font-size:12px">Appuie sur <strong>IA</strong> pour des protocoles adaptés à ton profil.</div>';
+    document.getElementById('hang-protocols').innerHTML = '<div class="empty" style="font-size:12px">Appuie sur <strong> Auto</strong> pour des protocoles adaptés à ton profil.</div>';
   }
 }
 
@@ -2578,7 +2579,7 @@ function saveHang() {
   let nom = hangProtoSel;
   if(hangProtoSel.startsWith('ai_')) {
     const i = parseInt(hangProtoSel.split('_')[1]);
-    nom = (window._aiHangProtos||[])[i]?.nom || 'Protocole IA';
+    nom = (window._aiHangProtos||[])[i]?.nom || 'Protocole';
   } else {
     const h = HANG_PROTOS.find(x=>x.id===hangProtoSel);
     nom = h?.nom || hangProtoSel;
@@ -2655,13 +2656,13 @@ Réponds UNIQUEMENT avec ce JSON (sans markdown) :
     el.innerHTML = `<div style="color:var(--red);font-size:12px">Erreur : ${e.message}</div>`;
   }
   btn.disabled = false;
-  btn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><path d="M18 2v4h4"/></svg> IA';
+  btn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><path d="M18 2v4h4"/></svg> Auto';
 }
 
 function renderCampusExos() {
   if(!document.getElementById('campus-exos').textContent.trim() ||
      document.getElementById('campus-exos').querySelector('.empty')) {
-    // keep empty state — user will click IA
+    // keep empty state — user will click Auto
   }
 }
 
@@ -3329,7 +3330,7 @@ function removeBeta(blocId, idx) {
 }
 
 
-// ========== COACHING IA ENRICHI ==========
+// ========== COACHING ENRICHI ==========
 
 function switchCoachTab(tab, el) {
   document.querySelectorAll('.coach-section').forEach(s=>s.classList.remove('active'));
@@ -3702,7 +3703,7 @@ async function callClaudeCoaching(mode) {
             ${d.blocs_recommandes?`<div style="font-size:10px;margin-top:4px;color:var(--accent);opacity:.85">🧗 ${d.blocs_recommandes}</div>`:''}
           </div>`).join('');
         const wt = document.getElementById('coach-week-text');
-        if(wt) wt.textContent = 'Plan généré par IA en fonction de ton profil et tes points faibles.';
+        if(wt) wt.textContent = 'Plan généré en fonction de ton profil et tes points faibles.';
       } catch(e) {
         const el = document.getElementById('coach-week-text');
         if(el) el.textContent = text;
@@ -6035,7 +6036,7 @@ function setBlocMorpho(val, id) {
 
 
 
-// ========== SÉANCE GUIDÉE IA ==========
+// ========== SÉANCE GUIDÉE ==========
 let guidedSessionActive = false;
 let guidedBlocs = [];
 let guidedResults = {};
@@ -6100,7 +6101,7 @@ async function startGuidedSession() {
     pg.blessures  ? 'Blessures: '+pg.blessures : null,
   ].filter(Boolean).join(', ') || 'Non renseigné';
 
-  const prompt = 'Tu es un coach escalade de bloc expert et bienveillant. Le grimpeur est en séance MAINTENANT.\n\nPROFIL :\n- Niveau : '+niveau+'\n- '+profilPhysique+'\n- Taux réussite global : '+tauxGlobal+'% ('+totalOk+' ok / '+totalNok+' ratés)\n- Points faibles — Inclinaisons : '+(worstIncl||'insuffisant')+' | Styles : '+(worstStyle||'insuffisant')+' | Couleurs : '+(worstColors||'insuffisant')+'\n- Historique : '+historique.length+' séances\n\nSÉANCE EN COURS :\n- Blocs réussis : '+okNow+', blocs ratés : '+nokNow+'\n- Hall actuel : '+(seanceHall||'non défini')+'\n- Blocs guidés déjà travaillés : '+guidedDone+'\n\nBLOCS DISPONIBLES (ID | couleur cotation | inclinaison | style | secteur) :\n'+(blocsDispos||'Non disponible')+'\n\nRecommande 3 à 4 blocs précis à travailler MAINTENANT. Cible les points faibles. Pour chaque bloc, explique POURQUOI en 1 phrase courte (max 12 mots).\n\nRéponds UNIQUEMENT avec ce JSON (sans markdown) :\n{"message":"1-2 phrases de coaching motivant et personnalisé","blocs":[{"id":"BLOC_ID","couleur":"couleur","cotation":"cotation ou vide","why":"pourquoi ce bloc en 1 phrase"}]}';
+  const prompt = 'Tu es un coach escalade de bloc expert et bienveillant. Le grimpeur est en séance MAINTENANT.\n\nPROFIL :\n- Niveau : '+niveau+'\n- '+profilPhysique+'\n- Taux réussite global : '+tauxGlobal+'% ('+totalOk+' ok / '+totalNok+' ratés)\n- Points faibles — Inclinaisons : '+(worstIncl||'insuffisant')+' | Styles : '+(worstStyle||'insuffisant')+' | Couleurs : '+(worstColors||'insuffisant')+'\n- Historique : '+historique.length+' séances\n\nSÉANCE EN COURS :\n- Blocs réussis : '+okNow+', blocs ratés : '+nokNow+'\n- Hall actuel : '+(seanceHall||'non défini')+'\n- Blocs guidés déjà travaillés : '+guidedDone+'\n\nBLOCS DISPONIBLES (ID | couleur cotation | inclinaison | style | secteur) :\n'+(blocsDispos||'Non disponible')+'\n\nRecommande exactement 8 blocs précis à travailler MAINTENANT. Cible les points faibles. Pour chaque bloc, explique POURQUOI en 1 phrase courte (max 12 mots).\n\nRéponds UNIQUEMENT avec ce JSON (sans markdown) :\n{"message":"1-2 phrases de coaching motivant et personnalisé","blocs":[{"id":"BLOC_ID","couleur":"couleur","cotation":"cotation ou vide","why":"pourquoi ce bloc en 1 phrase"}]}';
 
   try {
     const res = await fetch('/.netlify/functions/coaching', {
@@ -6362,7 +6363,7 @@ function onbFinish() {
       samuser: "M'amuser et grimper en groupe",
       sedefier: 'Me défier sur les blocs durs'
     };
-    // Store as a note for the IA
+    // Store as a note for coaching
     profilGrimpeur.blessures = profilGrimpeur.blessures || '';
   }
   saveAll();
