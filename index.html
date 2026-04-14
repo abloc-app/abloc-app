@@ -1283,30 +1283,10 @@ textarea{resize:none;height:62px;line-height:1.5}
       <button class="hall-tab" onclick="switchSeanceHall('nouvelle',this)">Nouvelle salle</button>
     </div>
 
-    <!-- Séance guidée -->
-    <div class="guided-banner" id="btn-open-guided" onclick="toggleGuidedSession()" role="button">
-      <div class="guided-banner-icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round">
-          <circle cx="12" cy="12" r="10"/>
-          <path d="M12 8v4l3 3"/>
-        </svg>
-      </div>
-      <div class="guided-banner-text">
-        <div class="guided-banner-title">Séance guidée</div>
-        <div class="guided-banner-sub">Blocs recommandés selon ton niveau &amp; objectifs</div>
-      </div>
-      <div class="guided-banner-arrow">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </div>
-    </div>
-    <div id="guided-session-panel">
-      <div class="guided-header">
-        <div class="guided-title"><div class="ai-pulse"></div>Coach — Séance guidée</div>
-        <button onclick="toggleGuidedSession()" style="background:none;border:none;font-size:20px;color:var(--accent);cursor:pointer;line-height:1;padding:0">×</button>
-      </div>
-      <div class="guided-body" id="guided-body">
-        <div class="guided-loading">Lance la séance guidée pour démarrer !</div>
-      </div>
+    <!-- Info map -->
+    <div style="display:flex;align-items:center;gap:10px;background:var(--accent-bg);border:1.5px solid #ffd5c2;border-radius:var(--r);padding:12px 14px;margin-bottom:10px">
+      <span style="font-size:20px;flex-shrink:0">🗺️</span>
+      <div style="font-size:13px;color:var(--ink2);line-height:1.5;font-weight:500">Trouve les blocs de ta séance dans la map ci-dessous et valide-les directement dans l'app.</div>
     </div>
     <div id="seance-map-note" style="display:none"></div>
     <div class="map-wrap" id="seance-wrap-anc">
