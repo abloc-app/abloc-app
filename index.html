@@ -516,10 +516,10 @@ textarea{resize:none;height:62px;line-height:1.5}
 .wow-ai-label{font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.5px;margin-bottom:6px}
 .wow-ai-text{font-size:13px;color:var(--ink2);line-height:1.55}
 .wow-actions{padding:16px 20px 32px;display:flex;flex-direction:column;gap:8px}
-.onb-screen{position:fixed;inset:0;background:#f7f6f4;z-index:10000;display:flex;flex-direction:column;overflow:hidden}
+.onb-screen{position:fixed;inset:0;background:#f7f6f4;z-index:10000;display:flex;flex-direction:column;overflow:hidden;touch-action:pan-y}
 .onb-screen.hidden{display:none}
-.onb-slides{display:flex;transition:transform .4s cubic-bezier(.4,0,.2,1);flex:1}
-.onb-slide{min-width:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:60px 28px 24px;box-sizing:border-box;background:#f7f6f4}
+.onb-slides{display:flex;transition:transform .35s cubic-bezier(.4,0,.2,1);flex:1;min-height:0;will-change:transform}
+.onb-slide{min-width:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:52px 28px 16px;box-sizing:border-box;background:#f7f6f4;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .onb-illo{width:96px;height:96px;margin:0 auto 28px;display:flex;align-items:center;justify-content:center;border-radius:28px;background:var(--accent-bg)}
 .onb-illo svg{width:52px;height:52px;stroke:var(--accent);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .onb-title{font-family:var(--display);font-size:28px;font-weight:800;color:var(--ink);text-align:center;line-height:1.15;margin-bottom:10px}
@@ -530,7 +530,7 @@ textarea{resize:none;height:62px;line-height:1.5}
 .onb-chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:8px}
 .onb-chip{padding:10px 18px;border-radius:30px;border:2px solid var(--line2);background:var(--white);font-size:14px;font-weight:600;color:var(--ink2);cursor:pointer;transition:all .15s}
 .onb-chip.sel{border-color:var(--accent);background:var(--accent);color:#fff}
-.onb-footer{padding:20px 28px calc(20px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px;background:#f7f6f4}
+.onb-footer{flex-shrink:0;padding:14px 28px calc(16px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px;background:#f7f6f4;border-top:1px solid var(--line)}
 .onb-btn{width:100%;padding:16px;border-radius:14px;border:none;background:var(--accent);color:#fff;font-size:16px;font-weight:700;font-family:var(--font);cursor:pointer;transition:opacity .15s}
 .onb-btn:disabled{opacity:.4;cursor:not-allowed}
 .onb-btn-skip{background:none;border:none;color:var(--ink3);font-size:13px;font-family:var(--font);cursor:pointer;text-align:center}
@@ -6744,6 +6744,34 @@ function showOnboarding() {
   document.querySelector('.topbar') && (document.querySelector('.topbar').style.display='none');
   document.querySelector('.tabbar') && (document.querySelector('.tabbar').style.display='none');
   onbGoTo(0);
+
+  // Swipe support
+  const slides = document.getElementById('onb-slides');
+  let _tx0 = 0, _ty0 = 0, _swiping = false;
+  slides.addEventListener('touchstart', e => {
+    _tx0 = e.touches[0].clientX;
+    _ty0 = e.touches[0].clientY;
+    _swiping = false;
+  }, {passive: true});
+  slides.addEventListener('touchmove', e => {
+    const dx = e.touches[0].clientX - _tx0;
+    const dy = e.touches[0].clientY - _ty0;
+    if(!_swiping && Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 8) _swiping = true;
+    if(_swiping) e.preventDefault(); // block vertical scroll only if swiping horizontally
+  }, {passive: false});
+  slides.addEventListener('touchend', e => {
+    if(!_swiping) return;
+    const dx = e.changedTouches[0].clientX - _tx0;
+    if(dx < -50 && onbStep < ONB_STEPS - 1) {
+      // Swipe left → next (only if button enabled)
+      const btn = document.getElementById('onb-btn');
+      if(!btn.disabled) onbNext();
+    } else if(dx > 50 && onbStep > 0) {
+      // Swipe right → previous
+      onbGoTo(onbStep - 1);
+    }
+    _swiping = false;
+  }, {passive: true});
 }
 
 function hideOnboarding() {
