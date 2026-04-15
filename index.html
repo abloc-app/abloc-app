@@ -2000,6 +2000,36 @@ textarea{resize:none;height:62px;line-height:1.5}
       <div class="wow-ai-label">Coaching</div>
       <div class="wow-ai-text" id="wow-ai-text">Analyse en cours...</div>
     </div>
+
+    <!-- Feedback post-séance -->
+    <div style="padding:14px 20px;border-top:1px solid var(--line)">
+      <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Effort perçu (RPE)</div>
+      <div style="display:flex;gap:4px;margin-bottom:14px" id="wow-rpe-btns">
+        <button onclick="setWowRPE(1,this)" style="flex:1;padding:7px 2px;border-radius:6px;border:1.5px solid var(--line2);background:var(--off);font-size:11px;font-weight:600;cursor:pointer;color:var(--ink2)">1</button>
+        <button onclick="setWowRPE(2,this)" style="flex:1;padding:7px 2px;border-radius:6px;border:1.5px solid var(--line2);background:var(--off);font-size:11px;font-weight:600;cursor:pointer;color:var(--ink2)">2</button>
+        <button onclick="setWowRPE(3,this)" style="flex:1;padding:7px 2px;border-radius:6px;border:1.5px solid var(--line2);background:var(--off);font-size:11px;font-weight:600;cursor:pointer;color:var(--ink2)">3</button>
+        <button onclick="setWowRPE(4,this)" style="flex:1;padding:7px 2px;border-radius:6px;border:1.5px solid var(--line2);background:var(--off);font-size:11px;font-weight:600;cursor:pointer;color:var(--ink2)">4</button>
+        <button onclick="setWowRPE(5,this)" style="flex:1;padding:7px 2px;border-radius:6px;border:1.5px solid var(--line2);background:var(--off);font-size:11px;font-weight:600;cursor:pointer;color:var(--ink2)">5</button>
+        <button onclick="setWowRPE(6,this)" style="flex:1;padding:7px 2px;border-radius:6px;border:1.5px solid var(--line2);background:var(--off);font-size:11px;font-weight:600;cursor:pointer;color:var(--ink2)">6</button>
+        <button onclick="setWowRPE(7,this)" style="flex:1;padding:7px 2px;border-radius:6px;border:1.5px solid var(--line2);background:var(--off);font-size:11px;font-weight:600;cursor:pointer;color:var(--ink2)">7</button>
+        <button onclick="setWowRPE(8,this)" style="flex:1;padding:7px 2px;border-radius:6px;border:1.5px solid var(--line2);background:var(--off);font-size:11px;font-weight:600;cursor:pointer;color:var(--ink2)">8</button>
+        <button onclick="setWowRPE(9,this)" style="flex:1;padding:7px 2px;border-radius:6px;border:1.5px solid var(--line2);background:var(--off);font-size:11px;font-weight:600;cursor:pointer;color:var(--ink2)">9</button>
+        <button onclick="setWowRPE(10,this)" style="flex:1;padding:7px 2px;border-radius:6px;border:1.5px solid var(--line2);background:var(--off);font-size:11px;font-weight:600;cursor:pointer;color:var(--ink2)">10</button>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Séance globalement</div>
+      <div style="display:flex;gap:8px;margin-bottom:12px" id="wow-diff-btns">
+        <button onclick="setWowDiff('facile',this)" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">😌 Facile</button>
+        <button onclick="setWowDiff('bien',this)" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">👊 Bien</button>
+        <button onclick="setWowDiff('dur',this)" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">🔥 Dur</button>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Objectif atteint ?</div>
+      <div style="display:flex;gap:8px" id="wow-obj-btns">
+        <button onclick="setWowObj('oui',this)" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">✓ Oui</button>
+        <button onclick="setWowObj('bof',this)" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">〜 Bof</button>
+        <button onclick="setWowObj('non',this)" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">✗ Non</button>
+      </div>
+    </div>
+
     <div class="wow-actions">
       <button class="btn btn-primary" style="margin:0" onclick="closeWow('coaching')">Voir mon coaching complet</button>
       <button class="btn" style="margin:0;color:var(--ink3);border-color:var(--line)" onclick="closeWow('seance')">Retour à la séance</button>
@@ -2008,6 +2038,61 @@ textarea{resize:none;height:62px;line-height:1.5}
 </div>
 
 </div><!-- /app -->
+
+<!-- MODAL PRÉ-SÉANCE -->
+<div id="pre-seance-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:600;align-items:flex-end;justify-content:center">
+  <div style="background:var(--white);border-radius:20px 20px 0 0;width:100%;max-width:430px;padding:24px 20px calc(28px + env(safe-area-inset-bottom))">
+    <div style="font-family:var(--display);font-size:18px;font-weight:700;color:var(--ink);margin-bottom:4px">Avant de grimper</div>
+    <div style="font-size:13px;color:var(--ink3);margin-bottom:16px">2 questions rapides pour mieux te coacher</div>
+
+    <!-- Plan du jour depuis la planif IA -->
+    <div id="pre-plan-du-jour" style="display:none;background:var(--accent-bg);border:1.5px solid #ffd5c2;border-radius:12px;padding:12px 14px;margin-bottom:16px">
+      <div style="font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">📋 Ton plan du jour</div>
+      <div id="pre-plan-titre" style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:2px"></div>
+      <div id="pre-plan-focus" style="font-size:12px;color:var(--ink2);margin-bottom:4px"></div>
+      <div id="pre-plan-blocs" style="font-size:11px;color:var(--accent)"></div>
+    </div>
+
+    <div style="font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Comment tu te sens aujourd'hui ?</div>
+    <div style="display:flex;gap:8px;justify-content:space-between;margin-bottom:20px" id="pre-ressenti-btns">
+      <button onclick="setPreRessenti(1,this)" style="flex:1;padding:10px 4px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:20px;cursor:pointer">😴</button>
+      <button onclick="setPreRessenti(2,this)" style="flex:1;padding:10px 4px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:20px;cursor:pointer">😕</button>
+      <button onclick="setPreRessenti(3,this)" style="flex:1;padding:10px 4px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:20px;cursor:pointer">😐</button>
+      <button onclick="setPreRessenti(4,this)" style="flex:1;padding:10px 4px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:20px;cursor:pointer">😊</button>
+      <button onclick="setPreRessenti(5,this)" style="flex:1;padding:10px 4px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:20px;cursor:pointer">🔥</button>
+    </div>
+
+    <div style="font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Objectif du jour ?</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px" id="pre-objectif-btns">
+      <button onclick="setPreObjectif('technique',this)" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">🎯 Technique</button>
+      <button onclick="setPreObjectif('force',this)" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">💪 Force</button>
+      <button onclick="setPreObjectif('projets',this)" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">🎯 Projets</button>
+      <button onclick="setPreObjectif('decompresser',this)" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">🌊 Décompresser</button>
+    </div>
+    <button id="pre-plan-btn" onclick="setPreObjectif('plan',this)" style="display:none;width:100%;padding:10px;border-radius:10px;border:1.5px solid var(--accent);background:var(--accent-bg);color:var(--accent);font-size:12px;font-weight:700;cursor:pointer;margin-bottom:20px">📋 Suivre mon plan du jour</button>
+    <div id="pre-objectif-spacer" style="display:block;height:12px"></div>
+
+    <button onclick="closePreSeance()" style="width:100%;padding:14px;border-radius:12px;background:var(--accent);color:#fff;border:none;font-size:15px;font-weight:700;cursor:pointer">C'est parti 🧗</button>
+    <button onclick="closePreSeance()" style="width:100%;padding:10px;background:none;border:none;color:var(--ink3);font-size:13px;cursor:pointer;margin-top:4px">Passer →</button>
+  </div>
+</div>
+
+<!-- MODAL RAISON ÉCHEC -->
+<div id="raison-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:700;align-items:flex-end;justify-content:center">
+  <div style="background:var(--white);border-radius:20px 20px 0 0;width:100%;max-width:430px;padding:20px 20px calc(24px + env(safe-area-inset-bottom))">
+    <div style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px">Pourquoi ce bloc a résisté ?</div>
+    <div style="font-size:12px;color:var(--ink3);margin-bottom:14px">Optionnel — aide le coaching à être plus précis</div>
+    <div id="raison-bloc-label" style="font-size:12px;color:var(--accent);font-weight:600;margin-bottom:12px"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+      <button onclick="setRaison('force')" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">💪 Pas assez fort</button>
+      <button onclick="setRaison('lecture')" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">👁 Mauvaise lecture</button>
+      <button onclick="setRaison('technique')" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">🎯 Technique</button>
+      <button onclick="setRaison('mobilite')" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">🧘 Mobilité</button>
+      <button onclick="setRaison('peur')" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">😬 Mental/Peur</button>
+      <button onclick="setRaison(null)" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;color:var(--ink3);cursor:pointer">Passer</button>
+    </div>
+  </div>
+</div>
 
 <div class="bloc-detail-overlay" id="bloc-detail-overlay" onclick="if(event.target===this)closeBlocDetail()">
   <div class="bloc-detail-sheet" id="bloc-detail-sheet"></div>
@@ -2086,6 +2171,12 @@ const SUGGESTIONS = [
 
 // ========== STATE ==========
 let results = {};
+let seanceRessenti = null;   // 1-5
+let seanceObjectif = null;   // 'technique' | 'force' | 'projets' | 'decompresser'
+let seanceRPE = null;        // 1-10
+let seanceFeedbackDiff = null; // 'facile' | 'bien' | 'dur'
+let seanceFeedbackObj = null;  // 'oui' | 'bof' | 'non'
+let blocRaisons = {};        // {blocId: 'force'|'lecture'|'peur'|'mobilite'|'technique'}
 let filterCouleur = 'all';
 let filterCirc = 'all';
 let filterSuggType = 'all';
@@ -2094,6 +2185,7 @@ let blocsArchive = []; // {id, couleur, col, secteur, cotation, ouvreur, action,
 let mesObjectifs = [];
 let historique = [];
 let moonData = {};
+let weekPlanData = null; // Plan de semaine IA stocké {lundi:{titre,focus,exercices,blocs_recommandes}, ...}
 let hangSessions = [];
 let campusSessions = [];
 let spraySessions = [];
@@ -2181,11 +2273,8 @@ function showTab(t) {
   document.getElementById('main-title').textContent=titles[t]||t;
   if(currentUser) { updateUserPill(); } else { document.getElementById('topbar-right').textContent=t==='seance'?new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'short',weekday:'short'}):'';}  
   if(t==='outils'){updateOutilsBadges();renderOutilsReco();}
+  if(t==='seance' && currentUser && !_preSeanceDone) { setTimeout(showPreSeance, 300); }
   if(t==='moonboard') renderMoonGrid();
-  if(t==='hangboard'){renderHangProtocols();renderHangHisto();}
-  if(t==='campus'){renderCampusExos();renderCampusHisto();}
-  if(t==='spraywall') renderSprayHisto();
-  if(t==='circuits') renderCircuits();
   if(t==='coaching'){
     renderCoaching();renderCoachStats();renderColorBars();
     // Ensure coach panel is visible by default
@@ -2282,6 +2371,146 @@ function updateObjSeanceBars() {
   saveAll();
 }
 
+// ========== PRÉ-SÉANCE ==========
+let _preSeanceDone = false; // reset à chaque nouvelle séance
+let _raisonCurrentKey = null;
+
+function showPreSeance() {
+  if(_preSeanceDone) return;
+  seanceRessenti = null; seanceObjectif = null;
+  
+  // Détecter le jour courant et le plan prévu
+  const DAYS_FR = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+  const todayKey = DAYS_FR[new Date().getDay()];
+  const todayPlan = weekPlanData && weekPlanData[todayKey];
+  const isRestDay = todayPlan && todayPlan.titre && todayPlan.titre.toLowerCase().includes('repos');
+
+  // Injecter le plan du jour si disponible
+  const planBlock = document.getElementById('pre-plan-du-jour');
+  if(planBlock) {
+    if(todayPlan && !isRestDay) {
+      planBlock.style.display = 'block';
+      document.getElementById('pre-plan-titre').textContent = todayPlan.titre || todayKey;
+      document.getElementById('pre-plan-focus').textContent = todayPlan.focus || '';
+      document.getElementById('pre-plan-blocs').textContent = todayPlan.blocs_recommandes ? '🧗 ' + todayPlan.blocs_recommandes : '';
+    } else if(isRestDay) {
+      planBlock.style.display = 'block';
+      document.getElementById('pre-plan-titre').textContent = '😴 Journée de repos prévue';
+      document.getElementById('pre-plan-focus').textContent = 'Ton plan suggère de récupérer aujourd\'hui';
+      document.getElementById('pre-plan-blocs').textContent = '';
+    } else {
+      planBlock.style.display = 'none';
+    }
+  }
+
+  document.getElementById('pre-seance-overlay').style.display = 'flex';
+  document.querySelectorAll('#pre-ressenti-btns button, #pre-objectif-btns button').forEach(b=>{
+    b.style.background='var(--off)'; b.style.borderColor='var(--line2)'; b.style.color='var(--ink)';
+  });
+
+  // Pré-sélectionner l'objectif du plan si disponible
+  if(todayPlan && !isRestDay && todayPlan.focus) {
+    const focus = todayPlan.focus.toLowerCase();
+    let objKey = null;
+    if(focus.includes('technique')) objKey = 'technique';
+    else if(focus.includes('force') || focus.includes('doigt') || focus.includes('physi')) objKey = 'force';
+    else if(focus.includes('projet') || focus.includes('dévers') || focus.includes('diffici')) objKey = 'projets';
+    else if(focus.includes('récup') || focus.includes('decharge') || focus.includes('volume')) objKey = 'decompresser';
+    if(objKey) {
+      seanceObjectif = objKey;
+      const btn = document.querySelector(`#pre-objectif-btns button[onclick*="${objKey}"]`);
+      if(btn) { btn.style.background='var(--accent)'; btn.style.borderColor='var(--accent)'; btn.style.color='#fff'; }
+    }
+  }
+
+  // Afficher le bouton "Suivre mon plan" seulement si un plan existe et que c'est pas repos
+  const planBtn = document.getElementById('pre-plan-btn');
+  const spacer = document.getElementById('pre-objectif-spacer');
+  const showPlanBtn = !!(todayPlan && !isRestDay);
+  if(planBtn) planBtn.style.display = showPlanBtn ? 'block' : 'none';
+  if(spacer) spacer.style.display = showPlanBtn ? 'none' : 'block';
+}
+function closePreSeance() {
+  document.getElementById('pre-seance-overlay').style.display = 'none';
+  _preSeanceDone = true;
+  // Check blessures toutes les 10 séances
+  if(historique.length > 0 && historique.length % 10 === 0) {
+    setTimeout(checkBlessuresPeriodic, 800);
+  }
+}
+function setPreRessenti(val, el) {
+  seanceRessenti = val;
+  document.querySelectorAll('#pre-ressenti-btns button').forEach(b=>{
+    b.style.background='var(--off)'; b.style.borderColor='var(--line2)';
+  });
+  el.style.background='var(--accent-bg)'; el.style.borderColor='var(--accent)';
+}
+function setPreObjectif(val, el) {
+  seanceObjectif = val;
+  document.querySelectorAll('#pre-objectif-btns button').forEach(b=>{
+    b.style.background='var(--off)'; b.style.borderColor='var(--line2)'; b.style.color='var(--ink)';
+  });
+  el.style.background='var(--accent)'; el.style.borderColor='var(--accent)'; el.style.color='#fff';
+}
+
+// ========== RAISON ÉCHEC ==========
+function showRaisonModal(blocKey, blocLabel) {
+  _raisonCurrentKey = blocKey;
+  document.getElementById('raison-bloc-label').textContent = blocLabel || '';
+  document.getElementById('raison-overlay').style.display = 'flex';
+}
+function setRaison(raison) {
+  if(_raisonCurrentKey) {
+    if(raison) blocRaisons[_raisonCurrentKey] = raison;
+    _raisonCurrentKey = null;
+  }
+  document.getElementById('raison-overlay').style.display = 'none';
+}
+
+// ========== CHECK BLESSURES PÉRIODIQUE ==========
+function checkBlessuresPeriodic() {
+  const overlay = document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:700;display:flex;align-items:flex-end;justify-content:center';
+  overlay.innerHTML=`
+    <div style="background:var(--white);border-radius:20px 20px 0 0;width:100%;max-width:430px;padding:22px 20px calc(26px + env(safe-area-inset-bottom))">
+      <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px">⚕️ Check rapide</div>
+      <div style="font-size:13px;color:var(--ink3);margin-bottom:16px">Tu as des douleurs ou contraintes physiques en ce moment ?</div>
+      <textarea id="blessure-check-input" placeholder="Ex: douleur poulie A2, épaule sensible... (laisse vide si rien)" rows="2"
+        style="width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line2);font-size:13px;font-family:var(--font);resize:none;box-sizing:border-box;margin-bottom:12px;background:var(--off);color:var(--ink)"></textarea>
+      <button onclick="saveBlessureCheck()" style="width:100%;padding:13px;border-radius:12px;background:var(--accent);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer">Enregistrer</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  window._blessureOverlay = overlay;
+}
+function saveBlessureCheck() {
+  const val = document.getElementById('blessure-check-input')?.value?.trim();
+  if(val) { profilGrimpeur.blessures = val; saveAll(); }
+  window._blessureOverlay?.remove();
+}
+
+// ========== FEEDBACK POST-SÉANCE ==========
+function setWowRPE(val, el) {
+  seanceRPE = val;
+  document.querySelectorAll('#wow-rpe-btns button').forEach(b=>{
+    b.style.background='var(--off)'; b.style.borderColor='var(--line2)'; b.style.color='var(--ink2)';
+  });
+  el.style.background='var(--accent)'; el.style.borderColor='var(--accent)'; el.style.color='#fff';
+}
+function setWowDiff(val, el) {
+  seanceFeedbackDiff = val;
+  document.querySelectorAll('#wow-diff-btns button').forEach(b=>{
+    b.style.background='var(--off)'; b.style.borderColor='var(--line2)'; b.style.color='var(--ink)';
+  });
+  el.style.background='var(--accent)'; el.style.borderColor='var(--accent)'; el.style.color='#fff';
+}
+function setWowObj(val, el) {
+  seanceFeedbackObj = val;
+  document.querySelectorAll('#wow-obj-btns button').forEach(b=>{
+    b.style.background='var(--off)'; b.style.borderColor='var(--line2)'; b.style.color='var(--ink)';
+  });
+  el.style.background='var(--accent)'; el.style.borderColor='var(--accent)'; el.style.color='#fff';
+}
+
 function finirSeance() {
   seanceSelZone=null;
   const zp=document.getElementById('seance-zone-panel');if(zp)zp.style.display='none';
@@ -2338,12 +2567,24 @@ function finirSeance() {
   });
   historique.unshift({
     date:new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'short',weekday:'short'}),
+    dateISO: new Date().toISOString().slice(0,10),
     ok, nok,
     objTouch:mesObjectifs.filter(o=>(o.lastPct||0)>0).length,
     colorOk:_sColorOk, styleOk:_sStyleOk, inclOk:_sInclOk,
     priseOk:_sPriseOk, mvtOk:_sMvtOk,
-    morphoOk:_morphoOk, morphoTot:_morphoTot
+    morphoOk:_morphoOk, morphoTot:_morphoTot,
+    // Nouvelles données de contexte
+    ressenti: seanceRessenti,
+    objectifSeance: seanceObjectif,
+    rpe: seanceRPE,
+    feedbackDiff: seanceFeedbackDiff,
+    feedbackObj: seanceFeedbackObj,
+    raisonEchecs: {...blocRaisons},
   });
+  // Reset état pré/post séance
+  seanceRessenti=null; seanceObjectif=null; seanceRPE=null;
+  seanceFeedbackDiff=null; seanceFeedbackObj=null; blocRaisons={};
+  _preSeanceDone=false; // prêt pour la prochaine séance
   // ── Calcul du score de la séance ──
   const _now = new Date();
   const _mKey = `${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}`;
@@ -2630,6 +2871,13 @@ Juste le texte, pas de JSON.`;
 }
 
 function closeWow(dest) {
+  // Sauvegarder le feedback post-séance dans la séance courante
+  if(historique[0]) {
+    if(seanceRPE !== null) historique[0].rpe = seanceRPE;
+    if(seanceFeedbackDiff) historique[0].feedbackDiff = seanceFeedbackDiff;
+    if(seanceFeedbackObj) historique[0].feedbackObj = seanceFeedbackObj;
+    saveAll();
+  }
   const overlay = document.getElementById('wow-overlay');
   overlay.classList.remove('open');
   setTimeout(() => {
@@ -3051,11 +3299,8 @@ function renderMesObj() {
       <div style="display:flex;align-items:center;gap:10px">
         <div style="width:10px;height:10px;border-radius:50%;background:${o.col||'var(--accent)'};flex-shrink:0"></div>
         <div style="flex:1;min-width:0">
-          <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:${o.duree?'3px':'0'}">${o.titre}</div>
-          ${o.done ? '<div style="font-size:11px;color:var(--green);font-weight:600">✓ Atteint !</div>'
-          : o.duree ? `<div style="font-size:11px;color:var(--ink3)">⏱ ${o.duree}</div>`
-          : o.dureeLoading ? '<div style="font-size:11px;color:var(--ink3)">Estimation en cours...</div>'
-          : ''}
+          <div style="font-size:13px;font-weight:600;color:var(--ink)">${o.titre}</div>
+          ${o.done ? '<div style="font-size:11px;color:var(--green);font-weight:600;margin-top:2px">✓ Atteint !</div>' : ''}
         </div>
         <span style="font-size:20px;cursor:pointer;color:var(--ink3);flex-shrink:0;line-height:1" onclick="removeObj('${o.id}')">×</span>
       </div>
@@ -3101,21 +3346,16 @@ function addObjLibre() {
   const titre = document.getElementById('obj-libre-titre')?.value.trim();
   if(!titre || titre.length < 3) { showToast('Écris un objectif d\'au moins 3 caractères'); return; }
   const id = 'libre_' + Date.now();
-  const obj = {
+  mesObjectifs.push({
     id, titre,
     col: 'var(--accent)',
-    lastPct: 0, done: false, justDone: false,
+    done: false, justDone: false,
     manuel: true,
-    duree: null,
-    dureeLoading: true,
-  };
-  mesObjectifs.push(obj);
+  });
   document.getElementById('obj-libre-titre').value = '';
-  renderMesObj(); renderSuggList();
+  renderMesObj();
   saveAll();
   showToast('Objectif ajouté !');
-  // Demander à l'IA une estimation de durée
-  estimeeDureeObjectif(obj);
 }
 
 async function estimeeDureeObjectif(obj) {
@@ -3420,7 +3660,7 @@ function saveAll() {
       blocMedias,
       userBlocs: BLOCS.filter(b=>b.addedBy), // user-added blocs
       blocAvis, myAvis, unlockedBadges: [...unlockedBadges], mesResas: [...mesResas],
-      profilGrimpeur, blocsArchive,
+      profilGrimpeur, blocsArchive, weekPlanData,
     };
     localStorage.setItem(LS_KEY, JSON.stringify(data));
   } catch(e) { console.warn('Save failed', e); }
@@ -3470,6 +3710,7 @@ function loadAll() {
     if (d.profilGrimpeur) Object.assign(profilGrimpeur, d.profilGrimpeur);
     if (d.mesResas)      d.mesResas.forEach(r=>mesResas.add(r));
     if (d.blocsArchive)  blocsArchive.push(...d.blocsArchive);
+    if (d.weekPlanData)  weekPlanData = d.weekPlanData;
     if (d.circuits) {
       d.circuits.forEach(saved => {
         const c = CIRCUITS.find(x=>x.id===saved.id);
@@ -3927,13 +4168,74 @@ async function callClaudeCoaching(mode) {
     buildCrossAnalysis(inclStats,    'INCLINAISONS'),
   ].filter(Boolean).join('\n');
 
+  // ── Stats mensuelles (2 derniers mois) ──
+  const now = new Date();
+  const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const lastMonthDate = new Date(now.getFullYear(), now.getMonth()-1, 1);
+  const lastMonth = `${lastMonthDate.getFullYear()}-${String(lastMonthDate.getMonth()+1).padStart(2,'0')}`;
+  const parseMonth = s => { try { const d=new Date(s+'T00:00:00'); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; } catch(e){return '';} };
+  const statsMonth = (mKey) => {
+    const ss = historique.filter(s=>parseMonth(s.dateISO||'')||mKey); // approx
+    const m = historique.filter((_,i)=>i<20); // use last 20 entries as proxy
+    return m;
+  };
+
+  // Détection d'absence (jours depuis la dernière séance)
+  let joursSansSeance = null;
+  if(historique.length > 0 && historique[0].dateISO) {
+    const last = new Date(historique[0].dateISO);
+    joursSansSeance = Math.round((now - last) / 86400000);
+  }
+
+  // Détection de cycle de fatigue (3+ séances consécutives avec RPE élevé ou taux décroissant)
+  let signaleFatigue = false;
+  if(historique.length >= 3) {
+    const rec = historique.slice(0,3);
+    const rpeEleve = rec.filter(s=>s.rpe && s.rpe >= 8).length >= 2;
+    const tauxDecroissant = rec[0].ok+rec[0].nok>0 && rec[1].ok+rec[1].nok>0 && rec[2].ok+rec[2].nok>0
+      && (rec[0].ok/(rec[0].ok+rec[0].nok)) < (rec[1].ok/(rec[1].ok+rec[1].nok))
+      && (rec[1].ok/(rec[1].ok+rec[1].nok)) < (rec[2].ok/(rec[2].ok+rec[2].nok));
+    signaleFatigue = rpeEleve || tauxDecroissant;
+  }
+
+  // Raisons d'échec cumulées
+  const raisonStats = {};
+  historique.forEach(s => {
+    Object.values(s.raisonEchecs||{}).forEach(r => {
+      raisonStats[r] = (raisonStats[r]||0) + 1;
+    });
+  });
+  const raisonSummary = Object.entries(raisonStats)
+    .sort((a,b)=>b[1]-a[1])
+    .map(([k,v])=>k+': '+v+'x')
+    .join(', ') || 'Pas de données';
+
+  // Ressenti et objectifs des séances récentes
+  const ressentiRecent = historique.slice(0,5).map(s=>{
+    const parts = [s.date];
+    if(s.ressenti) parts.push('ressenti: '+s.ressenti+'/5');
+    if(s.rpe) parts.push('RPE: '+s.rpe+'/10');
+    if(s.objectifSeance) parts.push('objectif: '+s.objectifSeance);
+    if(s.feedbackDiff) parts.push('séance: '+s.feedbackDiff);
+    if(s.feedbackObj) parts.push('objectif atteint: '+s.feedbackObj);
+    return parts.join(' | ');
+  }).filter(s=>s.split('|').length>1).join('\n') || 'Pas encore de données subjectives';
+
+  // Adéquation objectifs déclarés vs performance
+  const objVsPerf = mesObjectifs.filter(o=>!o.done).map(o=>`"${o.titre}" — progression ${o.lastPct||0}%`).join(', ') || 'Aucun objectif actif';
+
   const ctx = 'PROFIL GRIMPEUR :\n'
     +'- Niveau déclaré : '+niveau+'\n'
     +'- Niveau observé : '+niveauObserveCtx+'\n'
     +'- '+profilPhysique+'\n'
     +'- Séances enregistrées dans l\'app : '+historique.length+' (≠ ancienneté réelle)\n'
+    +(joursSansSeance!==null ? '- Jours depuis la dernière séance : '+joursSansSeance+(joursSansSeance>14?' ⚠ absence notable':'')+'\n' : '')
+    +(signaleFatigue ? '- ⚠ SIGNAL FATIGUE : taux décroissant ou RPE élevé sur 3 séances consécutives\n' : '')
     +'- Taux de réussite global : '+tauxGlobal+'%\n'
     +'- Blocs réussis / ratés : '+totalOk+' / '+totalNok+'\n\n'
+    +'DONNÉES SUBJECTIVES RÉCENTES :\n'+ressentiRecent+'\n\n'
+    +'RAISONS D\'ÉCHEC (cumulées) :\n'+raisonSummary+'\n\n'
+    +'OBJECTIFS ACTIFS VS PROGRESSION :\n'+objVsPerf+'\n\n'
     +'ANALYSE CROISÉE BLOCS RÉUSSIS / RATÉS (seuil min. '+MIN_SAMPLE+' blocs tentés par tag) :\n'
     +(crossAnalysis||'Pas encore assez de données (besoin de '+MIN_SAMPLE+'+ blocs tentés par caractéristique)')+'\n\n'
     +'STATS PAR COULEUR :\n'+(colorSummary||'Pas de données')+'\n\n'
@@ -3988,6 +4290,11 @@ CE QU'IL FAUT FAIRE :
 ✓ "Sur les 3 dernières séances, les dalles tiennent bien (78%) mais aujourd'hui le dévers du K_03 t'a résisté deux fois — peut-être fatigue, peut-être à retravailler."
 ✓ "Ton niveau global est cohérent avec du 6B, mais le 6C+ butte systématiquement sur les prises arquées — c'est un pattern qui revient."
 ✓ "L'analyse croisée montre que tu réussis bien les slopers (80%) mais les réglettes te font défaut (38% sur 8 blocs) — intéressant parce que c'est indépendant de l'inclinaison."
+✓ Si un signal de fatigue est détecté dans les données, propose une récupération plutôt que du volume supplémentaire.
+✓ Si les raisons d'échec pointent systématiquement vers la même cause (lecture, force, peur...), mentionne-le comme axe de travail concret.
+✓ Si le grimpeur était absent >14 jours, adapte le ton — ne pas surcharger au retour.
+✓ Si le ressenti avant séance était bas (1-2) mais les résultats bons, note-le positivement.
+✓ Compare les résultats avec l'objectif déclaré en début de séance si disponible.
 
 ${ctx}
 
@@ -4100,6 +4407,9 @@ Réponds UNIQUEMENT avec ce JSON :
       try {
         const clean = text.replace(/```[\w]*\n?/g,'').replace(/```/g,'').trim();
         const plan = JSON.parse(clean);
+        // Stocker le plan pour le modal pré-séance
+        weekPlanData = plan;
+        saveAll();
         const DAY_LABELS = {lundi:'LUN',mardi:'MAR',mercredi:'MER',jeudi:'JEU',vendredi:'VEN',samedi:'SAM',dimanche:'DIM'};
         const isRest = t => t.toLowerCase().includes('repos');
         const el = document.getElementById('coach-week-plan');
@@ -6216,8 +6526,6 @@ function selectSeanceZone(name){
         +'<div class="color-pill" style="background:'+(CCOLS[col]||'#888')+'"></div>'
         +'<div style="flex:1"><div class="bloc-id">'+nom+'</div></div>'
         +'<div style="display:flex;gap:6px;align-items:center">'
-        +'<button class="rbtn '+(res==='ok'?'ok':'')+'" data-key="'+key+'" data-val="ok" onclick="event.stopPropagation();setSeanceResBtn(this)">&#10003;</button>'
-        +'<button class="rbtn '+(res==='nok'?'nok':'')+'" data-key="'+key+'" data-val="nok" onclick="event.stopPropagation();setSeanceResBtn(this)">&#10007;</button>'
         +'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>'
         +'</div></div>'
       );
@@ -6244,8 +6552,6 @@ function selectSeanceZone(name){
       +(tags||b.cotation?'<div class="bloc-sub">'+(tags||'')+(b.cotation?' &middot; '+b.cotation:'')+'</div>':'')
       +'</div>'
       +'<div style="display:flex;gap:6px;align-items:center">'
-      +'<button class="rbtn '+(res==='ok'?'ok':'')+'" data-key="'+key+'" data-val="ok" data-type="bloc" onclick="event.stopPropagation();setSeanceResBtn(this)">&#10003;</button>'
-      +'<button class="rbtn '+(res==='nok'?'nok':'')+'" data-key="'+key+'" data-val="nok" data-type="bloc" onclick="event.stopPropagation();setSeanceResBtn(this)">&#10007;</button>'
       +'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>'
       +'</div></div>'
     );
@@ -6297,16 +6603,29 @@ function setSeanceResBtn(btn){
 
 
 function setSeanceRes(key,val){
+  const prev = mapResults[key];
   mapResults[key]===val?delete mapResults[key]:mapResults[key]=val;
   const parts=key.split('|');const bk=parts[1]+'|'+parts[2]+'|'+parts[3];
   if(mapResults[key])results[bk]=mapResults[key];else delete results[bk];
   updateSeanceCounts();updateObjSeanceBars();saveAll();
   selectSeanceZone(seanceSelZone);renderSeanceOverlays();
+  // Proposer une raison si raté
+  if(val==='nok' && prev!=='nok') {
+    const nom = (parts[2]||'')+ ' #'+(parts[3]||'') + ' — ' + (parts[1]||'');
+    setTimeout(()=>showRaisonModal(key, nom), 200);
+  }
 }
 function setSeanceResBloc(key,val){
+  const prev = results[key];
   results[key]===val?delete results[key]:results[key]=val;
   updateSeanceCounts();updateObjSeanceBars();saveAll();
   selectSeanceZone(seanceSelZone);renderSeanceOverlays();
+  // Proposer une raison si on vient de marquer comme raté
+  if(val==='nok' && prev!=='nok') {
+    const bloc = BLOCS.find(b=>b.id===key.split('|')[0]) || BLOCS.find(b=>b.id===key);
+    const label = bloc ? `${bloc.id} — ${bloc.couleur}${bloc.cotation?' ('+bloc.cotation+')':''}` : key;
+    setTimeout(()=>showRaisonModal(key, label), 200);
+  }
 }
 function updateSeanceCounts(){
   const ok=Object.values(results).filter(v=>v==='ok').length;
