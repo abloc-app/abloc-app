@@ -2295,7 +2295,7 @@ function finirSeance() {
   });
   totalReussis += ok;
   // Collect per-style and per-inclinaison stats for this session
-  const _sColorOk={}, _sStyleOk={}, _sInclOk={};
+  const _sColorOk={}, _sStyleOk={}, _sInclOk={}, _sPriseOk={}, _sMvtOk={};
   let _morphoOk=0, _morphoTot=0;
   BLOCS.forEach(b=>{
     const r=results[b.id];
@@ -2313,6 +2313,16 @@ function finirSeance() {
         if(!_sInclOk[i]) _sInclOk[i]={ok:0,nok:0};
         r==='ok'?_sInclOk[i].ok++:_sInclOk[i].nok++;
       });
+      // prises
+      toArr(b.prises).forEach(p=>{
+        if(!_sPriseOk[p]) _sPriseOk[p]={ok:0,nok:0};
+        r==='ok'?_sPriseOk[p].ok++:_sPriseOk[p].nok++;
+      });
+      // mouvements
+      toArr(b.mouvements).forEach(m=>{
+        if(!_sMvtOk[m]) _sMvtOk[m]={ok:0,nok:0};
+        r==='ok'?_sMvtOk[m].ok++:_sMvtOk[m].nok++;
+      });
       // morpho
       if(b.morpho!==undefined){ _morphoTot++; if(r==='ok') _morphoOk++; }
     }
@@ -2322,6 +2332,7 @@ function finirSeance() {
     ok, nok,
     objTouch:mesObjectifs.filter(o=>(o.lastPct||0)>0).length,
     colorOk:_sColorOk, styleOk:_sStyleOk, inclOk:_sInclOk,
+    priseOk:_sPriseOk, mvtOk:_sMvtOk,
     morphoOk:_morphoOk, morphoTot:_morphoTot
   });
   // ── Calcul du score de la séance ──
@@ -2577,18 +2588,35 @@ async function showWowMoment(ok, nok, sessionScore) {
       pg.frequence ? pg.frequence+'/sem' : null,
     ].filter(Boolean).join(', ');
 
-    const prompt = 'Tu es un coach escalade bienveillant. Le grimpeur vient de terminer une séance : '+ok+' blocs réussis, '+nok+' ratés, taux '+taux+'%. Profil : '+profilCtx+'. Total séances : '+historique.length+'. '+(delta!==null?'Par rapport à sa dernière séance : '+(delta>=0?'+'+ delta:delta)+' blocs.':'')+' Écris UN message de coaching en 1-2 phrases maximum, direct, motivant et personnalisé. Tutoie-le. Pas de JSON, juste le texte.';
+    const deltaCtx = delta !== null
+      ? (delta > 0 ? `+${delta} blocs vs séance précédente` : delta < 0 ? `${delta} blocs vs séance précédente` : 'même nombre que la séance précédente')
+      : 'première séance enregistrée';
+
+    const prompt = `Séance terminée : ${ok} blocs réussis, ${nok} ratés (${taux}%). Profil : ${profilCtx}. ${deltaCtx}. Séances totales : ${historique.length}.
+
+Écris UNE phrase de coaching post-séance. Règles strictes :
+- Le nombre de séances loggées dans l'app ne reflète pas l'expérience du grimpeur — quelqu'un à sa "1ère séance" peut grimper depuis des années. Ne traite jamais quelqu'un comme un débutant sur la base du compteur de séances. Fie-toi au niveau déclaré.
+- Utilise les chiffres réels, ne les généralise pas ("t'as bien bossé" est interdit si le taux est 40%)
+- Pas de "félicitations", "c'est normal", "continue comme ça", "chaque séance compte"
+- Si le delta est négatif, ne le minimise pas — mais ne dramatise pas non plus
+- Parle comme un pote qui a suivi la séance, pas comme une appli
+- Tutoie, 1 phrase max, pas de point d'exclamation obligatoire
+- Exemples à éviter : "Belle séance !", "Tu progresses bien !", "La régularité paie !"
+- Exemples corrects : "67% ce soir, -3 blocs sur la dernière fois — le mauve du J a l'air de bloquer." ou "10 blocs flash, c'est une bonne cadence pour du ${niveau}."
+
+Juste le texte, pas de JSON.`;
+
     const res = await fetch('/.netlify/functions/coaching', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:120,messages:[{role:'user',content:prompt}]})
+      body: JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:80,messages:[{role:'user',content:prompt}]})
     });
     const data = await res.json();
     const text = (data.content?.[0]?.text||'').trim();
     if(text) aiEl.textContent = text;
-    else aiEl.textContent = 'Belle séance ! Continue comme ça.';
+    else aiEl.textContent = `${taux}% ce soir — ${ok} blocs dans la poche.`;
   } catch(e) {
-    aiEl.textContent = ok >= 5 ? 'Excellente séance ! Tu progresses bien.' : 'Bonne séance. Chaque bloc compte !';
+    aiEl.textContent = `${ok} réussis, ${nok} ratés — ${taux}%.`;
   }
 }
 
@@ -3702,20 +3730,69 @@ async function callClaudeCoaching(mode) {
     return parts.join(' | ');
   }).join('\n') || 'Aucune séance enregistrée.';
 
-  // ── Stats inclinaison et style cumulées ──
-  const inclStats = {}, styleStats = {};
+  // ── Stats inclinaison, style, prise, mouvement cumulées ──
+  const inclStats = {}, styleStats = {}, priseStats = {}, mvtStats = {};
   historique.forEach(s=>{
     Object.entries(s.inclOk||{}).forEach(([k,v])=>{ if(!inclStats[k])inclStats[k]={ok:0,tot:0}; inclStats[k].ok+=(v.ok||0); inclStats[k].tot+=(v.ok||0)+(v.nok||0); });
     Object.entries(s.styleOk||{}).forEach(([k,v])=>{ if(!styleStats[k])styleStats[k]={ok:0,tot:0}; styleStats[k].ok+=(v.ok||0); styleStats[k].tot+=(v.ok||0)+(v.nok||0); });
+    Object.entries(s.priseOk||{}).forEach(([k,v])=>{ if(!priseStats[k])priseStats[k]={ok:0,tot:0}; priseStats[k].ok+=(v.ok||0); priseStats[k].tot+=(v.ok||0)+(v.nok||0); });
+    Object.entries(s.mvtOk||{}).forEach(([k,v])=>{ if(!mvtStats[k])mvtStats[k]={ok:0,tot:0}; mvtStats[k].ok+=(v.ok||0); mvtStats[k].tot+=(v.ok||0)+(v.nok||0); });
   });
   const fmtStats = obj => Object.entries(obj).filter(([,v])=>v.tot>0).sort((a,b)=>a[1].ok/a[1].tot-b[1].ok/b[1].tot).map(([k,v])=>k+': '+Math.round(v.ok/v.tot*100)+'% ('+v.ok+'/'+v.tot+')').join(', ') || 'Pas de données';
-  const worstIncl = Object.entries(inclStats).filter(([,v])=>v.tot>=2).sort((a,b)=>a[1].ok/a[1].tot-b[1].ok/b[1].tot).slice(0,3).map(([k])=>k).join(', ');
-  const worstStyle = Object.entries(styleStats).filter(([,v])=>v.tot>=2).sort((a,b)=>a[1].ok/a[1].tot-b[1].ok/b[1].tot).slice(0,3).map(([k])=>k).join(', ');
+  const worstOf = (stats, minTot=2) => Object.entries(stats).filter(([,v])=>v.tot>=minTot).sort((a,b)=>a[1].ok/a[1].tot-b[1].ok/b[1].tot).slice(0,3).map(([k])=>k).join(', ');
+  const worstIncl  = worstOf(inclStats);
+  const worstStyle = worstOf(styleStats);
+  const worstPrise = worstOf(priseStats);
+  const worstMvt   = worstOf(mvtStats);
 
   // ── Blocs de la salle ──
   const blocsDispos = BLOCS.slice(0,40).map(b=>
     '['+b.id+'] '+b.couleur+(b.cotation?' '+b.cotation:'')+' | '+(b.inclinaisons||[b.incl||'']).join('+')+' | '+(b.styles||[b.style||'']).join('+')+' | '+(Array.isArray(b.prises)?b.prises:[b.prises||'']).join('+')+(b.mouvements&&b.mouvements.length?' | mvt:'+b.mouvements.join('+'):'')
   ).join('\n');
+
+  // ── Niveau observé à partir des performances réelles ──
+  // Ordre de difficulté : vert(4) < orange(5) < rose(5+) < noir(6A) < bleu(6B) < mauve(6C) < jaune(7A) < rouge(7B) < blanc(7C+)
+  const COULEUR_DIFF = ['vert','orange','rose','noir','bleu','mauve','jaune','rouge','blanc'];
+  const COULEUR_LABEL = {vert:'4',orange:'5',rose:'5+',noir:'6A',bleu:'6B',mauve:'6C',jaune:'7A',rouge:'7B',blanc:'7C+'};
+  let niveauObserve = null;
+  let niveauObserveCtx = '';
+  if(historique.length >= 3) {
+    // Couleur la plus difficile avec taux >= 50% sur au moins 2 blocs tentés
+    const couleurStats = {};
+    COULEUR_DIFF.forEach(c=>{ couleurStats[c]={ok:0,tot:0}; });
+    historique.forEach(s=>{
+      Object.entries(s.colorOk||{}).forEach(([c,v])=>{
+        if(couleurStats[c]){
+          couleurStats[c].ok += (v.ok||0);
+          couleurStats[c].tot += (v.ok||0)+(v.nok||0);
+        }
+      });
+    });
+    // Niveau "plancher" = couleur la plus difficile réussie à 50%+ sur 2+ blocs
+    let plancher = null;
+    COULEUR_DIFF.forEach(c=>{
+      const s = couleurStats[c];
+      if(s.tot >= 2 && s.ok/s.tot >= 0.5) plancher = c;
+    });
+    // Niveau "plafond" = couleur la plus difficile tentée au moins 2 fois
+    let plafond = null;
+    COULEUR_DIFF.forEach(c=>{ if(couleurStats[c].tot >= 2) plafond = c; });
+
+    if(plancher) {
+      niveauObserve = plancher;
+      const plancherLabel = COULEUR_LABEL[plancher];
+      const plafondLabel = plafond ? COULEUR_LABEL[plafond] : plancherLabel;
+      const detail = COULEUR_DIFF
+        .filter(c=>couleurStats[c].tot>=2)
+        .map(c=>c+': '+Math.round(couleurStats[c].ok/couleurStats[c].tot*100)+'% ('+couleurStats[c].ok+'/'+couleurStats[c].tot+')')
+        .join(', ');
+      niveauObserveCtx = `Niveau observé (basé sur ${historique.length} séances) : réussit régulièrement du ${plancherLabel}, tente jusqu'au ${plafondLabel}. Détail : ${detail}.`;
+    } else {
+      niveauObserveCtx = `Données insuffisantes pour inférer un niveau observé (${historique.length} séances enregistrées, mais peu de blocs tentés par couleur).`;
+    }
+  } else {
+    niveauObserveCtx = `Pas encore assez de séances pour observer le niveau réel (${historique.length}/3 minimum). Se fier au niveau déclaré.`;
+  }
 
   const notePerso = getCoachingNote();
 
@@ -3733,18 +3810,46 @@ async function callClaudeCoaching(mode) {
     pg.blessures  ? 'Blessures/contraintes: '+pg.blessures : null,
   ].filter(Boolean).join('\n- ') || 'Non renseigné';
 
+  // ── Analyse croisée : caractéristiques des blocs réussis vs ratés ──
+  // Minimum 4 blocs tentés pour chaque tag pour être significatif
+  const MIN_SAMPLE = 4;
+  const buildCrossAnalysis = (stats, label) => {
+    const entries = Object.entries(stats).filter(([,v])=>v.tot>=MIN_SAMPLE);
+    if(!entries.length) return '';
+    entries.sort((a,b)=>a[1].ok/a[1].tot - b[1].ok/b[1].tot);
+    const faibles = entries.filter(([,v])=>v.ok/v.tot<0.5).map(([k,v])=>`${k} ${Math.round(v.ok/v.tot*100)}% (${v.ok}/${v.tot})`);
+    const forts   = entries.filter(([,v])=>v.ok/v.tot>=0.7).map(([k,v])=>`${k} ${Math.round(v.ok/v.tot*100)}% (${v.ok}/${v.tot})`);
+    const parts = [];
+    if(faibles.length) parts.push(`Faibles (<50%) : ${faibles.join(', ')}`);
+    if(forts.length)   parts.push(`Forts (≥70%) : ${forts.join(', ')}`);
+    return parts.length ? `${label} — ${parts.join(' | ')}` : '';
+  };
+  const crossAnalysis = [
+    buildCrossAnalysis(priseStats,   'PRISES'),
+    buildCrossAnalysis(mvtStats,     'MOUVEMENTS'),
+    buildCrossAnalysis(styleStats,   'STYLES'),
+    buildCrossAnalysis(inclStats,    'INCLINAISONS'),
+  ].filter(Boolean).join('\n');
+
   const ctx = 'PROFIL GRIMPEUR :\n'
-    +'- Niveau : '+niveau+'\n'
+    +'- Niveau déclaré : '+niveau+'\n'
+    +'- Niveau observé : '+niveauObserveCtx+'\n'
     +'- '+profilPhysique+'\n'
-    +'- Séances totales : '+historique.length+'\n'
+    +'- Séances enregistrées dans l\'app : '+historique.length+' (≠ ancienneté réelle)\n'
     +'- Taux de réussite global : '+tauxGlobal+'%\n'
     +'- Blocs réussis / ratés : '+totalOk+' / '+totalNok+'\n\n'
+    +'ANALYSE CROISÉE BLOCS RÉUSSIS / RATÉS (seuil min. '+MIN_SAMPLE+' blocs tentés par tag) :\n'
+    +(crossAnalysis||'Pas encore assez de données (besoin de '+MIN_SAMPLE+'+ blocs tentés par caractéristique)')+'\n\n'
     +'STATS PAR COULEUR :\n'+(colorSummary||'Pas de données')+'\n\n'
     +'STATS PAR INCLINAISON :\n'+fmtStats(inclStats)+'\n\n'
     +'STATS PAR STYLE DE GRIMPE :\n'+fmtStats(styleStats)+'\n\n'
-    +'POINTS FAIBLES :\n'
+    +'STATS PAR TYPE DE PRISE :\n'+fmtStats(priseStats)+'\n\n'
+    +'STATS PAR MOUVEMENT :\n'+fmtStats(mvtStats)+'\n\n'
+    +'POINTS FAIBLES PRIORITAIRES :\n'
     +'- Inclinaisons : '+(worstIncl||'données insuffisantes')+'\n'
     +'- Styles : '+(worstStyle||'données insuffisantes')+'\n'
+    +'- Prises : '+(worstPrise||'données insuffisantes')+'\n'
+    +'- Mouvements : '+(worstMvt||'données insuffisantes')+'\n'
     +'- Couleurs : '+(worstColors||'données insuffisantes')+'\n\n'
     +'OUTILS UTILISÉS (détail) :\n'
     +(hangSessions.length>0
@@ -3766,43 +3871,87 @@ async function callClaudeCoaching(mode) {
     +'NOTE GRIMPEUR : '+(notePerso||'Aucune');
 
   const PROMPTS = {
-    analyse: "Tu es un coach escalade de bloc expert, bienveillant et direct.\n\n"
-      +ctx+"\n\n"
-      +"Reponds UNIQUEMENT avec ce JSON (sans markdown) :\n"
-      +"{"
-      +'  \"intro\": \"2-3 phrases analyse globale personnalisee avec donnees concretes\",'
-      +'  \"positif\": \"1 point fort precis avec donnees\",'
-      +'  \"amelioration\": \"1 point faible prioritaire concret (inclinaison/style precis)\",'
-      +'  \"conseil_seance\": \"1 conseil precis pour la prochaine seance, cite les IDs des blocs recommandes\"'
-      +"}",
+    analyse: `Tu es un coach escalade de bloc. Ton rôle : observer, nuancer, suggérer — pas donner des leçons.
 
-    points: "Tu es un coach escalade de bloc expert. Analyse les points faibles.\n\n"
-      +ctx+"\n\n"
-      +"Genere une analyse en 4-5 phrases : inclinaisons/styles faibles, patterns dans les seances, exercices a travailler, blocs de la salle a cibler (cite leurs IDs). Tutoie le grimpeur, sois tres concret.",
+RÈGLES ABSOLUES :
+- Ne transforme JAMAIS un élément isolé d'une séance en vérité générale. Si quelqu'un a raté 2 blocs de dévers aujourd'hui, ce n'est pas forcément "son point faible". Dis plutôt : "sur cette séance, les dévers ont résisté".
+- Utilise les chiffres réels du contexte, ne les arrondis pas ni ne les dramatises.
+- Si les données sont insuffisantes (< 3 séances), dis-le honnêtement plutôt que de forcer une analyse.
+- IMPORTANT : le nombre de séances enregistrées dans l'app ne reflète PAS le niveau réel du grimpeur. Quelqu'un avec 1 séance loggée peut grimper depuis 10 ans. Fie-toi UNIQUEMENT au niveau déclaré dans le profil — et au niveau observé si les données sont suffisantes (3+ séances). Si le niveau observé diffère du niveau déclaré, mentionne-le subtilement sans en faire une conclusion définitive.
+- Ton : parle comme un pote qui grimpe et qui a regardé la séance, pas comme une IA qui coach. Pas de "félicitations", pas de "c'est normal", pas de "rappelle-toi que...".
+- Sois court. Une observation précise vaut mieux qu'un paragraphe vague.
+- Tutoie, sois direct, pas condescendant.
 
-    semaine: "Tu es un coach escalade de bloc expert. Genere un plan de semaine personnalise.\n\n"
-      +ctx+"\n\n"
-      +"Pour chaque seance, recommande des blocs precis (par ID) qui correspondent au focus.\n\n"
-      +"Reponds UNIQUEMENT avec ce JSON :\n"
-      +'{"lundi":{"titre":"...","focus":"...","exercices":"...","blocs_recommandes":"ex: A01 (dalle technique)"},'
-      +'"mardi":{"titre":"Repos actif","focus":"recuperation","exercices":"etirements","blocs_recommandes":""},'
-      +'"mercredi":{"titre":"...","focus":"...","exercices":"...","blocs_recommandes":"..."},'
-      +'"jeudi":{"titre":"Repos","focus":"recuperation","exercices":"mobilite","blocs_recommandes":""},'
-      +'"vendredi":{"titre":"...","focus":"...","exercices":"...","blocs_recommandes":"..."},'
-      +'"samedi":{"titre":"...","focus":"...","exercices":"...","blocs_recommandes":"..."},'
-      +'"dimanche":{"titre":"Repos complet","focus":"recuperation","exercices":"","blocs_recommandes":""}}',
+CE QUE TU NE DOIS PAS FAIRE (exemples à éviter) :
+✗ "Les dévers sont clairement ton point faible — tu dois absolument travailler dessus."
+✗ "Avec un taux de 67%, tu progresses bien, continue comme ça !"
+✗ "La régularité est la clé de la progression en escalade."
+✗ "Tu as montré une belle résistance mentale aujourd'hui."
 
-    plan: "Tu es un coach escalade de bloc expert. Genere un programme 4 semaines progressif.\n\n"
-      +ctx+"\n\n"
-      +"Pour chaque session, recommande des blocs precis (IDs) de la salle. Adapte la progression.\n\n"
-      +"Reponds UNIQUEMENT avec ce JSON :\n"
-      +'{"semaine1":{"focus":"...","objectif":"...","sessions":['
-      +'{"jour":"Lundi","type":"...","description":"...","blocs":"IDs + explication"},'
-      +'{"jour":"Mercredi","type":"...","description":"...","blocs":"..."},'
-      +'{"jour":"Vendredi","type":"...","description":"...","blocs":"..."}]},'
-      +'"semaine2":{"focus":"...","objectif":"...","sessions":[...]},'
-      +'"semaine3":{"focus":"...","objectif":"...","sessions":[...]},'
-      +'"semaine4":{"focus":"Recuperation active","objectif":"Consolider les acquis","sessions":[...]}}'
+CE QU'IL FAUT FAIRE :
+✓ "Sur les 3 dernières séances, les dalles tiennent bien (78%) mais aujourd'hui le dévers du K_03 t'a résisté deux fois — peut-être fatigue, peut-être à retravailler."
+✓ "Ton niveau global est cohérent avec du 6B, mais le 6C+ butte systématiquement sur les prises arquées — c'est un pattern qui revient."
+✓ "L'analyse croisée montre que tu réussis bien les slopers (80%) mais les réglettes te font défaut (38% sur 8 blocs) — intéressant parce que c'est indépendant de l'inclinaison."
+
+${ctx}
+
+Réponds UNIQUEMENT avec ce JSON (sans markdown) :
+{"intro": "1-2 phrases d'observation précise sur CETTE séance ou la tendance récente — avec des chiffres concrets, sans généralisation",
+"positif": "1 observation factuelle positive — pas un compliment, une donnée",
+"amelioration": "1 piste concrète nuancée — avec 'sur les X dernières séances' ou 'aujourd'hui' pour contextualiser",
+"conseil_seance": "1 suggestion précise pour la prochaine fois — cite un bloc spécifique si possible"}`,
+
+    points: `Tu es un coach escalade de bloc. Tu analyses les données de progression.
+
+RÈGLES :
+- Base-toi uniquement sur des patterns qui reviennent sur AU MOINS 3 séances. Pas de conclusion sur un seul événement.
+- Distingue ce qui est une tendance claire de ce qui est une hypothèse. Utilise "il semble que", "sur les dernières séances" pour les hypothèses.
+- Pas de généralités sur l'escalade ("la force des doigts est essentielle" — tout le monde sait ça).
+- Si une donnée est trop faible pour conclure, dis-le.
+- IMPORTANT : le nombre de séances dans l'app ne reflète pas l'expérience réelle du grimpeur. Fie-toi au niveau déclaré, et au niveau observé s'il est disponible dans les données. Si les deux divergent, c'est une information utile à mentionner avec nuance.
+- Tutoie, 4-5 phrases max, chiffres concrets.
+
+${ctx}
+
+Analyse les patterns récurrents dans les données, identifie 1-2 pistes de travail précises et contextualisées.`,
+
+    semaine: `Tu es un coach escalade de bloc. Génère un plan de semaine basé sur les données réelles.
+
+RÈGLES :
+- Adapte le volume à la fréquence habituelle du grimpeur. Ne propose pas 5 séances à quelqu'un qui vient 2x/semaine.
+- Justifie chaque choix avec une donnée du contexte, pas avec un principe général.
+- Si des blocs spécifiques sont pertinents, cite leurs IDs et explique pourquoi ce bloc en particulier.
+- Pas de langue de bois ("séance de récup bien méritée", "écoute ton corps").
+
+${ctx}
+
+Réponds UNIQUEMENT avec ce JSON :
+{"lundi":{"titre":"...","focus":"...","exercices":"...","blocs_recommandes":"ex: K_03 (dévers, ta bête noire de la semaine)"},
+"mardi":{"titre":"Repos actif","focus":"récupération","exercices":"étirements","blocs_recommandes":""},
+"mercredi":{"titre":"...","focus":"...","exercices":"...","blocs_recommandes":"..."},
+"jeudi":{"titre":"Repos","focus":"récupération","exercices":"mobilité","blocs_recommandes":""},
+"vendredi":{"titre":"...","focus":"...","exercices":"...","blocs_recommandes":"..."},
+"samedi":{"titre":"...","focus":"...","exercices":"...","blocs_recommandes":"..."},
+"dimanche":{"titre":"Repos complet","focus":"récupération","exercices":"","blocs_recommandes":""}}`,
+
+    plan: `Tu es un coach escalade de bloc. Génère un programme 4 semaines.
+
+RÈGLES :
+- La progression doit être justifiée par les données réelles du grimpeur, pas par un modèle générique.
+- Si le grimpeur a des blessures ou contraintes, intègre-les vraiment.
+- Cite des blocs spécifiques (IDs) quand c'est pertinent, avec une explication courte.
+- Semaine 4 = décharge si le volume est élevé, sinon consolidation.
+
+${ctx}
+
+Réponds UNIQUEMENT avec ce JSON :
+{"semaine1":{"focus":"...","objectif":"...","sessions":[
+{"jour":"Lundi","type":"...","description":"...","blocs":"IDs + pourquoi ce bloc"},
+{"jour":"Mercredi","type":"...","description":"...","blocs":"..."},
+{"jour":"Vendredi","type":"...","description":"...","blocs":"..."}]},
+"semaine2":{"focus":"...","objectif":"...","sessions":[...]},
+"semaine3":{"focus":"...","objectif":"...","sessions":[...]},
+"semaine4":{"focus":"Décharge / consolidation","objectif":"...","sessions":[...]}}`
   };
 
   try {
@@ -4058,6 +4207,28 @@ async function loadAdminData() {
       // Render quand même pour afficher les sections vides
     }
     renderAdminDashboard(data);
+    // Charger l'historique des ouvertures depuis Supabase
+    supa.getOuvertures().then(ouvertures => {
+      if(!Array.isArray(ouvertures)) return;
+      ouvertures.forEach(o => {
+        const ts = new Date(o.created_at||o.date).getTime();
+        const dateStr = new Date(o.created_at||o.date).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'});
+        const monthKey = new Date(o.created_at||o.date).toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+        // Éviter les doublons (si déjà dans blocsArchive local)
+        const exists = blocsArchive.find(a=>a.action==='opening'&&a.secteur===o.secteur&&Math.abs(a.ts-ts)<60000);
+        if(!exists) {
+          blocsArchive.push({
+            id:'—', couleur:'', col:'var(--accent)', secteur:o.secteur||'?',
+            cotation:'', ouvreur:o.ouvreur_pseudo||'Admin',
+            action:'opening', nom:o.nom||`Ouverture zone ${o.secteur}`,
+            nbBlocs:o.nb_blocs||0, ts, dateStr, monthKey,
+          });
+        }
+      });
+      blocsArchive.sort((a,b)=>b.ts-a.ts);
+      renderArchiveList();
+    }).catch(()=>{});
+
   } catch(e) {
     errEl.textContent = 'Erreur réseau : ' + e.message;
     errEl.style.display = 'block';
@@ -4962,13 +5133,20 @@ const supa = {
     return this.req('/auth/v1/recover', 'POST', {email});
   },
   async getBlocs() {
-    return this.req('/rest/v1/blocs?select=*&order=added_at.asc', 'GET', null, currentToken);
+    // Toujours lire avec la clé anon (lecture publique) — le token perso filtrerait par added_by
+    return this.req('/rest/v1/blocs?select=*&order=added_at.asc', 'GET', null, null);
   },
   async insertBloc(bloc) {
     return this.req('/rest/v1/blocs', 'POST', bloc, currentToken);
   },
   async insertSessionResults(rows) {
     return this.req('/rest/v1/session_results', 'POST', rows, currentToken, {'Prefer':'return=minimal'});
+  },
+  async insertOuverture(row) {
+    return this.req('/rest/v1/ouvertures', 'POST', row, currentToken, {'Prefer':'return=minimal'});
+  },
+  async getOuvertures() {
+    return this.req('/rest/v1/ouvertures?select=*&order=created_at.desc&limit=100', 'GET', null, null);
   },
   async getSessionResults(days=30) {
     const since = new Date(Date.now() - days*24*60*60*1000).toISOString().slice(0,10);
@@ -6516,10 +6694,8 @@ function getCoachingNote(){
 // ========== BLOCS SUPABASE ==========
 async function loadBlocsFromSupabase() {
   try {
-    // Essaie avec token si dispo, sinon lecture publique (mode démo inclus)
-    let data = currentToken
-      ? await supa.getBlocs()
-      : await supa.req('/rest/v1/blocs?select=*&order=added_at.asc', 'GET', null, null);
+    // Lecture publique (clé anon) pour tous — connecté ou non
+    const data = await supa.getBlocs();
     if(!Array.isArray(data) || data.length === 0) return;
     let added = 0;
     data.forEach(b => {
@@ -6771,6 +6947,17 @@ function confirmerOuvertureZone() {
   saveAll();
   renderBlocs && renderBlocs();
   renderSeanceOverlays && renderSeanceOverlays();
+  // Sauvegarder l'événement dans Supabase
+  if(currentToken) {
+    supa.insertOuverture({
+      secteur,
+      hall: seanceHall||'ancienne',
+      nom: nom || `Ouverture zone ${secteur}`,
+      nb_blocs: blocsZone.length,
+      ouvreur_pseudo: currentProfile?.pseudo || currentUser?.email?.split('@')[0] || 'Admin',
+      date: now.toISOString().slice(0,10),
+    }).catch(e=>console.warn('Ouverture save error:', e));
+  }
   showToast(`Zone ${secteur} vidée — ${blocsZone.length} bloc${blocsZone.length>1?'s':''} retirés`);
   showTab('seance');
 }
