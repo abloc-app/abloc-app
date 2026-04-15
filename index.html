@@ -945,7 +945,20 @@ textarea{resize:none;height:62px;line-height:1.5}
 
   <!-- Table -->
   <div class="admin-card" style="margin-bottom:30px">
-    <div class="admin-card-title">Tous les blocs</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div class="admin-card-title" style="margin-bottom:0">Tous les blocs <span id="adm-table-count" style="color:var(--accent);font-size:11px"></span></div>
+      <button onclick="resetAdminFilters()" style="font-size:11px;color:var(--ink3);background:none;border:1px solid var(--line2);border-radius:6px;padding:4px 10px;cursor:pointer">Réinitialiser</button>
+    </div>
+    <!-- Filtres -->
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px" id="adm-filters">
+      <select id="flt-couleur" onchange="applyAdminFilters()" style="font-size:11px;padding:5px 8px;border-radius:6px;border:1.5px solid var(--line2);background:var(--white);color:var(--ink);cursor:pointer"><option value="">🎨 Couleur</option></select>
+      <select id="flt-secteur" onchange="applyAdminFilters()" style="font-size:11px;padding:5px 8px;border-radius:6px;border:1.5px solid var(--line2);background:var(--white);color:var(--ink);cursor:pointer"><option value="">📍 Secteur</option></select>
+      <select id="flt-style" onchange="applyAdminFilters()" style="font-size:11px;padding:5px 8px;border-radius:6px;border:1.5px solid var(--line2);background:var(--white);color:var(--ink);cursor:pointer"><option value="">🏃 Style</option></select>
+      <select id="flt-incl" onchange="applyAdminFilters()" style="font-size:11px;padding:5px 8px;border-radius:6px;border:1.5px solid var(--line2);background:var(--white);color:var(--ink);cursor:pointer"><option value="">📐 Inclinaison</option></select>
+      <select id="flt-morpho" onchange="applyAdminFilters()" style="font-size:11px;padding:5px 8px;border-radius:6px;border:1.5px solid var(--line2);background:var(--white);color:var(--ink);cursor:pointer"><option value="">👤 Morpho</option><option value="oui">Oui</option><option value="non">Non</option></select>
+      <select id="flt-ouvreur" onchange="applyAdminFilters()" style="font-size:11px;padding:5px 8px;border-radius:6px;border:1.5px solid var(--line2);background:var(--white);color:var(--ink);cursor:pointer"><option value="">🧗 Ouvreur</option></select>
+      <select id="flt-etoiles" onchange="applyAdminFilters()" style="font-size:11px;padding:5px 8px;border-radius:6px;border:1.5px solid var(--line2);background:var(--white);color:var(--ink);cursor:pointer"><option value="">★ Étoiles</option><option value="0">Sans étoile</option><option value="1">★</option><option value="2">★★</option><option value="3">★★★</option></select>
+    </div>
     <div style="overflow-x:auto"><table class="admin-table">
       <thead><tr><th>ID</th><th>Couleur</th><th>Secteur</th><th>Cotation</th><th>Styles</th><th>Inclinaisons</th><th>Morpho</th><th>Ouvreur</th><th>★</th></tr></thead>
       <tbody id="adm-table-body"></tbody>
@@ -1919,6 +1932,15 @@ textarea{resize:none;height:62px;line-height:1.5}
       Ajouter ce bloc à la salle
     </button>
     <button class="btn" onclick="showTab('seance')" style="margin-top:6px">← Retour</button>
+
+    <!-- Bouton admin : nouvelle ouverture de zone -->
+    <div id="btn-nouvelle-ouverture-wrap" style="display:none;margin-top:16px;padding-top:14px;border-top:1px dashed var(--line2)">
+      <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">🔑 Zone admin</div>
+      <button class="btn" onclick="ouvertureZone()" style="width:100%;border-color:var(--red);color:var(--red);font-size:13px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
+        Nouvelle ouverture — vider une zone
+      </button>
+    </div>
   </div>
 
 
@@ -2126,6 +2148,9 @@ function showTab(t) {
     document.getElementById('s-addbloc').classList.add('open');
     document.getElementById('s-addbloc').scrollTop=0;
     document.getElementById('main-title').textContent='Ajouter un bloc';
+    // Afficher le bouton admin si l'utilisateur est admin
+    const adminWrap = document.getElementById('btn-nouvelle-ouverture-wrap');
+    if(adminWrap) adminWrap.style.display = isAdmin() ? 'block' : 'none';
     return;
   }
   // Close addbloc overlay if open
@@ -4048,9 +4073,12 @@ function renderAdminDashboard(blocs) {
   renderAdminStyles(blocs);
   renderAdminTopBlocs(blocs);
   renderAdminOuvreurs(blocs);
-  renderAdminTable(blocs);
-  // Store blocs for AI analysis
+  // Store blocs for AI analysis and filters
   window._adminBlocs = blocs;
+  populateAdminFilters(blocs);
+  applyAdminFilters();
+  const cnt = document.getElementById('adm-table-count');
+  if(cnt) cnt.textContent = `(${blocs.length})`;
 }
 
 // ── ADMIN AI ANALYSIS ──
@@ -4329,6 +4357,68 @@ function renderAdminOuvreurs(blocs) {
     </div>`).join('')||'<div class="empty">Aucun ouvreur</div>';
 }
 
+function populateAdminFilters(blocs) {
+  const fill = (id, vals) => {
+    const sel = document.getElementById(id);
+    if(!sel) return;
+    const cur = sel.value;
+    const first = sel.options[0];
+    sel.innerHTML = '';
+    sel.appendChild(first);
+    [...vals].sort().forEach(v => {
+      const o = document.createElement('option');
+      o.value = v; o.textContent = v;
+      sel.appendChild(o);
+    });
+    if(cur) sel.value = cur;
+  };
+  fill('flt-couleur', new Set(blocs.map(b=>b.couleur).filter(Boolean)));
+  fill('flt-secteur', new Set(blocs.map(b=>b.secteur).filter(Boolean)));
+  fill('flt-ouvreur', new Set(blocs.map(b=>b.ouvreur).filter(Boolean)));
+  const styles = new Set(); blocs.forEach(b=>toArr(b.styles).forEach(s=>s&&styles.add(s)));
+  fill('flt-style', styles);
+  const incls = new Set(); blocs.forEach(b=>toArr(b.inclinaisons).forEach(i=>i&&incls.add(i)));
+  fill('flt-incl', incls);
+}
+
+function applyAdminFilters() {
+  const blocs = window._adminBlocs || [];
+  const fCouleur = document.getElementById('flt-couleur')?.value || '';
+  const fSecteur = document.getElementById('flt-secteur')?.value || '';
+  const fStyle   = document.getElementById('flt-style')?.value   || '';
+  const fIncl    = document.getElementById('flt-incl')?.value    || '';
+  const fMorpho  = document.getElementById('flt-morpho')?.value  || '';
+  const fOuvreur = document.getElementById('flt-ouvreur')?.value || '';
+  const fEtoiles = document.getElementById('flt-etoiles')?.value || '';
+
+  const filtered = blocs.filter(b => {
+    if(fCouleur && b.couleur !== fCouleur) return false;
+    if(fSecteur && b.secteur !== fSecteur) return false;
+    if(fStyle   && !toArr(b.styles).includes(fStyle)) return false;
+    if(fIncl    && !toArr(b.inclinaisons).includes(fIncl)) return false;
+    if(fMorpho  === 'oui' && !b.morpho) return false;
+    if(fMorpho  === 'non' && b.morpho)  return false;
+    if(fOuvreur && b.ouvreur !== fOuvreur) return false;
+    if(fEtoiles !== '') {
+      const e = parseInt(fEtoiles);
+      if((b.etoiles||0) !== e) return false;
+    }
+    return true;
+  });
+
+  renderAdminTable(filtered);
+  const cnt = document.getElementById('adm-table-count');
+  if(cnt) cnt.textContent = filtered.length < blocs.length ? `(${filtered.length}/${blocs.length})` : `(${blocs.length})`;
+}
+
+function resetAdminFilters() {
+  ['flt-couleur','flt-secteur','flt-style','flt-incl','flt-morpho','flt-ouvreur','flt-etoiles'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+  applyAdminFilters();
+}
+
 function renderAdminTable(blocs) {
   document.getElementById('adm-table-body').innerHTML = blocs.map(b=>{
     const c=ADMIN_COLORS.find(x=>x.key===b.couleur);
@@ -4343,7 +4433,7 @@ function renderAdminTable(blocs) {
       <td>${b.ouvreur||'—'}</td>
       <td style="color:var(--yellow)">${b.etoiles?'★'.repeat(b.etoiles):'—'}</td>
     </tr>`;
-  }).join('');
+  }).join('') || '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--ink3)">Aucun bloc ne correspond aux filtres</td></tr>';
 }
 
 // ========== ACTU FEED ==========
@@ -6598,6 +6688,93 @@ checkAllBadges();
 })();
 
 // ========== HISTORIQUE DES OUVERTURES ==========
+function ouvertureZone() {
+  // Récupérer toutes les zones disponibles
+  const allSecteurs = [...new Set(BLOCS.map(b=>b.secteur).filter(Boolean))].sort();
+  const currentSecteur = newBlocData.secteur || '';
+
+  // Construire la liste des zones avec comptage
+  const zonesDispos = allSecteurs.map(s=>{
+    const n = BLOCS.filter(b=>b.secteur===s).length;
+    return `<option value="${s}" ${s===currentSecteur?'selected':''}>${s} (${n} bloc${n>1?'s':''})</option>`;
+  }).join('');
+
+  if(allSecteurs.length===0){
+    showToast('Aucun bloc enregistré dans la salle.');
+    return;
+  }
+
+  // Créer un dialog de confirmation
+  const overlay = document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:flex-end;justify-content:center';
+  overlay.innerHTML=`
+    <div style="background:var(--white);border-radius:20px 20px 0 0;width:100%;max-width:430px;padding:24px 20px 32px;box-shadow:0 -4px 30px rgba(0,0,0,.15)">
+      <div style="font-family:var(--display);font-size:18px;font-weight:700;color:var(--ink);margin-bottom:6px">🔄 Nouvelle ouverture</div>
+      <div style="font-size:13px;color:var(--ink3);margin-bottom:16px;line-height:1.5">Sélectionne la zone à vider. Tous ses blocs seront supprimés et un événement d'ouverture sera créé dans l'historique.</div>
+      <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Zone à vider</div>
+      <select id="ouverture-zone-sel" style="width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);color:var(--ink);font-size:14px;box-sizing:border-box;margin-bottom:16px">
+        ${zonesDispos}
+      </select>
+      <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Nom de l'ouverture <span style="font-weight:400;color:var(--ink3)">(optionnel)</span></div>
+      <input id="ouverture-nom" type="text" placeholder="Ex: Ouverture printemps, Session dévers…" style="width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);color:var(--ink);font-size:13px;font-family:var(--font);box-sizing:border-box;margin-bottom:20px">
+      <button onclick="confirmerOuvertureZone()" style="width:100%;padding:13px;border-radius:12px;background:var(--red);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:10px">
+        Vider la zone et annoncer l'ouverture
+      </button>
+      <button onclick="this.closest('[style*=fixed]').remove()" style="width:100%;padding:11px;border-radius:12px;background:var(--off);color:var(--ink2);border:1.5px solid var(--line2);font-size:13px;font-weight:600;cursor:pointer">
+        Annuler
+      </button>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+function confirmerOuvertureZone() {
+  const secteur = document.getElementById('ouverture-zone-sel')?.value;
+  const nom = document.getElementById('ouverture-nom')?.value?.trim() || '';
+  // Fermer le dialog
+  document.querySelector('[style*="position:fixed"][style*="9999"]')?.remove();
+  if(!secteur) return;
+
+  const blocsZone = BLOCS.filter(b=>b.secteur===secteur);
+  if(blocsZone.length===0){ showToast('Aucun bloc dans cette zone.'); return; }
+
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'});
+  const monthKey = now.toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+
+  // Archiver chaque bloc comme retiré
+  blocsZone.forEach(b=>archiveBloc(b,'removed'));
+
+  // Supprimer les blocs de la liste locale
+  blocsZone.forEach(b=>{
+    const idx = BLOCS.findIndex(x=>x.id===b.id);
+    if(idx>=0) BLOCS.splice(idx,1);
+    // Supprimer dans Supabase si connecté
+    if(currentToken && b.id) supa.deleteBloc(b.id).catch(()=>{});
+  });
+
+  // Ajouter une entrée spéciale "ouverture" dans l'archive
+  blocsArchive.unshift({
+    id: '—',
+    couleur: '',
+    col: 'var(--accent)',
+    secteur,
+    cotation: '',
+    ouvreur: currentProfile?.pseudo || currentUser?.email?.split('@')[0] || 'Admin',
+    action: 'opening',
+    nom: nom || `Ouverture zone ${secteur}`,
+    nbBlocs: blocsZone.length,
+    ts: now.getTime(),
+    dateStr,
+    monthKey,
+  });
+
+  saveAll();
+  renderBlocs && renderBlocs();
+  renderSeanceOverlays && renderSeanceOverlays();
+  showToast(`Zone ${secteur} vidée — ${blocsZone.length} bloc${blocsZone.length>1?'s':''} retirés`);
+  showTab('seance');
+}
+
 function archiveBloc(bloc, action) {
   const now = new Date();
   blocsArchive.unshift({
@@ -6638,6 +6815,8 @@ function renderArchiveList() {
 
   const items = _archiveFilter === 'all'
     ? blocsArchive
+    : _archiveFilter === 'removed'
+    ? blocsArchive.filter(b => b.action === 'removed' || b.action === 'opening')
     : blocsArchive.filter(b => b.action === _archiveFilter);
 
   if (!items.length) {
@@ -6656,14 +6835,19 @@ function renderArchiveList() {
   el.innerHTML = Object.entries(groups).map(([month, blocs]) => `
     <div class="arch-month">${month}</div>
     ${blocs.map(b => `
-      <div class="arch-item">
-        <div class="arch-dot" style="background:${b.col}"></div>
+      <div class="arch-item" style="${b.action==='opening'?'background:var(--accent-bg);border-left:3px solid var(--accent);padding-left:13px;border-radius:8px;':''}">
+        <div class="arch-dot" style="background:${b.action==='opening'?'var(--accent)':b.col}"></div>
         <div class="arch-info">
           <div class="arch-name">
-            ${b.id}${b.couleur ? ' · '+b.couleur : ''}${b.cotation ? ' ('+b.cotation+')' : ''}
-            <span class="arch-badge ${b.action==='added'?'arch-badge-add':'arch-badge-rm'}">${b.action==='added'?'↑ Ajouté':'↓ Retiré'}</span>
+            ${b.action==='opening'
+              ? `<strong>${b.nom||'Nouvelle ouverture'}</strong> — ${b.nbBlocs||0} bloc${(b.nbBlocs||0)>1?'s':''} retirés`
+              : `${b.id}${b.couleur ? ' · '+b.couleur : ''}${b.cotation ? ' ('+b.cotation+')' : ''}`
+            }
+            <span class="arch-badge ${b.action==='added'?'arch-badge-add':b.action==='opening'?'arch-badge-add':'arch-badge-rm'}" style="${b.action==='opening'?'background:var(--accent);color:#fff;':''}">
+              ${b.action==='added'?'↑ Ajouté':b.action==='opening'?'🔄 Ouverture':'↓ Retiré'}
+            </span>
           </div>
-          <div class="arch-meta">Secteur ${b.secteur}${b.ouvreur?' · '+b.ouvreur:''}</div>
+          <div class="arch-meta">Zone ${b.secteur}${b.ouvreur?' · '+b.ouvreur:''}</div>
         </div>
         <div class="arch-date">${b.dateStr||''}</div>
       </div>`).join('')}
