@@ -952,6 +952,17 @@ textarea{resize:none;height:62px;line-height:1.5}
     </table></div>
   </div>
 
+  <!-- Lacunes collectives grimpeurs -->
+  <div class="admin-card" style="margin-bottom:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div class="admin-card-title" style="margin-bottom:0">🔍 Lacunes collectives — Grimpeurs</div>
+      <button onclick="loadCollectiveLacunes()" style="padding:6px 12px;border-radius:20px;background:var(--blue-bg);color:var(--blue);border:1.5px solid var(--blue);font-size:11px;font-weight:700;cursor:pointer">Analyser</button>
+    </div>
+    <div id="adm-lacunes-result">
+      <div style="color:var(--ink3);font-size:12px;text-align:center;padding:12px 0">Lance l'analyse pour détecter les lacunes communes des grimpeurs.</div>
+    </div>
+  </div>
+
   <!-- Analyse ouvreurs/gérants -->
   <div class="admin-card" style="margin-bottom:14px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
@@ -1706,16 +1717,15 @@ textarea{resize:none;height:62px;line-height:1.5}
     <div class="addbloc-section">
       <div class="addbloc-section-title">Couleur de l'étiquette <span class="req">* obligatoire</span></div>
       <div class="color-selector" id="color-selector">
-        <div class="color-opt" style="background:#fbbf24" onclick="selectBlocColor('jaune','#fbbf24',this)"><span>Jaune</span></div>
+        <div class="color-opt" style="background:#22c55e" onclick="selectBlocColor('vert','#22c55e',this)"><span>Vert</span></div>
         <div class="color-opt" style="background:#f97316" onclick="selectBlocColor('orange','#f97316',this)"><span>Orange</span></div>
         <div class="color-opt" style="background:#ec4899" onclick="selectBlocColor('rose','#ec4899',this)"><span>Rose</span></div>
-        <div class="color-opt" style="background:#ef4444" onclick="selectBlocColor('rouge','#ef4444',this)"><span>Rouge</span></div>
-        <div class="color-opt" style="background:#3b82f6" onclick="selectBlocColor('bleu','#3b82f6',this)"><span>Bleu</span></div>
-        <div class="color-opt" style="background:#22c55e" onclick="selectBlocColor('vert','#22c55e',this)"><span>Vert</span></div>
         <div class="color-opt" style="background:#111827" onclick="selectBlocColor('noir','#111827',this)"><span>Noir</span></div>
-        <div class="color-opt" style="background:#9ca3af" onclick="selectBlocColor('blanc','#9ca3af',this)"><span>Blanc</span></div>
+        <div class="color-opt" style="background:#3b82f6" onclick="selectBlocColor('bleu','#3b82f6',this)"><span>Bleu</span></div>
         <div class="color-opt" style="background:#8b5cf6" onclick="selectBlocColor('mauve','#8b5cf6',this)"><span>Mauve</span></div>
-        <div class="color-opt" style="background:#0ea5e9" onclick="selectBlocColor('cyan','#0ea5e9',this)"><span>Cyan</span></div>
+        <div class="color-opt" style="background:#fbbf24" onclick="selectBlocColor('jaune','#fbbf24',this)"><span>Jaune</span></div>
+        <div class="color-opt" style="background:#ef4444" onclick="selectBlocColor('rouge','#ef4444',this)"><span>Rouge</span></div>
+        <div class="color-opt" style="background:#9ca3af" onclick="selectBlocColor('blanc','#9ca3af',this)"><span>Blanc</span></div>
       </div>
     </div>
 
@@ -1727,10 +1737,8 @@ textarea{resize:none;height:62px;line-height:1.5}
         <button class="secteur-btn" onclick="selectSecteur('B',this)">B</button>
         <button class="secteur-btn" onclick="selectSecteur('C',this)">C</button>
         <button class="secteur-btn" onclick="selectSecteur('D',this)">D</button>
-        <button class="secteur-btn" onclick="selectSecteur('E',this)">E</button>
         <button class="secteur-btn" onclick="selectSecteur('F',this)">F</button>
         <button class="secteur-btn" onclick="selectSecteur('G',this)">G</button>
-        <button class="secteur-btn" onclick="selectSecteur('H',this)">H</button>
         <button class="secteur-btn" onclick="selectSecteur('I',this)">I</button>
         <button class="secteur-btn" onclick="selectSecteur('J',this)">J</button>
         <button class="secteur-btn" onclick="selectSecteur('K',this)">K</button>
@@ -1780,6 +1788,7 @@ textarea{resize:none;height:62px;line-height:1.5}
       <div class="addbloc-section-title">Type de grimpe <span class="req">* obligatoire — plusieurs choix possibles</span></div>
       <div class="tag-grid" id="style-grid">
         <div class="tag-btn" onclick="toggleTag('style','Athlétique',this)">💪 Athlétique</div>
+        <div class="tag-btn" onclick="toggleTag('style','Explosif',this)">💥 Explosif</div>
         <div class="tag-btn" onclick="toggleTag('style','Technique',this)">🎯 Technique</div>
         <div class="tag-btn" onclick="toggleTag('style','Dynamique',this)">⚡ Dynamique</div>
         <div class="tag-btn" onclick="toggleTag('style','Coordination',this)">🤸 Coordination</div>
@@ -1790,6 +1799,8 @@ textarea{resize:none;height:62px;line-height:1.5}
         <div class="tag-btn" onclick="toggleTag('style','Gainage',this)">🧱 Gainage</div>
         <div class="tag-btn" onclick="toggleTag('style','Lecture',this)">👁 Lecture</div>
         <div class="tag-btn" onclick="toggleTag('style','Endurance',this)">🔄 Endurance</div>
+        <div class="tag-btn" onclick="toggleTag('style','Grimpe 3D',this)">🌐 Grimpe 3D</div>
+        <div class="tag-btn" onclick="toggleTag('style','Éducatif',this)">📚 Éducatif</div>
         <div class="tag-btn" onclick="toggleTag('style','Morpho',this)">📏 Morpho</div>
         <div class="tag-btn" onclick="toggleTag('style','Cruxy',this)">🔑 Cruxy</div>
         <div class="tag-btn" onclick="toggleTag('style','Mobilité',this)">🧘 Mobilité</div>
@@ -1836,6 +1847,7 @@ textarea{resize:none;height:62px;line-height:1.5}
       <div class="tag-grid" id="mouvement-grid">
         <div class="tag-btn" onclick="toggleTag('mouvement','Talon',this)">🦶 Talon</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Toe hook',this)">👟 Toe hook</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Pied haut',this)">🦵 Pied haut</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Talon-pointe',this)">🔁 Talon-pointe</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Contre-pointe',this)">↙ Contre-pointe</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Carre interne',this)">◁ Carre interne</div>
@@ -1845,6 +1857,7 @@ textarea{resize:none;height:62px;line-height:1.5}
         <div class="tag-btn" onclick="toggleTag('mouvement','Changement de pied',this)">🔄 Chgt de pied</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Changement de main',this)">✋ Chgt de main</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Lolotte',this)">🔄 Lolotte</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','360°',this)">🔃 360°</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Drapeau',this)">🚩 Drapeau</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','En opposition',this)">↔ En opposition</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Stemming',this)">⟵⟶ Stemming</div>
@@ -2068,11 +2081,15 @@ let profilGrimpeur = {taille:null,poids:null,age:null,ape:null,anciennete:null,f
 
 // Poids par couleur de bloc (pondération niveau)
 const BLOC_WEIGHTS = {
-  vert:100, rose:120,                   // Débutant
-  orange:160,                            // Intermédiaire bas
-  noir:220, bleu:220,                    // Intermédiaire
-  mauve:360, jaune:360,                  // Avancé
-  rouge:520, blanc:540                   // Expert
+  vert:100,                                // 4
+  orange:140,                              // 5
+  rose:180,                                // 5+
+  noir:240,                                // 6A
+  bleu:320,                                // 6B
+  mauve:420,                               // 6C
+  jaune:540,                               // 7A
+  rouge:680,                               // 7B
+  blanc:800                                // 7C+
 };
 // Multiplicateur selon les essais
 const ESSAIS_MULT = {
@@ -2309,6 +2326,8 @@ function finirSeance() {
       month_key: _mKey, year_key: _yKey
     }, currentToken).catch(()=>{});
   }
+  // Sauvegarder les résultats détaillés pour l'analyse collective
+  saveSessionToSupabase(ok, nok);
   // Post activité (automatique pour tous les connectés)
   postActiviteSeance(ok, nok);
   results={};
@@ -2328,6 +2347,156 @@ function finirSeance() {
   document.getElementById('obj-seance-panel').style.display='none';
   checkBadge('first_seance'); checkBadge('5_seances'); checkBadge('10_seances'); checkBadge('10_blocs');
   showWowMoment(ok, nok, _sessionScore);
+}
+
+// ========== SAUVEGARDE SÉANCE SUPABASE ==========
+async function saveSessionToSupabase(ok, nok) {
+  if(!currentUser) return; // mode démo ou non connecté
+  const today = new Date().toISOString().slice(0,10);
+  const pseudo = currentProfile?.pseudo || currentUser.email?.split('@')[0] || 'Grimpeur';
+  const rows = [];
+  // Blocs utilisateurs
+  BLOCS.forEach(b=>{
+    const key = b.id+'|'+b.couleur;
+    const res = results[key] || results[b.id];
+    if(res==='ok'||res==='nok'){
+      rows.push({
+        user_id: currentUser.id,
+        pseudo,
+        date: today,
+        couleur: b.couleur,
+        secteur: b.secteur||'',
+        hall: b.hall||seanceHall||'ancienne',
+        styles: toArr(b.styles),
+        inclinaisons: toArr(b.inclinaisons),
+        prises: toArr(b.prises),
+        result: res,
+      });
+    }
+  });
+  // Blocs map (résultats de zone)
+  Object.entries(mapResults).forEach(([key, res])=>{
+    const parts = key.split('|'); // MAP|zone|couleur|index
+    if(parts.length===4 && (res==='ok'||res==='nok')){
+      rows.push({
+        user_id: currentUser.id,
+        pseudo,
+        date: today,
+        couleur: parts[2],
+        secteur: parts[1],
+        hall: seanceHall||'ancienne',
+        styles: [],
+        inclinaisons: [],
+        prises: [],
+        result: res,
+      });
+    }
+  });
+  if(rows.length>0){
+    supa.insertSessionResults(rows).catch(e=>console.warn('Session results save error:', e));
+  }
+}
+
+// ========== ANALYSE COLLECTIVE DES LACUNES ==========
+async function loadCollectiveLacunes() {
+  const el = document.getElementById('adm-lacunes-result');
+  el.innerHTML = '<div style="color:var(--ink3);font-size:12px;text-align:center;padding:12px 0">⏳ Chargement des données...</div>';
+  try {
+    const data = await supa.getSessionResults(30);
+    if(!Array.isArray(data) || data.length===0){
+      el.innerHTML = '<div style="color:var(--ink3);font-size:12px;text-align:center;padding:12px 0">Pas encore de données. Les résultats s\'accumuleront après les prochaines séances.</div>';
+      return;
+    }
+
+    // Agréger par style, inclinaison, couleur
+    const styleStats={}, inclStats={}, colorStats={};
+    const usersByStyle={}, usersByIncl={}, usersByColor={};
+
+    data.forEach(row=>{
+      const uid = row.user_id;
+      const res = row.result;
+
+      // Couleur
+      if(row.couleur){
+        if(!colorStats[row.couleur]) colorStats[row.couleur]={ok:0,nok:0,users:new Set()};
+        colorStats[row.couleur][res]++;
+        colorStats[row.couleur].users.add(uid);
+      }
+      // Styles
+      (row.styles||[]).forEach(s=>{
+        if(!styleStats[s]) styleStats[s]={ok:0,nok:0,users:new Set()};
+        styleStats[s][res]++;
+        styleStats[s].users.add(uid);
+      });
+      // Inclinaisons
+      (row.inclinaisons||[]).forEach(i=>{
+        if(!inclStats[i]) inclStats[i]={ok:0,nok:0,users:new Set()};
+        inclStats[i][res]++;
+        inclStats[i].users.add(uid);
+      });
+    });
+
+    // Détecter les lacunes (seuil: >40% échec, >2 users, >4 essais)
+    const SEUIL_ECHEC = 0.40;
+    const SEUIL_USERS = 2;
+    const SEUIL_ESSAIS = 4;
+    const lacunes = [];
+
+    const checkStats = (stats, type) => {
+      Object.entries(stats).forEach(([tag, s])=>{
+        const total = s.ok + s.nok;
+        const pctEchec = total>0 ? s.nok/total : 0;
+        const nbUsers = s.users.size;
+        if(pctEchec >= SEUIL_ECHEC && nbUsers >= SEUIL_USERS && total >= SEUIL_ESSAIS){
+          lacunes.push({tag, type, pctEchec: Math.round(pctEchec*100), nbUsers, total, ok:s.ok, nok:s.nok});
+        }
+      });
+    };
+    checkStats(styleStats, 'Style');
+    checkStats(inclStats, 'Inclinaison');
+    checkStats(colorStats, 'Couleur');
+    lacunes.sort((a,b)=>b.pctEchec-a.pctEchec);
+
+    const totalUsers = new Set(data.map(r=>r.user_id)).size;
+    const totalRows = data.length;
+
+    let html = `<div style="font-size:11px;color:var(--ink3);margin-bottom:12px">Basé sur ${totalRows} résultats de ${totalUsers} grimpeur${totalUsers>1?'s':''} (30 derniers jours)</div>`;
+
+    if(lacunes.length===0){
+      html += '<div style="color:var(--green);font-size:13px;padding:10px;background:var(--green-bg);border-radius:8px">✓ Aucune lacune collective détectée. La progression semble équilibrée !</div>';
+    } else {
+      html += lacunes.map(l=>{
+        const urgence = l.pctEchec >= 65 ? 'var(--red)' : l.pctEchec >= 50 ? 'var(--amber)' : 'var(--blue)';
+        const urgenceBg = l.pctEchec >= 65 ? 'var(--red-bg)' : l.pctEchec >= 50 ? 'var(--amber-bg)' : 'var(--blue-bg)';
+        return `<div style="padding:10px 12px;background:${urgenceBg};border-radius:8px;margin-bottom:8px;border-left:3px solid ${urgence}">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <div style="font-size:13px;font-weight:700;color:var(--ink)">${l.type} — ${l.tag}</div>
+            <div style="font-size:14px;font-weight:800;color:${urgence}">${l.pctEchec}% d'échec</div>
+          </div>
+          <div style="font-size:11px;color:var(--ink3)">${l.nok} ratés / ${l.total} essais · ${l.nbUsers} grimpeur${l.nbUsers>1?'s':''} concerné${l.nbUsers>1?'s':''}</div>
+          <div style="font-size:12px;color:${urgence};margin-top:6px;font-weight:600">
+            💡 ${l.pctEchec>=65?'🚨 Lacune critique — ':l.pctEchec>=50?'⚠️ Lacune notable — ':''}Proposer un cours collectif sur : <strong>${l.tag}</strong>
+          </div>
+        </div>`;
+      }).join('');
+
+      // Alertes pour gérants si lacunes critiques
+      const critiques = lacunes.filter(l=>l.pctEchec>=65);
+      if(critiques.length>0){
+        html += `<div style="margin-top:12px;padding:10px 12px;background:var(--red-bg);border:1.5px solid rgba(239,68,68,.3);border-radius:8px">
+          <div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:4px">🚨 Action recommandée pour les gérants</div>
+          <div style="font-size:12px;color:var(--ink2);line-height:1.5">${critiques.length} lacune${critiques.length>1?'s critique détectées':'critique détectée'} sur : <strong>${critiques.map(l=>l.tag).join(', ')}</strong>.<br>Proposer à un moniteur d'organiser un cours ciblé.</div>
+        </div>`;
+      }
+    }
+
+    el.innerHTML = html;
+    // Injecter dans le contexte IA
+    window._adminLacunes = lacunes;
+
+  } catch(e) {
+    el.innerHTML = `<div style="color:var(--red);font-size:12px">Erreur : ${e.message}<br><small>Vérifie que la table session_results existe dans Supabase.</small></div>`;
+  }
 }
 
 // ========== WOW MOMENT POST-SÉANCE ==========
@@ -2930,7 +3099,7 @@ function showToast(msg) {
 
 // ========== MAP ==========
 const MAP_ZONES_A = {"Zone 1":{"l":52,"t":85,"w":22,"h":11,"blocs":{},"date":"2026-03-10"},"Zone 2":{"l":72,"t":70,"w":18,"h":12,"blocs":{},"date":"2026-03-13"},"Zone 3":{"l":74,"t":55,"w":14,"h":13,"blocs":{},"date":"2026-03-13"},"Zone 4":{"l":74,"t":40,"w":15,"h":13,"blocs":{},"date":"2026-03-13"},"Zone 5":{"l":76,"t":22,"w":17,"h":15,"blocs":{},"date":"2026-03-20"},"Zone 6":{"l":76,"t":3,"w":17,"h":11,"blocs":{},"date":"2026-02-26"},"Zone 7":{"l":55,"t":2,"w":18,"h":10,"blocs":{},"date":"2026-02-03"},"Zone 8":{"l":30,"t":2,"w":19,"h":11,"blocs":{},"date":"2026-02-03"},"Zone 9":{"l":2,"t":4,"w":16,"h":12,"blocs":{},"date":"2026-02-03"},"Zone 10":{"l":2,"t":18,"w":13,"h":17,"blocs":{},"date":"2026-02-10"},"Zone 11":{"l":1,"t":38,"w":11,"h":24,"blocs":{},"date":"2026-02-20"},"Zone 12":{"l":14,"t":56,"w":15,"h":12,"blocs":{},"date":"2026-03-24"},"Zone 13":{"l":32,"t":66,"w":14,"h":13,"blocs":{},"date":"2026-03-24"},"Zone 14":{"l":38,"t":50,"w":14,"h":14,"blocs":{},"date":"2026-02-27"},"Zone 15":{"l":42,"t":37,"w":15,"h":13,"blocs":{},"date":"2026-02-27"},"Zone 16":{"l":34,"t":22,"w":14,"h":13,"blocs":{},"date":"2026-02-17"},"Zone 17":{"l":17,"t":33,"w":14,"h":15,"blocs":{},"date":"2026-03-06"}};
-const MAP_ZONES_N = {"A":{"l":58,"t":31,"w":25,"h":14,"blocs":{},"date":"2026-02-14"},"B":{"l":38,"t":40,"w":19,"h":14,"blocs":{},"date":"2026-02-14"},"C":{"l":20,"t":37,"w":17,"h":14,"blocs":{},"date":"2026-02-27"},"D":{"l":19,"t":24,"w":16,"h":12,"blocs":{},"date":"2026-02-27"},"E":{"l":22,"t":15,"w":16,"h":11,"blocs":{},"date":"2026-02-27"},"F":{"l":11,"t":6,"w":22,"h":13,"blocs":{},"date":"2026-03-03"},"G":{"l":3,"t":50,"w":12,"h":18,"blocs":{},"date":"2026-02-25"},"H":{"l":5,"t":63,"w":12,"h":14,"blocs":{},"date":"2026-02-25"},"I":{"l":7,"t":74,"w":19,"h":15,"blocs":{},"date":"2026-01-30"},"J":{"l":27,"t":74,"w":20,"h":15,"blocs":{},"date":"2026-02-25"},"K":{"l":46,"t":74,"w":20,"h":15,"blocs":{},"date":"2026-02-06"},"L":{"l":67,"t":79,"w":16,"h":14,"blocs":{},"date":"—"},"M":{"l":77,"t":62,"w":16,"h":22,"blocs":{},"date":"2026-03-17"}};
+const MAP_ZONES_N = {"A":{"l":58,"t":31,"w":25,"h":14,"blocs":{},"date":"2026-02-14"},"B":{"l":38,"t":40,"w":19,"h":14,"blocs":{},"date":"2026-02-14"},"C":{"l":20,"t":37,"w":17,"h":14,"blocs":{},"date":"2026-02-27"},"D":{"l":19,"t":24,"w":16,"h":12,"blocs":{},"date":"2026-02-27"},"F":{"l":11,"t":6,"w":22,"h":13,"blocs":{},"date":"2026-03-03"},"G":{"l":3,"t":50,"w":12,"h":18,"blocs":{},"date":"2026-02-25"},"I":{"l":7,"t":74,"w":19,"h":15,"blocs":{},"date":"2026-01-30"},"J":{"l":27,"t":74,"w":20,"h":15,"blocs":{},"date":"2026-02-25"},"K":{"l":46,"t":74,"w":20,"h":15,"blocs":{},"date":"2026-02-06"},"L":{"l":67,"t":79,"w":16,"h":14,"blocs":{},"date":"—"},"M":{"l":77,"t":62,"w":16,"h":22,"blocs":{},"date":"2026-03-17"}};
 const MAP_COULEUR_CSS = {"vert": "#4ade80", "orange": "#f97316", "rose": "#ec4899", "noir": "#94a3b8", "bleu": "#3b82f6", "mauve": "#a78bfa", "jaune": "#fbbf24", "rouge": "#ef4444", "blanc": "#e2e8f0"};
 const MAP_COULEUR_NAMES = {"vert": "Vert", "orange": "Orange", "rose": "Rose", "noir": "Noir", "bleu": "Bleu", "mauve": "Mauve", "jaune": "Jaune", "rouge": "Rouge", "blanc": "Blanc"};
 const MAP_COULEUR_BG = {
@@ -3326,7 +3495,7 @@ function renderCoachStats() {
 }
 
 function renderColorBars() {
-  const COULEURS = ['jaune','orange','rose','rouge','bleu','vert','noir','blanc','mauve'];
+  const COULEURS = ['vert','orange','rose','noir','bleu','mauve','jaune','rouge','blanc'];
   const COLS = {jaune:'#fbbf24',orange:'#f97316',rose:'#ec4899',rouge:'#ef4444',bleu:'#3b82f6',vert:'#22c55e',noir:'#111827',blanc:'#9ca3af',mauve:'#8b5cf6'};
   const stats = {};
   COULEURS.forEach(c=>{ stats[c]={ok:0,total:0}; });
@@ -3455,7 +3624,7 @@ async function callClaudeCoaching(mode) {
   const tauxGlobal = totalOk+totalNok>0?Math.round(totalOk/(totalOk+totalNok)*100):0;
 
   // Color analysis
-  const COULEURS = ['jaune','orange','rose','rouge','bleu','vert','noir','blanc','mauve'];
+  const COULEURS = ['vert','orange','rose','noir','bleu','mauve','jaune','rouge','blanc'];
   const colorStats = {};
   COULEURS.forEach(c=>{colorStats[c]={ok:0,total:0};});
   Object.entries(results).forEach(([key,val])=>{
@@ -3792,24 +3961,29 @@ function checkAllBadges() {
 const ADMIN_EMAILS = ['admin@abloc.brussels', 'lucas@abloc.brussels', 'lionel.grauribes@gmail.com'];
 
 const ADMIN_COLORS = [
-  {key:'vert',hex:'#22c55e',label:'Vert',level:1},
-  {key:'rose',hex:'#ec4899',label:'Rose',level:1},
-  {key:'orange',hex:'#f97316',label:'Orange',level:2},
-  {key:'bleu',hex:'#3b82f6',label:'Bleu',level:2},
-  {key:'noir',hex:'#94a3b8',label:'Noir',level:2},
-  {key:'mauve',hex:'#8b5cf6',label:'Mauve',level:3},
-  {key:'jaune',hex:'#fbbf24',label:'Jaune',level:3},
-  {key:'rouge',hex:'#ef4444',label:'Rouge',level:4},
-  {key:'blanc',hex:'#e2e8f0',label:'Blanc',level:4},
+  {key:'vert',  hex:'#22c55e',label:'Vert',  level:1, cotation:'4'},
+  {key:'orange',hex:'#f97316',label:'Orange',level:1, cotation:'5'},
+  {key:'rose',  hex:'#ec4899',label:'Rose',  level:2, cotation:'5+'},
+  {key:'noir',  hex:'#94a3b8',label:'Noir',  level:2, cotation:'6A'},
+  {key:'bleu',  hex:'#3b82f6',label:'Bleu',  level:3, cotation:'6B'},
+  {key:'mauve', hex:'#8b5cf6',label:'Mauve', level:3, cotation:'6C'},
+  {key:'jaune', hex:'#fbbf24',label:'Jaune', level:4, cotation:'7A'},
+  {key:'rouge', hex:'#ef4444',label:'Rouge', level:4, cotation:'7B'},
+  {key:'blanc', hex:'#e2e8f0',label:'Blanc', level:5, cotation:'7C+'},
 ];
-const ADMIN_LEVEL_LABELS = {1:'Débutant',2:'Intermédiaire',3:'Avancé',4:'Expert'};
-const ADMIN_LEVEL_IDEAL  = {1:.30,2:.35,3:.25,4:.10};
+const ADMIN_LEVEL_LABELS = {1:'Débutant',2:'Intermédiaire bas',3:'Intermédiaire',4:'Avancé',5:'Expert'};
+const ADMIN_LEVEL_IDEAL  = {1:.25,2:.25,3:.20,4:.20,5:.10};
 const ADMIN_COT_RANK = {'3':1,'4':2,'4+':3,'5':4,'5+':5,'6A':6,'6A+':7,'6B':8,'6B+':9,'6C':10,'6C+':11,'7A':12,'7A+':13,'7B':14,'7B+':15,'7C':16,'7C+':17,'8A':18,'8A+':19,'8B':20};
 const ADMIN_COT_RANGE = {
-  vert:{min:1,max:5},rose:{min:3,max:7},orange:{min:5,max:9},
-  bleu:{min:6,max:11},noir:{min:7,max:12},
-  mauve:{min:10,max:15},jaune:{min:10,max:16},
-  rouge:{min:13,max:18},blanc:{min:14,max:20}
+  vert:  {min:2,  max:4},   // 4
+  orange:{min:4,  max:5},   // 5
+  rose:  {min:5,  max:6},   // 5+
+  noir:  {min:6,  max:7},   // 6A
+  bleu:  {min:8,  max:9},   // 6B
+  mauve: {min:10, max:11},  // 6C
+  jaune: {min:12, max:13},  // 7A
+  rouge: {min:14, max:15},  // 7B
+  blanc: {min:16, max:20},  // 7C+
 };
 
 function isAdmin() {
@@ -3925,7 +4099,11 @@ async function callAdminAI() {
 
   const prompt = `Tu es un expert en gestion de salle d'escalade indoor. Voici les données actuelles de la salle :
 
+ORDRE DE DIFFICULTÉ DES COULEURS (du plus facile au plus difficile) :
+Vert (4) < Orange (5) < Rose (5+) < Noir (6A) < Bleu (6B) < Mauve (6C) < Jaune (7A) < Rouge (7B) < Blanc (7C+)
+
 BLOCS : ${total} blocs actifs
+LACUNES COLLECTIVES GRIMPEURS : ${window._adminLacunes && window._adminLacunes.length > 0 ? window._adminLacunes.map(l=>`${l.type} "${l.tag}" : ${l.pctEchec}% d'échec, ${l.nbUsers} grimpeurs`).join('; ') : 'Non analysé ou aucune lacune'}
 RÉPARTITION PAR COULEUR : ${colorSummary}
 STYLES REPRÉSENTÉS : ${styleSummary}
 INCLINAISONS : ${inclSummary}
@@ -4699,6 +4877,13 @@ const supa = {
   async insertBloc(bloc) {
     return this.req('/rest/v1/blocs', 'POST', bloc, currentToken);
   },
+  async insertSessionResults(rows) {
+    return this.req('/rest/v1/session_results', 'POST', rows, currentToken, {'Prefer':'return=minimal'});
+  },
+  async getSessionResults(days=30) {
+    const since = new Date(Date.now() - days*24*60*60*1000).toISOString().slice(0,10);
+    return this.req(`/rest/v1/session_results?select=*&date=gte.${since}&order=created_at.desc&limit=2000`, 'GET', null, null);
+  },
   async upsertBloc(bloc, token) {
     return this.req('/rest/v1/blocs', 'POST', bloc, token, {
       'Prefer': 'resolution=merge-duplicates,return=minimal'
@@ -5445,7 +5630,7 @@ function submitNewBloc() {
   // Build bloc object
   const secteurCode = newBlocData.secteur.replace('Zone ','Z').replace(/\s/g,'');
   const id = secteurCode + '_' + String(BLOCS.filter(b=>b.secteur===newBlocData.secteur||b.secteur===newBlocData.secteur.replace('Zone ','')).length+1).padStart(2,'0');
-  const COLS = {jaune:'#fbbf24',orange:'#f97316',rose:'#ec4899',rouge:'#ef4444',bleu:'#3b82f6',vert:'#22c55e',noir:'#111827',blanc:'#9ca3af',mauve:'#8b5cf6',cyan:'#0ea5e9'};
+  const COLS = {jaune:'#fbbf24',orange:'#f97316',rose:'#ec4899',rouge:'#ef4444',bleu:'#3b82f6',vert:'#22c55e',noir:'#111827',blanc:'#9ca3af',mauve:'#8b5cf6'};
   const bloc = {
     id,
     couleur: newBlocData.couleur,
@@ -5569,7 +5754,7 @@ function resetBlocForm() {
 
 
 // ========== MAP INTEGREE SEANCE ==========
-const CCOLS={jaune:'#fbbf24',orange:'#f97316',rose:'#ec4899',rouge:'#ef4444',bleu:'#3b82f6',vert:'#22c55e',noir:'#111827',blanc:'#9ca3af',mauve:'#8b5cf6',cyan:'#0ea5e9'};
+const CCOLS={jaune:'#fbbf24',orange:'#f97316',rose:'#ec4899',rouge:'#ef4444',bleu:'#3b82f6',vert:'#22c55e',noir:'#111827',blanc:'#9ca3af',mauve:'#8b5cf6'};
 const CNAMES_S={jaune:'Jaune',orange:'Orange',rose:'Rose',rouge:'Rouge',bleu:'Bleu',vert:'Vert',noir:'Noir',blanc:'Blanc',mauve:'Mauve',cyan:'Cyan'};
 let seanceHall='ancienne',seanceSelZone=null,seanceColorFilter=null;
 function getSeanceZones(){return seanceHall==='ancienne'?MAP_ZONES_A:MAP_ZONES_N;}
@@ -6065,7 +6250,7 @@ async function startGuidedSession() {
   const totalNok = historique.reduce((a,s)=>a+s.nok,0);
   const tauxGlobal = totalOk+totalNok>0?Math.round(totalOk/(totalOk+totalNok)*100):0;
 
-  const COULEURS = ['jaune','orange','rose','rouge','bleu','vert','noir','blanc','mauve'];
+  const COULEURS = ['vert','orange','rose','noir','bleu','mauve','jaune','rouge','blanc'];
   const colorStats = {};
   COULEURS.forEach(c=>{colorStats[c]={ok:0,total:0};});
   Object.entries(results).forEach(([key,val])=>{
@@ -6100,7 +6285,7 @@ async function startGuidedSession() {
     pg.blessures  ? 'Blessures: '+pg.blessures : null,
   ].filter(Boolean).join(', ') || 'Non renseigné';
 
-  const prompt = 'Tu es un coach escalade de bloc expert et bienveillant. Le grimpeur est en séance MAINTENANT.\n\nPROFIL :\n- Niveau : '+niveau+'\n- '+profilPhysique+'\n- Taux réussite global : '+tauxGlobal+'% ('+totalOk+' ok / '+totalNok+' ratés)\n- Points faibles — Inclinaisons : '+(worstIncl||'insuffisant')+' | Styles : '+(worstStyle||'insuffisant')+' | Couleurs : '+(worstColors||'insuffisant')+'\n- Historique : '+historique.length+' séances\n\nSÉANCE EN COURS :\n- Blocs réussis : '+okNow+', blocs ratés : '+nokNow+'\n- Hall actuel : '+(seanceHall||'non défini')+'\n- Blocs guidés déjà travaillés : '+guidedDone+'\n\nBLOCS DISPONIBLES (ID | couleur cotation | inclinaison | style | secteur) :\n'+(blocsDispos||'Non disponible')+'\n\nRecommande exactement 8 blocs précis à travailler MAINTENANT. Cible les points faibles. Pour chaque bloc, explique POURQUOI en 1 phrase courte (max 12 mots).\n\nRéponds UNIQUEMENT avec ce JSON (sans markdown) :\n{"message":"1-2 phrases de coaching motivant et personnalisé","blocs":[{"id":"BLOC_ID","couleur":"couleur","cotation":"cotation ou vide","why":"pourquoi ce bloc en 1 phrase"}]}';
+  const prompt = 'Tu es un coach escalade de bloc expert et bienveillant. Le grimpeur est en séance MAINTENANT.\n\nORDRE DE DIFFICULTÉ DES COULEURS DE LA SALLE (du plus facile au plus difficile) :\nVert (4) < Orange (5) < Rose (5+) < Noir (6A) < Bleu (6B) < Mauve (6C) < Jaune (7A) < Rouge (7B) < Blanc (7C+)\nUtilise cet ordre pour interpréter les performances par couleur.\n\nPROFIL :\n- Niveau : '+niveau+'\n- '+profilPhysique+'\n- Taux réussite global : '+tauxGlobal+'% ('+totalOk+' ok / '+totalNok+' ratés)\n- Points faibles — Inclinaisons : '+(worstIncl||'insuffisant')+' | Styles : '+(worstStyle||'insuffisant')+' | Couleurs : '+(worstColors||'insuffisant')+'\n- Historique : '+historique.length+' séances\n\nSÉANCE EN COURS :\n- Blocs réussis : '+okNow+', blocs ratés : '+nokNow+'\n- Hall actuel : '+(seanceHall||'non défini')+'\n- Blocs guidés déjà travaillés : '+guidedDone+'\n\nBLOCS DISPONIBLES (ID | couleur cotation | inclinaison | style | secteur) :\n'+(blocsDispos||'Non disponible')+'\n\nRecommande exactement 8 blocs précis à travailler MAINTENANT. Cible les points faibles. Pour chaque bloc, explique POURQUOI en 1 phrase courte (max 12 mots).\n\nRéponds UNIQUEMENT avec ce JSON (sans markdown) :\n{"message":"1-2 phrases de coaching motivant et personnalisé","blocs":[{"id":"BLOC_ID","couleur":"couleur","cotation":"cotation ou vide","why":"pourquoi ce bloc en 1 phrase"}]}';
 
   try {
     const res = await fetch('/.netlify/functions/coaching', {
@@ -6240,10 +6425,12 @@ function getCoachingNote(){
 
 // ========== BLOCS SUPABASE ==========
 async function loadBlocsFromSupabase() {
-  if(!currentToken) return;
   try {
-    const data = await supa.getBlocs();
-    if(!Array.isArray(data)) return;
+    // Essaie avec token si dispo, sinon lecture publique (mode démo inclus)
+    let data = currentToken
+      ? await supa.getBlocs()
+      : await supa.req('/rest/v1/blocs?select=*&order=added_at.asc', 'GET', null, null);
+    if(!Array.isArray(data) || data.length === 0) return;
     let added = 0;
     data.forEach(b => {
       // Convertir format Supabase -> format app
