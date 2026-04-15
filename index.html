@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧗</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'></text></svg>">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -920,7 +920,7 @@ textarea{resize:none;height:62px;line-height:1.5}
 
   <!-- Alertes -->
   <div class="admin-card" style="margin-bottom:14px">
-    <div class="admin-card-title">⚠ Alertes ouvreurs <span id="adm-alerts-count" style="color:var(--accent)"></span></div>
+    <div class="admin-card-title">△ Alertes ouvreurs <span id="adm-alerts-count" style="color:var(--accent)"></span></div>
     <div id="adm-alerts-list"></div>
   </div>
 
@@ -932,7 +932,7 @@ textarea{resize:none;height:62px;line-height:1.5}
     </div>
     <!-- Top blocs -->
     <div class="admin-card">
-      <div class="admin-card-title">🌟 Meilleurs blocs</div>
+      <div class="admin-card-title">★ Meilleurs blocs</div>
       <div id="adm-top-blocs"></div>
     </div>
   </div>
@@ -951,12 +951,12 @@ textarea{resize:none;height:62px;line-height:1.5}
     </div>
     <!-- Filtres -->
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px" id="adm-filters">
-      <select id="flt-couleur" onchange="applyAdminFilters()" style="font-size:11px;padding:5px 8px;border-radius:6px;border:1.5px solid var(--line2);background:var(--white);color:var(--ink);cursor:pointer"><option value="">🎨 Couleur</option></select>
-      <select id="flt-secteur" onchange="applyAdminFilters()" style="font-size:11px;padding:5px 8px;border-radius:6px;border:1.5px solid var(--line2);background:var(--white);color:var(--ink);cursor:pointer"><option value="">📍 Secteur</option></select>
-      <select id="flt-style" onchange="applyAdminFilters()" style="font-size:11px;padding:5px 8px;border-radius:6px;border:1.5px solid var(--line2);background:var(--white);color:var(--ink);cursor:pointer"><option value="">🏃 Style</option></select>
-      <select id="flt-incl" onchange="applyAdminFilters()" style="font-size:11px;padding:5px 8px;border-radius:6px;border:1.5px solid var(--line2);background:var(--white);color:var(--ink);cursor:pointer"><option value="">📐 Inclinaison</option></select>
-      <select id="flt-morpho" onchange="applyAdminFilters()" style="font-size:11px;padding:5px 8px;border-radius:6px;border:1.5px solid var(--line2);background:var(--white);color:var(--ink);cursor:pointer"><option value="">👤 Morpho</option><option value="oui">Oui</option><option value="non">Non</option></select>
-      <select id="flt-ouvreur" onchange="applyAdminFilters()" style="font-size:11px;padding:5px 8px;border-radius:6px;border:1.5px solid var(--line2);background:var(--white);color:var(--ink);cursor:pointer"><option value="">🧗 Ouvreur</option></select>
+      <select id="flt-couleur" onchange="applyAdminFilters()" style="font-size:11px;padding:5px 8px;border-radius:6px;border:1.5px solid var(--line2);background:var(--white);color:var(--ink);cursor:pointer"><option value="">Couleur</option></select>
+      <select id="flt-secteur" onchange="applyAdminFilters()" style="font-size:11px;padding:5px 8px;border-radius:6px;border:1.5px solid var(--line2);background:var(--white);color:var(--ink);cursor:pointer"><option value="">Secteur</option></select>
+      <select id="flt-style" onchange="applyAdminFilters()" style="font-size:11px;padding:5px 8px;border-radius:6px;border:1.5px solid var(--line2);background:var(--white);color:var(--ink);cursor:pointer"><option value="">Style</option></select>
+      <select id="flt-incl" onchange="applyAdminFilters()" style="font-size:11px;padding:5px 8px;border-radius:6px;border:1.5px solid var(--line2);background:var(--white);color:var(--ink);cursor:pointer"><option value="">Inclinaison</option></select>
+      <select id="flt-morpho" onchange="applyAdminFilters()" style="font-size:11px;padding:5px 8px;border-radius:6px;border:1.5px solid var(--line2);background:var(--white);color:var(--ink);cursor:pointer"><option value="">Morpho</option><option value="oui">Oui</option><option value="non">Non</option></select>
+      <select id="flt-ouvreur" onchange="applyAdminFilters()" style="font-size:11px;padding:5px 8px;border-radius:6px;border:1.5px solid var(--line2);background:var(--white);color:var(--ink);cursor:pointer"><option value=""> Ouvreur</option></select>
       <select id="flt-etoiles" onchange="applyAdminFilters()" style="font-size:11px;padding:5px 8px;border-radius:6px;border:1.5px solid var(--line2);background:var(--white);color:var(--ink);cursor:pointer"><option value="">★ Étoiles</option><option value="0">Sans étoile</option><option value="1">★</option><option value="2">★★</option><option value="3">★★★</option></select>
     </div>
     <div style="overflow-x:auto"><table class="admin-table">
@@ -968,7 +968,7 @@ textarea{resize:none;height:62px;line-height:1.5}
   <!-- Lacunes collectives grimpeurs -->
   <div class="admin-card" style="margin-bottom:14px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <div class="admin-card-title" style="margin-bottom:0">🔍 Lacunes collectives — Grimpeurs</div>
+      <div class="admin-card-title" style="margin-bottom:0">◆ Lacunes collectives — Grimpeurs</div>
       <button onclick="loadCollectiveLacunes()" style="padding:6px 12px;border-radius:20px;background:var(--blue-bg);color:var(--blue);border:1.5px solid var(--blue);font-size:11px;font-weight:700;cursor:pointer">Analyser</button>
     </div>
     <div id="adm-lacunes-result">
@@ -1004,7 +1004,7 @@ textarea{resize:none;height:62px;line-height:1.5}
 
   <!-- Historique des ouvertures -->
   <div class="admin-card" style="margin-bottom:30px">
-    <div class="admin-card-title" style="margin-bottom:12px">📅 Historique des ouvertures</div>
+    <div class="admin-card-title" style="margin-bottom:12px">Historique des ouvertures</div>
     <div style="display:flex;gap:6px;margin-bottom:12px">
       <button onclick="filterArchive('all',this)" style="padding:5px 12px;border-radius:20px;border:1.5px solid var(--ink);background:var(--ink);color:#fff;font-size:11px;font-weight:600;cursor:pointer" id="arch-btn-all">Tout</button>
       <button onclick="filterArchive('added',this)" style="padding:5px 12px;border-radius:20px;border:1.5px solid var(--line2);background:var(--white);color:var(--ink2);font-size:11px;font-weight:600;cursor:pointer" id="arch-btn-added">↑ Ajoutés</button>
@@ -1017,16 +1017,16 @@ textarea{resize:none;height:62px;line-height:1.5}
 <!-- FEEDBACK MODAL -->
 <div id="feedback-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;align-items:flex-end;justify-content:center">
   <div style="background:var(--white);border-radius:20px 20px 0 0;width:100%;max-width:430px;padding:24px 20px calc(24px + env(safe-area-inset-bottom));max-height:85vh;overflow-y:auto">
-    <div style="font-family:var(--display);font-size:18px;font-weight:700;color:var(--ink);margin-bottom:6px">💬 Feedback</div>
+    <div style="font-family:var(--display);font-size:18px;font-weight:700;color:var(--ink);margin-bottom:6px">Feedback</div>
     <div style="font-size:13px;color:var(--ink3);margin-bottom:16px">Partage ton ressenti, signale un bug ou propose une idée. Chaque retour compte !</div>
 
     <!-- Type -->
     <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Type</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px" id="feedback-type-chips">
-      <div class="chip sel" onclick="selectFeedbackType('bug',this)">🐛 Bug</div>
-      <div class="chip" onclick="selectFeedbackType('idee',this)">💡 Idée</div>
+      <div class="chip sel" onclick="selectFeedbackType('bug',this)">Bug</div>
+      <div class="chip" onclick="selectFeedbackType('idee',this)">Idée</div>
       <div class="chip" onclick="selectFeedbackType('avis',this)">⭐ Avis général</div>
-      <div class="chip" onclick="selectFeedbackType('autre',this)">💬 Autre</div>
+      <div class="chip" onclick="selectFeedbackType('autre',this)">Autre</div>
     </div>
 
     <!-- Note -->
@@ -1045,7 +1045,7 @@ textarea{resize:none;height:62px;line-height:1.5}
 
     <div style="display:flex;gap:8px">
       <button class="btn" style="flex:1;margin:0;color:var(--ink3)" onclick="closeFeedback()">Annuler</button>
-      <button id="feedback-send-btn" class="btn btn-primary" style="flex:2;margin:0" onclick="sendFeedback()">Envoyer 🚀</button>
+      <button id="feedback-send-btn" class="btn btn-primary" style="flex:2;margin:0" onclick="sendFeedback()">Envoyer →</button>
     </div>
   </div>
 </div>
@@ -1068,7 +1068,7 @@ textarea{resize:none;height:62px;line-height:1.5}
 
   <!-- Installer l'app -->
   <div class="card" style="margin-bottom:12px" id="install-card">
-    <div class="card-label" style="margin-bottom:12px">📲 Installer l'app sur ton téléphone</div>
+    <div class="card-label" style="margin-bottom:12px">Installer l'app sur ton téléphone</div>
     <div style="font-size:12px;color:var(--ink3);margin-bottom:12px">Ajoute À Bloc sur ton écran d'accueil pour un accès rapide, même sans connexion.</div>
     <!-- iOS -->
     <div style="background:var(--bg);border:1px solid var(--line2);border-radius:12px;padding:12px 14px;margin-bottom:8px">
@@ -1155,9 +1155,9 @@ textarea{resize:none;height:62px;line-height:1.5}
     <div style="margin-bottom:12px">
       <div style="font-size:11px;color:var(--ink3);margin-bottom:6px">Pratique hors salle</div>
       <div style="display:flex;flex-wrap:wrap;gap:6px" id="prof-outdoor-chips">
-        <div class="chip" onclick="selectProfChip('outdoor','falaise',this)">🪨 Falaise</div>
-        <div class="chip" onclick="selectProfChip('outdoor','competition',this)">🏆 Compétition</div>
-        <div class="chip" onclick="selectProfChip('outdoor','speed',this)">⚡ Speed</div>
+        <div class="chip" onclick="selectProfChip('outdoor','falaise',this)">Falaise</div>
+        <div class="chip" onclick="selectProfChip('outdoor','competition',this)">Compétition</div>
+        <div class="chip" onclick="selectProfChip('outdoor','speed',this)">Speed</div>
         <div class="chip" onclick="selectProfChip('outdoor','aucun',this)">Salle uniquement</div>
       </div>
     </div>
@@ -1182,25 +1182,25 @@ textarea{resize:none;height:62px;line-height:1.5}
     <div style="margin-bottom:10px">
       <div style="font-size:11px;color:var(--ink3);margin-bottom:6px">Mes points forts (selon toi)</div>
       <div style="display:flex;flex-wrap:wrap;gap:6px" id="prof-pointsForts-chips">
-        <div class="chip" onclick="selectProfChipMulti('pointsForts','force',this)">💪 Force</div>
-        <div class="chip" onclick="selectProfChipMulti('pointsForts','endurance',this)">🔋 Endurance</div>
-        <div class="chip" onclick="selectProfChipMulti('pointsForts','technique',this)">🎯 Technique</div>
-        <div class="chip" onclick="selectProfChipMulti('pointsForts','lecture',this)">👁 Lecture</div>
-        <div class="chip" onclick="selectProfChipMulti('pointsForts','mental',this)">🧠 Mental</div>
-        <div class="chip" onclick="selectProfChipMulti('pointsForts','souplesse',this)">🤸 Souplesse</div>
+        <div class="chip" onclick="selectProfChipMulti('pointsForts','force',this)">Force</div>
+        <div class="chip" onclick="selectProfChipMulti('pointsForts','endurance',this)">Endurance</div>
+        <div class="chip" onclick="selectProfChipMulti('pointsForts','technique',this)">Technique</div>
+        <div class="chip" onclick="selectProfChipMulti('pointsForts','lecture',this)">Lecture</div>
+        <div class="chip" onclick="selectProfChipMulti('pointsForts','mental',this)">Mental</div>
+        <div class="chip" onclick="selectProfChipMulti('pointsForts','souplesse',this)">Souplesse</div>
       </div>
     </div>
     <div style="margin-bottom:12px">
       <div style="font-size:11px;color:var(--ink3);margin-bottom:6px">Mes points à améliorer (selon toi)</div>
       <div style="display:flex;flex-wrap:wrap;gap:6px" id="prof-pointsFaibles-chips">
-        <div class="chip" onclick="selectProfChipMulti('pointsFaibles','force',this)">💪 Force doigts</div>
-        <div class="chip" onclick="selectProfChipMulti('pointsFaibles','devers',this)">📐 Dévers</div>
+        <div class="chip" onclick="selectProfChipMulti('pointsFaibles','force',this)">/ Force doigts</div>
+        <div class="chip" onclick="selectProfChipMulti('pointsFaibles','devers',this)">/ Dévers</div>
         <div class="chip" onclick="selectProfChipMulti('pointsFaibles','dalle',this)">⬜ Dalle</div>
-        <div class="chip" onclick="selectProfChipMulti('pointsFaibles','dynamique',this)">💥 Dynamique</div>
-        <div class="chip" onclick="selectProfChipMulti('pointsFaibles','lecture',this)">👁 Lecture</div>
-        <div class="chip" onclick="selectProfChipMulti('pointsFaibles','mental',this)">😬 Mental/Peur</div>
-        <div class="chip" onclick="selectProfChipMulti('pointsFaibles','souplesse',this)">🤸 Souplesse</div>
-        <div class="chip" onclick="selectProfChipMulti('pointsFaibles','endurance',this)">🔋 Endurance</div>
+        <div class="chip" onclick="selectProfChipMulti('pointsFaibles','dynamique',this)">Dynamique</div>
+        <div class="chip" onclick="selectProfChipMulti('pointsFaibles','lecture',this)">Lecture</div>
+        <div class="chip" onclick="selectProfChipMulti('pointsFaibles','mental',this)">Mental</div>
+        <div class="chip" onclick="selectProfChipMulti('pointsFaibles','souplesse',this)">Souplesse</div>
+        <div class="chip" onclick="selectProfChipMulti('pointsFaibles','endurance',this)">Endurance</div>
       </div>
     </div>
 
@@ -1209,12 +1209,12 @@ textarea{resize:none;height:62px;line-height:1.5}
     <div style="margin-bottom:8px">
       <div style="font-size:11px;color:var(--ink3);margin-bottom:6px">Zones sensibles actuellement</div>
       <div style="display:flex;flex-wrap:wrap;gap:6px" id="prof-blessures-chips">
-        <div class="chip" onclick="selectProfChipMulti('blessuresZones','poulies',this)">🖐 Poulies</div>
-        <div class="chip" onclick="selectProfChipMulti('blessuresZones','epaule',this)">💪 Épaule</div>
-        <div class="chip" onclick="selectProfChipMulti('blessuresZones','coude',this)">🦾 Coude</div>
-        <div class="chip" onclick="selectProfChipMulti('blessuresZones','poignet',this)">✋ Poignet</div>
-        <div class="chip" onclick="selectProfChipMulti('blessuresZones','genou',this)">🦵 Genou</div>
-        <div class="chip" onclick="selectProfChipMulti('blessuresZones','dos',this)">🔙 Dos</div>
+        <div class="chip" onclick="selectProfChipMulti('blessuresZones','poulies',this)">Poulies</div>
+        <div class="chip" onclick="selectProfChipMulti('blessuresZones','epaule',this)">Épaule</div>
+        <div class="chip" onclick="selectProfChipMulti('blessuresZones','coude',this)">Coude</div>
+        <div class="chip" onclick="selectProfChipMulti('blessuresZones','poignet',this)">Poignet</div>
+        <div class="chip" onclick="selectProfChipMulti('blessuresZones','genou',this)">Genou</div>
+        <div class="chip" onclick="selectProfChipMulti('blessuresZones','dos',this)">Dos</div>
         <div class="chip" onclick="selectProfChipMulti('blessuresZones','aucune',this)">✓ Aucune</div>
       </div>
     </div>
@@ -1234,10 +1234,19 @@ textarea{resize:none;height:62px;line-height:1.5}
     </div>
   </div>
 
-  <!-- Progression séances -->
+  <!-- Progression -->
   <div class="card">
-    <div class="card-label">Progression (10 dernières séances)</div>
-    <div id="prof-chart" style="margin-top:8px"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div class="card-label" style="margin-bottom:0">Progression</div>
+      <div style="display:flex;gap:4px">
+        <button id="chart-tab-seances" onclick="switchChartTab('seances')" style="font-size:11px;padding:4px 10px;border-radius:20px;border:1.5px solid var(--ink);background:var(--ink);color:#fff;font-weight:600;cursor:pointer">Séances</button>
+        <button id="chart-tab-semaines" onclick="switchChartTab('semaines')" style="font-size:11px;padding:4px 10px;border-radius:20px;border:1.5px solid var(--line2);background:var(--white);color:var(--ink2);font-weight:600;cursor:pointer">Semaines</button>
+      </div>
+    </div>
+    <div id="prof-chart-seances"></div>
+    <div id="prof-chart-semaines" style="display:none"></div>
+    <!-- Stats de tendance -->
+    <div id="prof-trend" style="margin-top:12px;padding-top:12px;border-top:1px solid var(--line)"></div>
   </div>
 
   <!-- Par inclinaison -->
@@ -1288,7 +1297,7 @@ textarea{resize:none;height:62px;line-height:1.5}
     </div>
     <!-- Feedback -->
     <button class="btn" style="margin-top:12px;font-size:12px;color:var(--ink3);border-color:var(--line2)" onclick="openFeedback()">
-      💬 Donner un feedback sur l'app
+      / Donner un feedback sur l'app
     </button>
   </div>
 
@@ -1370,7 +1379,7 @@ textarea{resize:none;height:62px;line-height:1.5}
 
     <!-- Info map -->
     <div style="display:flex;align-items:center;gap:10px;background:var(--accent-bg);border:1.5px solid #ffd5c2;border-radius:var(--r);padding:12px 14px;margin-bottom:10px">
-      <span style="font-size:20px;flex-shrink:0">🗺️</span>
+      <span style="font-size:20px;flex-shrink:0">/</span>
       <div style="font-size:13px;color:var(--ink2);line-height:1.5;font-weight:500">Trouve les blocs de ta séance dans la map ci-dessous et valide-les directement dans l'app.</div>
     </div>
     <div id="seance-map-note" style="display:none"></div>
@@ -1839,7 +1848,7 @@ textarea{resize:none;height:62px;line-height:1.5}
     <div class="addbloc-section">
       <div class="addbloc-section-title">Inclinaison <span class="req">* obligatoire — plusieurs choix possibles</span></div>
       <div class="tag-grid" id="inclinaison-grid">
-        <div class="tag-btn" onclick="toggleTag('inclinaison','Dalle',this)">🏔 Dalle</div>
+        <div class="tag-btn" onclick="toggleTag('inclinaison','Dalle',this)">Dalle</div>
         <div class="tag-btn" onclick="toggleTag('inclinaison','Léger dévers',this)">↗ Léger dévers</div>
         <div class="tag-btn" onclick="toggleTag('inclinaison','Gros dévers',this)">↗↗ Gros dévers</div>
         <div class="tag-btn" onclick="toggleTag('inclinaison','Vertical',this)">⬆ Vertical</div>
@@ -1855,27 +1864,27 @@ textarea{resize:none;height:62px;line-height:1.5}
     <div class="addbloc-section">
       <div class="addbloc-section-title">Type de grimpe <span class="req">* obligatoire — plusieurs choix possibles</span></div>
       <div class="tag-grid" id="style-grid">
-        <div class="tag-btn" onclick="toggleTag('style','Athlétique',this)">💪 Athlétique</div>
-        <div class="tag-btn" onclick="toggleTag('style','Explosif',this)">💥 Explosif</div>
-        <div class="tag-btn" onclick="toggleTag('style','Technique',this)">🎯 Technique</div>
+        <div class="tag-btn" onclick="toggleTag('style','Athlétique',this)">/ Athlétique</div>
+        <div class="tag-btn" onclick="toggleTag('style','Explosif',this)">! Explosif</div>
+        <div class="tag-btn" onclick="toggleTag('style','Technique',this)">Technique</div>
         <div class="tag-btn" onclick="toggleTag('style','Dynamique',this)">⚡ Dynamique</div>
-        <div class="tag-btn" onclick="toggleTag('style','Coordination',this)">🤸 Coordination</div>
+        <div class="tag-btn" onclick="toggleTag('style','Coordination',this)">× Coordination</div>
         <div class="tag-btn" onclick="toggleTag('style','Équilibre',this)">⚖ Équilibre</div>
-        <div class="tag-btn" onclick="toggleTag('style','Compression',this)">🤜 Compression</div>
-        <div class="tag-btn" onclick="toggleTag('style','À doigts',this)">🤏 À doigts</div>
-        <div class="tag-btn" onclick="toggleTag('style','Adhérence',this)">👟 Adhérence</div>
-        <div class="tag-btn" onclick="toggleTag('style','Gainage',this)">🧱 Gainage</div>
-        <div class="tag-btn" onclick="toggleTag('style','Lecture',this)">👁 Lecture</div>
-        <div class="tag-btn" onclick="toggleTag('style','Endurance',this)">🔄 Endurance</div>
-        <div class="tag-btn" onclick="toggleTag('style','Grimpe 3D',this)">🌐 Grimpe 3D</div>
-        <div class="tag-btn" onclick="toggleTag('style','Éducatif',this)">📚 Éducatif</div>
-        <div class="tag-btn" onclick="toggleTag('style','Morpho',this)">📏 Morpho</div>
-        <div class="tag-btn" onclick="toggleTag('style','Cruxy',this)">🔑 Cruxy</div>
-        <div class="tag-btn" onclick="toggleTag('style','Mobilité',this)">🧘 Mobilité</div>
-        <div class="tag-btn" onclick="toggleTag('style','Low %',this)">🎲 Low %</div>
-        <div class="tag-btn" onclick="toggleTag('style','Scary/Mental',this)">🧠 Scary/Mental</div>
-        <div class="tag-btn" onclick="toggleTag('style','Rando/Smooth',this)">🌊 Rando/Smooth</div>
-        <div class="tag-btn" onclick="toggleTag('style','Style compét',this)">🏆 Style compét</div>
+        <div class="tag-btn" onclick="toggleTag('style','Compression',this)">Compression</div>
+        <div class="tag-btn" onclick="toggleTag('style','À doigts',this)">À doigts</div>
+        <div class="tag-btn" onclick="toggleTag('style','Adhérence',this)">Adhérence</div>
+        <div class="tag-btn" onclick="toggleTag('style','Gainage',this)">Gainage</div>
+        <div class="tag-btn" onclick="toggleTag('style','Lecture',this)">Lecture</div>
+        <div class="tag-btn" onclick="toggleTag('style','Endurance',this)">Endurance</div>
+        <div class="tag-btn" onclick="toggleTag('style','Grimpe 3D',this)">Grimpe 3D</div>
+        <div class="tag-btn" onclick="toggleTag('style','Éducatif',this)">Éducatif</div>
+        <div class="tag-btn" onclick="toggleTag('style','Morpho',this)">◇ Morpho</div>
+        <div class="tag-btn" onclick="toggleTag('style','Cruxy',this)">◆ Cruxy</div>
+        <div class="tag-btn" onclick="toggleTag('style','Mobilité',this)">Mobilité</div>
+        <div class="tag-btn" onclick="toggleTag('style','Low %',this)">? Low %</div>
+        <div class="tag-btn" onclick="toggleTag('style','Scary/Mental',this)">△ Scary/Mental</div>
+        <div class="tag-btn" onclick="toggleTag('style','Rando/Smooth',this)">~ Rando/Smooth</div>
+        <div class="tag-btn" onclick="toggleTag('style','Style compét',this)">◆ Style compét</div>
         <div class="tag-btn" onclick="toggleTag('style','Traversée',this)">↔️ Traversée</div>
         <div class="tag-btn" onclick="toggleTag('style','Sensation',this)">✨ Sensation</div>
         <div class="tag-btn" onclick="toggleTag('style','Fissure',this)">🪨 Fissure</div>
@@ -1890,22 +1899,22 @@ textarea{resize:none;height:62px;line-height:1.5}
         <div class="tag-btn" onclick="toggleTag('prise','Réglette',this)">— Réglette</div>
         <div class="tag-btn" onclick="toggleTag('prise','Microcrimp',this)">▪ Microcrimp</div>
         <div class="tag-btn" onclick="toggleTag('prise','Arquée',this)">✊ Arquée</div>
-        <div class="tag-btn" onclick="toggleTag('prise','Semi-arquée',this)">🖐 Semi-arquée</div>
+        <div class="tag-btn" onclick="toggleTag('prise','Semi-arquée',this)">~ Semi-arquée</div>
         <div class="tag-btn" onclick="toggleTag('prise','Open hand',this)">✋ Open hand</div>
         <div class="tag-btn" onclick="toggleTag('prise','Pocket',this)">○ Pocket</div>
         <div class="tag-btn" onclick="toggleTag('prise','Mono',this)">• Mono</div>
         <div class="tag-btn" onclick="toggleTag('prise','Bi-doigts',this)">•• Bi</div>
         <div class="tag-btn" onclick="toggleTag('prise','3 doigts',this)">••• 3 doigts</div>
         <div class="tag-btn" onclick="toggleTag('prise','Grosse pince',this)">✌ Grosse pince</div>
-        <div class="tag-btn" onclick="toggleTag('prise','Micro pince',this)">🤌 Micro pince</div>
-        <div class="tag-btn" onclick="toggleTag('prise','Jug',this)">🤙 Jug</div>
+        <div class="tag-btn" onclick="toggleTag('prise','Micro pince',this)">· Micro pince</div>
+        <div class="tag-btn" onclick="toggleTag('prise','Jug',this)">○ Jug</div>
         <div class="tag-btn" onclick="toggleTag('prise','Bac',this)">□ Bac</div>
         <div class="tag-btn" onclick="toggleTag('prise','Gaston',this)">↔ Gaston</div>
         <div class="tag-btn" onclick="toggleTag('prise','Undercling',this)">⬆ Undercling</div>
         <div class="tag-btn" onclick="toggleTag('prise','Sidepull',this)">↕ Sidepull</div>
         <div class="tag-btn" onclick="toggleTag('prise','Volume',this)">▲ Volume</div>
-        <div class="tag-btn" onclick="toggleTag('prise','Pied-main',this)">🦶 Pied-main</div>
-        <div class="tag-btn" onclick="toggleTag('prise','Porte',this)">🚪 Porte</div>
+        <div class="tag-btn" onclick="toggleTag('prise','Pied-main',this)">∧ Pied-main</div>
+        <div class="tag-btn" onclick="toggleTag('prise','Porte',this)">⌐ Porte</div>
       </div>
     </div>
 
@@ -1913,45 +1922,45 @@ textarea{resize:none;height:62px;line-height:1.5}
     <div class="addbloc-section">
       <div class="addbloc-section-title">Type de mouvement <span style="font-size:11px;color:var(--ink3);font-weight:400">— optionnel, plusieurs choix possibles</span></div>
       <div class="tag-grid" id="mouvement-grid">
-        <div class="tag-btn" onclick="toggleTag('mouvement','Talon',this)">🦶 Talon</div>
-        <div class="tag-btn" onclick="toggleTag('mouvement','Toe hook',this)">👟 Toe hook</div>
-        <div class="tag-btn" onclick="toggleTag('mouvement','Pied haut',this)">🦵 Pied haut</div>
-        <div class="tag-btn" onclick="toggleTag('mouvement','Talon-pointe',this)">🔁 Talon-pointe</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Talon',this)">∧ Talon</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Toe hook',this)">∫ Toe hook</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Pied haut',this)">↑ Pied haut</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Talon-pointe',this)">↔ Talon-pointe</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Contre-pointe',this)">↙ Contre-pointe</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Carre interne',this)">◁ Carre interne</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Carre externe',this)">▷ Carre externe</div>
-        <div class="tag-btn" onclick="toggleTag('mouvement','Smear',this)">👟 Smear</div>
-        <div class="tag-btn" onclick="toggleTag('mouvement','Petit pied',this)">🦶 Petit pied</div>
-        <div class="tag-btn" onclick="toggleTag('mouvement','Changement de pied',this)">🔄 Chgt de pied</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Smear',this)">∫ Smear</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Petit pied',this)">∧ Petit pied</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Changement de pied',this)">⇄ Chgt de pied</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Changement de main',this)">✋ Chgt de main</div>
-        <div class="tag-btn" onclick="toggleTag('mouvement','Lolotte',this)">🔄 Lolotte</div>
-        <div class="tag-btn" onclick="toggleTag('mouvement','360°',this)">🔃 360°</div>
-        <div class="tag-btn" onclick="toggleTag('mouvement','Drapeau',this)">🚩 Drapeau</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Lolotte',this)">⇄ Lolotte</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','360°',this)">↺ 360°</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Drapeau',this)">/ Drapeau</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','En opposition',this)">↔ En opposition</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Stemming',this)">⟵⟶ Stemming</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Layback',this)">↗ Layback</div>
-        <div class="tag-btn" onclick="toggleTag('mouvement','Lock-off',this)">🔒 Lock-off</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Lock-off',this)">| Lock-off</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Croisé',this)">✂ Croisé</div>
-        <div class="tag-btn" onclick="toggleTag('mouvement','Épaule',this)">💪 Épaule</div>
-        <div class="tag-btn" onclick="toggleTag('mouvement','Inversée',this)">🙃 Inversée</div>
-        <div class="tag-btn" onclick="toggleTag('mouvement','Palm press',this)">🖐 Palm press</div>
-        <div class="tag-btn" onclick="toggleTag('mouvement','Deadpoint',this)">🎯 Deadpoint</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Épaule',this)">Épaule</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Inversée',this)">↓ Inversée</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Palm press',this)">~ Palm press</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Deadpoint',this)">· Deadpoint</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Jeté',this)">⚡ Jeté</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Double dyno',this)">⚡⚡ Double dyno</div>
-        <div class="tag-btn" onclick="toggleTag('mouvement','Paddle dyno',this)">🏓 Paddle dyno</div>
-        <div class="tag-btn" onclick="toggleTag('mouvement','Pogo',this)">🔁 Pogo</div>
-        <div class="tag-btn" onclick="toggleTag('mouvement','Knee bar',this)">🦵 Knee bar</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Paddle dyno',this)">/ Paddle dyno</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Pogo',this)">↔ Pogo</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Knee bar',this)">↑ Knee bar</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Figure 4',this)">4️⃣ Figure 4</div>
-        <div class="tag-btn" onclick="toggleTag('mouvement','Double toe hook',this)">👟👟 Double toe</div>
-        <div class="tag-btn" onclick="toggleTag('mouvement','Talon inversé',this)">🦶 Talon inversé</div>
-        <div class="tag-btn" onclick="toggleTag('mouvement','No-hand rest',this)">🙌 No-hand rest</div>
-        <div class="tag-btn" onclick="toggleTag('mouvement','Top-out',this)">🏔 Top-out</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Double toe hook',this)">∫∫ Double toe</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Talon inversé',this)">∧ Talon inversé</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','No-hand rest',this)">— No-hand rest</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Top-out',this)">↑ Top-out</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Réta',this)">↩ Réta</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Bascule',this)">⚖ Bascule</div>
-        <div class="tag-btn" onclick="toggleTag('mouvement','Pivot hanche',this)">🌀 Pivot hanche</div>
-        <div class="tag-btn" onclick="toggleTag('mouvement','Campus',this)">🤸 Campus</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Pivot hanche',this)">↻ Pivot hanche</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Campus',this)">× Campus</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Départ assis',this)">🪑 Départ assis</div>
-        <div class="tag-btn" onclick="toggleTag('mouvement','Run & jump',this)">🏃 Run & jump</div>
+        <div class="tag-btn" onclick="toggleTag('mouvement','Run & jump',this)">→ Run & jump</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Quart externe',this)">↗ Quart externe</div>
       </div>
     </div>
@@ -1990,7 +1999,7 @@ textarea{resize:none;height:62px;line-height:1.5}
 
     <!-- Bouton admin : nouvelle ouverture de zone -->
     <div id="btn-nouvelle-ouverture-wrap" style="display:none;margin-top:16px;padding-top:14px;border-top:1px dashed var(--line2)">
-      <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">🔑 Zone admin</div>
+      <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">◆ Zone admin</div>
       <button class="btn" onclick="ouvertureZone()" style="width:100%;border-color:var(--red);color:var(--red);font-size:13px">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
         Nouvelle ouverture — vider une zone
@@ -2053,7 +2062,7 @@ textarea{resize:none;height:62px;line-height:1.5}
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
       <div>
-        <div style="font-size:11px;font-weight:700;color:#15803d;letter-spacing:.3px">Badge débloqué !</div>
+        <div style="font-size:11px;font-weight:700;color:#15803d;letter-spacing:.3px">Badge débloqué</div>
         <div style="font-size:14px;font-weight:600;color:var(--ink)" id="wow-badge-name">—</div>
       </div>
     </div>
@@ -2079,9 +2088,9 @@ textarea{resize:none;height:62px;line-height:1.5}
       </div>
       <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Séance globalement</div>
       <div style="display:flex;gap:8px;margin-bottom:12px" id="wow-diff-btns">
-        <button onclick="setWowDiff('facile',this)" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">😌 Facile</button>
-        <button onclick="setWowDiff('bien',this)" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">👊 Bien</button>
-        <button onclick="setWowDiff('dur',this)" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">🔥 Dur</button>
+        <button onclick="setWowDiff('facile',this)" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">○ Facile</button>
+        <button onclick="setWowDiff('bien',this)" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">◆ Bien</button>
+        <button onclick="setWowDiff('dur',this)" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">△ Dur</button>
       </div>
       <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Objectif atteint ?</div>
       <div style="display:flex;gap:8px" id="wow-obj-btns">
@@ -2104,11 +2113,11 @@ textarea{resize:none;height:62px;line-height:1.5}
 <div id="pre-seance-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:600;align-items:flex-end;justify-content:center">
   <div style="background:var(--white);border-radius:20px 20px 0 0;width:100%;max-width:430px;padding:24px 20px calc(28px + env(safe-area-inset-bottom))">
     <div style="font-family:var(--display);font-size:18px;font-weight:700;color:var(--ink);margin-bottom:4px">Avant de grimper</div>
-    <div style="font-size:13px;color:var(--ink3);margin-bottom:16px">2 questions rapides pour mieux te coacher</div>
+    <div style="font-size:13px;color:var(--ink3);margin-bottom:16px">2 questions pour mieux te coacher</div>
 
     <!-- Plan du jour depuis la planif IA -->
     <div id="pre-plan-du-jour" style="display:none;background:var(--accent-bg);border:1.5px solid #ffd5c2;border-radius:12px;padding:12px 14px;margin-bottom:16px">
-      <div style="font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">📋 Ton plan du jour</div>
+      <div style="font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Plan du jour</div>
       <div id="pre-plan-titre" style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:2px"></div>
       <div id="pre-plan-focus" style="font-size:12px;color:var(--ink2);margin-bottom:4px"></div>
       <div id="pre-plan-blocs" style="font-size:11px;color:var(--accent)"></div>
@@ -2116,24 +2125,24 @@ textarea{resize:none;height:62px;line-height:1.5}
 
     <div style="font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Comment tu te sens aujourd'hui ?</div>
     <div style="display:flex;gap:8px;justify-content:space-between;margin-bottom:20px" id="pre-ressenti-btns">
-      <button onclick="setPreRessenti(1,this)" style="flex:1;padding:10px 4px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:20px;cursor:pointer">😴</button>
-      <button onclick="setPreRessenti(2,this)" style="flex:1;padding:10px 4px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:20px;cursor:pointer">😕</button>
-      <button onclick="setPreRessenti(3,this)" style="flex:1;padding:10px 4px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:20px;cursor:pointer">😐</button>
-      <button onclick="setPreRessenti(4,this)" style="flex:1;padding:10px 4px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:20px;cursor:pointer">😊</button>
-      <button onclick="setPreRessenti(5,this)" style="flex:1;padding:10px 4px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:20px;cursor:pointer">🔥</button>
+      <button onclick="setPreRessenti(1,this)" style="flex:1;padding:10px 4px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:20px;cursor:pointer">Épuisé</button>
+      <button onclick="setPreRessenti(2,this)" style="flex:1;padding:10px 4px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:20px;cursor:pointer">Moyen</button>
+      <button onclick="setPreRessenti(3,this)" style="flex:1;padding:10px 4px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:20px;cursor:pointer">OK</button>
+      <button onclick="setPreRessenti(4,this)" style="flex:1;padding:10px 4px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:20px;cursor:pointer">Bien</button>
+      <button onclick="setPreRessenti(5,this)" style="flex:1;padding:10px 4px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:20px;cursor:pointer">Top</button>
     </div>
 
     <div style="font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Objectif du jour ?</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px" id="pre-objectif-btns">
-      <button onclick="setPreObjectif('technique',this)" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">🎯 Technique</button>
-      <button onclick="setPreObjectif('force',this)" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">💪 Force</button>
-      <button onclick="setPreObjectif('projets',this)" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">🎯 Projets</button>
-      <button onclick="setPreObjectif('decompresser',this)" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">🌊 Décompresser</button>
+      <button onclick="setPreObjectif('technique',this)" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">Technique</button>
+      <button onclick="setPreObjectif('force',this)" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">Force</button>
+      <button onclick="setPreObjectif('projets',this)" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">Projets</button>
+      <button onclick="setPreObjectif('decompresser',this)" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">Décompresser</button>
     </div>
-    <button id="pre-plan-btn" onclick="setPreObjectif('plan',this)" style="display:none;width:100%;padding:10px;border-radius:10px;border:1.5px solid var(--accent);background:var(--accent-bg);color:var(--accent);font-size:12px;font-weight:700;cursor:pointer;margin-bottom:20px">📋 Suivre mon plan du jour</button>
+    <button id="pre-plan-btn" onclick="setPreObjectif('plan',this)" style="display:none;width:100%;padding:10px;border-radius:10px;border:1.5px solid var(--accent);background:var(--accent-bg);color:var(--accent);font-size:12px;font-weight:700;cursor:pointer;margin-bottom:20px">→ Suivre mon plan du jour</button>
     <div id="pre-objectif-spacer" style="display:block;height:12px"></div>
 
-    <button onclick="closePreSeance()" style="width:100%;padding:14px;border-radius:12px;background:var(--accent);color:#fff;border:none;font-size:15px;font-weight:700;cursor:pointer">C'est parti 🧗</button>
+    <button onclick="closePreSeance()" style="width:100%;padding:14px;border-radius:12px;background:var(--accent);color:#fff;border:none;font-size:15px;font-weight:700;cursor:pointer">C'est parti </button>
     <button onclick="closePreSeance()" style="width:100%;padding:10px;background:none;border:none;color:var(--ink3);font-size:13px;cursor:pointer;margin-top:4px">Passer →</button>
   </div>
 </div>
@@ -2145,11 +2154,11 @@ textarea{resize:none;height:62px;line-height:1.5}
     <div style="font-size:12px;color:var(--ink3);margin-bottom:14px">Optionnel — aide le coaching à être plus précis</div>
     <div id="raison-bloc-label" style="font-size:12px;color:var(--accent);font-weight:600;margin-bottom:12px"></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
-      <button onclick="setRaison('force')" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">💪 Pas assez fort</button>
-      <button onclick="setRaison('lecture')" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">👁 Mauvaise lecture</button>
-      <button onclick="setRaison('technique')" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">🎯 Technique</button>
-      <button onclick="setRaison('mobilite')" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">🧘 Mobilité</button>
-      <button onclick="setRaison('peur')" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">😬 Mental/Peur</button>
+      <button onclick="setRaison('force')" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">Force</button>
+      <button onclick="setRaison('lecture')" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">Lecture</button>
+      <button onclick="setRaison('technique')" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">Technique</button>
+      <button onclick="setRaison('mobilite')" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">Mobilité</button>
+      <button onclick="setRaison('peur')" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;font-weight:600;cursor:pointer">Mental</button>
       <button onclick="setRaison(null)" style="padding:10px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);font-size:12px;color:var(--ink3);cursor:pointer">Passer</button>
     </div>
   </div>
@@ -2453,10 +2462,10 @@ function showPreSeance() {
       planBlock.style.display = 'block';
       document.getElementById('pre-plan-titre').textContent = todayPlan.titre || todayKey;
       document.getElementById('pre-plan-focus').textContent = todayPlan.focus || '';
-      document.getElementById('pre-plan-blocs').textContent = todayPlan.blocs_recommandes ? '🧗 ' + todayPlan.blocs_recommandes : '';
+      document.getElementById('pre-plan-blocs').textContent = todayPlan.blocs_recommandes ? ' ' + todayPlan.blocs_recommandes : '';
     } else if(isRestDay) {
       planBlock.style.display = 'block';
-      document.getElementById('pre-plan-titre').textContent = '😴 Journée de repos prévue';
+      document.getElementById('pre-plan-titre').textContent = '— Journée de repos prévue';
       document.getElementById('pre-plan-focus').textContent = 'Ton plan suggère de récupérer aujourd\'hui';
       document.getElementById('pre-plan-blocs').textContent = '';
     } else {
@@ -2534,7 +2543,7 @@ function checkBlessuresPeriodic() {
   overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:700;display:flex;align-items:flex-end;justify-content:center';
   overlay.innerHTML=`
     <div style="background:var(--white);border-radius:20px 20px 0 0;width:100%;max-width:430px;padding:22px 20px calc(26px + env(safe-area-inset-bottom))">
-      <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px">⚕️ Check rapide</div>
+      <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px">◆ Check rapide</div>
       <div style="font-size:13px;color:var(--ink3);margin-bottom:16px">Tu as des douleurs ou contraintes physiques en ce moment ?</div>
       <textarea id="blessure-check-input" placeholder="Ex: douleur poulie A2, épaule sensible... (laisse vide si rien)" rows="2"
         style="width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line2);font-size:13px;font-family:var(--font);resize:none;box-sizing:border-box;margin-bottom:12px;background:var(--off);color:var(--ink)"></textarea>
@@ -2626,6 +2635,38 @@ function finirSeance() {
       if(b.morpho!==undefined){ _morphoTot++; if(r==='ok') _morphoOk++; }
     }
   });
+  // Collecter les IDs exacts des blocs tentés avec leur résultat
+  const _blocsSeance = [];
+  // Blocs ouvreurs (depuis BLOCS)
+  BLOCS.forEach(b=>{
+    const key = b.id+'|'+b.couleur;
+    const r = results[key] || results[b.id];
+    if(r==='ok'||r==='nok'){
+      _blocsSeance.push({
+        id: b.id,
+        couleur: b.couleur,
+        cotation: b.cotation||null,
+        inclinaisons: toArr(b.inclinaisons),
+        styles: toArr(b.styles),
+        prises: toArr(b.prises),
+        mouvements: toArr(b.mouvements),
+        res: r,
+        raison: blocRaisons[key] || blocRaisons[b.id] || null,
+      });
+    }
+  });
+  // Blocs map (non dans BLOCS mais dans mapResults)
+  Object.entries(mapResults).forEach(([key,r])=>{
+    if(r!=='ok'&&r!=='nok') return;
+    const parts = key.split('|'); // hall|couleur|secteur|num
+    const couleur = parts[1]||'';
+    const secteur = parts[2]||'';
+    const id = secteur+'_'+parts[3];
+    if(!_blocsSeance.find(b=>b.id===id)) {
+      _blocsSeance.push({id, couleur, cotation:null, inclinaisons:[], styles:[], prises:[], mouvements:[], res:r, raison: blocRaisons[key]||null});
+    }
+  });
+
   historique.unshift({
     date:new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'short',weekday:'short'}),
     dateISO: new Date().toISOString().slice(0,10),
@@ -2634,7 +2675,8 @@ function finirSeance() {
     colorOk:_sColorOk, styleOk:_sStyleOk, inclOk:_sInclOk,
     priseOk:_sPriseOk, mvtOk:_sMvtOk,
     morphoOk:_morphoOk, morphoTot:_morphoTot,
-    // Nouvelles données de contexte
+    blocs: _blocsSeance, // IDs exacts + résultats
+    // Données subjectives
     ressenti: seanceRessenti,
     objectifSeance: seanceObjectif,
     rpe: seanceRPE,
@@ -2822,7 +2864,7 @@ async function loadCollectiveLacunes() {
           </div>
           <div style="font-size:11px;color:var(--ink3)">${l.nok} ratés / ${l.total} essais · ${l.nbUsers} grimpeur${l.nbUsers>1?'s':''} concerné${l.nbUsers>1?'s':''}</div>
           <div style="font-size:12px;color:${urgence};margin-top:6px;font-weight:600">
-            💡 ${l.pctEchec>=65?'🚨 Lacune critique — ':l.pctEchec>=50?'⚠️ Lacune notable — ':''}Proposer un cours collectif sur : <strong>${l.tag}</strong>
+            · ${l.pctEchec>=65?'△ Lacune critique — ':l.pctEchec>=50?'⚠️ Lacune notable — ':''}Proposer un cours collectif sur : <strong>${l.tag}</strong>
           </div>
         </div>`;
       }).join('');
@@ -2831,7 +2873,7 @@ async function loadCollectiveLacunes() {
       const critiques = lacunes.filter(l=>l.pctEchec>=65);
       if(critiques.length>0){
         html += `<div style="margin-top:12px;padding:10px 12px;background:var(--red-bg);border:1.5px solid rgba(239,68,68,.3);border-radius:8px">
-          <div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:4px">🚨 Action recommandée pour les gérants</div>
+          <div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:4px">△ Action recommandée pour les gérants</div>
           <div style="font-size:12px;color:var(--ink2);line-height:1.5">${critiques.length} lacune${critiques.length>1?'s critique détectées':'critique détectée'} sur : <strong>${critiques.map(l=>l.tag).join(', ')}</strong>.<br>Proposer à un moniteur d'organiser un cours ciblé.</div>
         </div>`;
       }
@@ -2866,6 +2908,48 @@ async function showWowMoment(ok, nok, sessionScore) {
   deltaEl.textContent = deltaStr;
   deltaEl.style.color = deltaColor;
   document.getElementById('wow-total').textContent = totalReussis;
+
+  // ── Détection projets réussis ce jour ──
+  // Un "projet" = bloc raté 2+ fois dans les séances précédentes, réussi aujourd'hui
+  const seanceActuelle = historique[0];
+  const projetsReussis = [];
+  if(seanceActuelle?.blocs) {
+    const reussisAujourdhui = new Set(seanceActuelle.blocs.filter(b=>b.res==='ok').map(b=>b.id));
+    // Compter les échecs dans les séances précédentes (pas la séance actuelle)
+    const echecsPrecedents = {};
+    historique.slice(1).forEach(s=>{
+      (s.blocs||[]).filter(b=>b.res==='nok').forEach(b=>{
+        echecsPrecedents[b.id] = (echecsPrecedents[b.id]||0) + 1;
+      });
+    });
+    // Projet = était raté 2+ fois avant et réussi aujourd'hui
+    reussisAujourdhui.forEach(id=>{
+      if((echecsPrecedents[id]||0) >= 2) {
+        const bloc = BLOCS.find(b=>b.id===id) || seanceActuelle.blocs.find(b=>b.id===id);
+        projetsReussis.push({id, couleur: bloc?.couleur||'', cotation: bloc?.cotation||'', tentatives: echecsPrecedents[id]});
+      }
+    });
+  }
+
+  // Afficher la section projets réussis si applicable
+  let projetHtml = '';
+  if(projetsReussis.length > 0) {
+    const items = projetsReussis.map(p=>`<span style="font-weight:700;color:var(--accent)">${p.id}</span>${p.couleur?' ('+p.couleur+(p.cotation?' '+p.cotation:'')+')':''} — ${p.tentatives} essais précédents`).join('<br>');
+    projetHtml = `<div style="padding:14px 20px;border-bottom:1px solid var(--line);background:var(--accent-bg)">
+      <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">★ Projet${projetsReussis.length>1?'s':''} réussi${projetsReussis.length>1?'s':''}</div>
+      <div style="font-size:13px;color:var(--ink);line-height:1.7">${items}</div>
+    </div>`;
+    // Insérer dans le sheet après les stats
+    const sheet = document.querySelector('.wow-sheet');
+    if(sheet) {
+      const statsEl = sheet.querySelector('.wow-stats');
+      if(statsEl) {
+        const projetEl = document.createElement('div');
+        projetEl.innerHTML = projetHtml;
+        statsEl.insertAdjacentElement('afterend', projetEl.firstElementChild);
+      }
+    }
+  }
 
   // Badge débloqué ce jour
   const newBadge = [...unlockedBadges].find(b => {
@@ -2903,17 +2987,22 @@ async function showWowMoment(ok, nok, sessionScore) {
       ? (delta > 0 ? `+${delta} blocs vs séance précédente` : delta < 0 ? `${delta} blocs vs séance précédente` : 'même nombre que la séance précédente')
       : 'première séance enregistrée';
 
-    const prompt = `Séance terminée : ${ok} blocs réussis, ${nok} ratés (${taux}%). Profil : ${profilCtx}. ${deltaCtx}. Séances totales : ${historique.length}.
+    const projetCtx = projetsReussis.length > 0
+      ? `PROJET${projetsReussis.length>1?'S':''} RÉUSSI${projetsReussis.length>1?'S':''} CE JOUR : ${projetsReussis.map(p=>`${p.id} (${p.couleur}${p.cotation?' '+p.cotation:''}, raté ${p.tentatives}x avant)`).join(', ')}. `
+      : '';
+
+    const prompt = `Séance terminée : ${ok} blocs réussis, ${nok} ratés (${taux}%). Profil : ${profilCtx}. ${deltaCtx}. Séances totales : ${historique.length}. ${projetCtx}
 
 Écris UNE phrase de coaching post-séance. Règles strictes :
 - Le nombre de séances loggées dans l'app ne reflète pas l'expérience du grimpeur — quelqu'un à sa "1ère séance" peut grimper depuis des années. Ne traite jamais quelqu'un comme un débutant sur la base du compteur de séances. Fie-toi au niveau déclaré.
 - Utilise les chiffres réels, ne les généralise pas ("t'as bien bossé" est interdit si le taux est 40%)
 - Pas de "félicitations", "c'est normal", "continue comme ça", "chaque séance compte"
 - Si le delta est négatif, ne le minimise pas — mais ne dramatise pas non plus
+- Si un PROJET est réussi, mentionne-le explicitement — c'est l'info la plus importante de la séance
 - Parle comme un pote qui a suivi la séance, pas comme une appli
 - Tutoie, 1 phrase max, pas de point d'exclamation obligatoire
-- Exemples à éviter : "Belle séance !", "Tu progresses bien !", "La régularité paie !"
-- Exemples corrects : "67% ce soir, -3 blocs sur la dernière fois — le mauve du J a l'air de bloquer." ou "10 blocs flash, c'est une bonne cadence pour du ${niveau}."
+- Exemples avec projet : "${projetsReussis[0]?.id||'K_05'} passe enfin — après ${projetsReussis[0]?.tentatives||3} essais ratés, ça compte."
+- Exemples sans projet : "67% ce soir, -3 blocs sur la dernière fois — le mauve du J a l'air de bloquer."
 
 Juste le texte, pas de JSON.`;
 
@@ -2939,6 +3028,8 @@ function closeWow(dest) {
     if(seanceFeedbackObj) historique[0].feedbackObj = seanceFeedbackObj;
     saveAll();
   }
+  // Nettoyer le bloc projet inséré dynamiquement
+  document.querySelector('.wow-sheet [style*="accent-bg"]')?.remove();
   const overlay = document.getElementById('wow-overlay');
   overlay.classList.remove('open');
   setTimeout(() => {
@@ -4108,13 +4199,32 @@ async function callClaudeCoaching(mode) {
   // ── Contexte riche : séances détaillées ──
   const seancesDetail = historique.slice(0,8).map(s=>{
     const parts = [s.date+': '+s.ok+'✓ '+s.nok+'✗'];
-    if(s.inclOk && Object.keys(s.inclOk).length) {
-      const top = Object.entries(s.inclOk).sort((a,b)=>(b[1].ok||0)-(a[1].ok||0)).slice(0,3);
-      parts.push('Incl: '+top.map(([k,v])=>k+'('+( v.ok||0)+'/'+(( v.ok||0)+(v.nok||0))+')').join(', '));
-    }
-    if(s.styleOk && Object.keys(s.styleOk).length) {
-      const top = Object.entries(s.styleOk).sort((a,b)=>(b[1].ok||0)-(a[1].ok||0)).slice(0,3);
-      parts.push('Styles: '+top.map(([k,v])=>k+'('+(v.ok||0)+'/'+(( v.ok||0)+(v.nok||0))+')').join(', '));
+    // Données subjectives
+    if(s.ressenti) parts.push('ressenti:'+s.ressenti+'/5');
+    if(s.rpe) parts.push('RPE:'+s.rpe+'/10');
+    if(s.objectifSeance) parts.push('obj:'+s.objectifSeance);
+    if(s.feedbackDiff) parts.push(s.feedbackDiff);
+    if(s.feedbackObj) parts.push('obj atteint:'+s.feedbackObj);
+    // Blocs exacts (max 8 par séance pour ne pas saturer le contexte)
+    if(s.blocs && s.blocs.length) {
+      const reussis = s.blocs.filter(b=>b.res==='ok').map(b=>{
+        const tags = [b.couleur, b.cotation].filter(Boolean).join(' ');
+        const ctx = [...b.inclinaisons.slice(0,1), ...b.prises.slice(0,1)].filter(Boolean).join('+');
+        return b.id+(tags?' ('+tags+')':'')+(ctx?' ['+ctx+']':'');
+      }).slice(0,6);
+      const rates = s.blocs.filter(b=>b.res==='nok').map(b=>{
+        const tags = [b.couleur, b.cotation].filter(Boolean).join(' ');
+        const raison = b.raison ? ' ('+b.raison+')' : '';
+        return b.id+(tags?' ('+tags+')':'')+raison;
+      }).slice(0,6);
+      if(reussis.length) parts.push('✓ '+reussis.join(', '));
+      if(rates.length) parts.push('✗ '+rates.join(', '));
+    } else {
+      // Fallback ancienne version sans blocs détaillés
+      if(s.inclOk && Object.keys(s.inclOk).length) {
+        const top = Object.entries(s.inclOk).sort((a,b)=>(b[1].ok||0)-(a[1].ok||0)).slice(0,2);
+        parts.push('Incl: '+top.map(([k,v])=>k+'('+(v.ok||0)+'/'+(( v.ok||0)+(v.nok||0))+')').join(', '));
+      }
     }
     // Outils utilisés le même jour
     const toolsDay = [];
@@ -4127,6 +4237,19 @@ async function callClaudeCoaching(mode) {
     if(toolsDay.length) parts.push('Outils: '+toolsDay.join(' + '));
     return parts.join(' | ');
   }).join('\n') || 'Aucune séance enregistrée.';
+
+  // ── Détection de blocs récurrents échoués (même bloc raté sur 2+ séances) ──
+  const blocEchecCount = {};
+  historique.slice(0,6).forEach(s=>{
+    (s.blocs||[]).filter(b=>b.res==='nok').forEach(b=>{
+      blocEchecCount[b.id] = (blocEchecCount[b.id]||0) + 1;
+    });
+  });
+  const blocsRecurrents = Object.entries(blocEchecCount)
+    .filter(([,n])=>n>=2)
+    .sort((a,b)=>b[1]-a[1])
+    .map(([id,n])=>`${id} (raté ${n}x)`)
+    .join(', ') || null;
 
   // ── Stats inclinaison, style, prise, mouvement cumulées ──
   const inclStats = {}, styleStats = {}, priseStats = {}, mvtStats = {};
@@ -4294,8 +4417,9 @@ async function callClaudeCoaching(mode) {
     +'- Niveau observé : '+niveauObserveCtx+'\n'
     +'- '+profilPhysique+'\n'
     +'- Séances enregistrées dans l\'app : '+historique.length+' (≠ ancienneté réelle)\n'
-    +(joursSansSeance!==null ? '- Jours depuis la dernière séance : '+joursSansSeance+(joursSansSeance>14?' ⚠ absence notable':'')+'\n' : '')
-    +(signaleFatigue ? '- ⚠ SIGNAL FATIGUE : taux décroissant ou RPE élevé sur 3 séances consécutives\n' : '')
+    +(joursSansSeance!==null ? '- Jours depuis la dernière séance : '+joursSansSeance+(joursSansSeance>14?' — absence notable':'')+'\n' : '')
+    +(signaleFatigue ? '- SIGNAL FATIGUE : taux décroissant ou RPE élevé sur 3 séances consécutives\n' : '')
+    +(blocsRecurrents ? '- Blocs récurrents échoués (projets à travailler) : '+blocsRecurrents+'\n' : '')
     +'- Taux de réussite global : '+tauxGlobal+'%\n'
     +'- Blocs réussis / ratés : '+totalOk+' / '+totalNok+'\n\n'
     +'DONNÉES SUBJECTIVES RÉCENTES :\n'+ressentiRecent+'\n\n'
@@ -4483,7 +4607,7 @@ Réponds UNIQUEMENT avec ce JSON :
             <div class="coach-day-name">${DAY_LABELS[day]||day}</div>
             <div class="coach-day-title">${d.titre}</div>
             <div class="coach-day-sub">${d.focus}${d.exercices?' — '+d.exercices:''}</div>
-            ${d.blocs_recommandes?`<div style="font-size:10px;margin-top:4px;color:var(--accent);opacity:.85">🧗 ${d.blocs_recommandes}</div>`:''}
+            ${d.blocs_recommandes?`<div style="font-size:10px;margin-top:4px;color:var(--accent);opacity:.85"> ${d.blocs_recommandes}</div>`:''}
           </div>`).join('');
         const wt = document.getElementById('coach-week-text');
         if(wt) wt.textContent = 'Plan généré en fonction de ton profil et tes points faibles.';
@@ -4520,7 +4644,7 @@ Réponds UNIQUEMENT avec ce JSON :
                   <div class="ws-content">
                     <div class="ws-title">${s.jour} — ${s.type}</div>
                     <div class="ws-desc">${s.description}</div>
-                    ${s.blocs?`<div style="font-size:10px;color:var(--accent);margin-top:3px">🧗 ${s.blocs}</div>`:''}
+                    ${s.blocs?`<div style="font-size:10px;color:var(--accent);margin-top:3px"> ${s.blocs}</div>`:''}
                   </div>
                 </div>`).join('')}
             </div>
@@ -4918,26 +5042,26 @@ function renderAdminPyramide(blocs) {
 function computeAdminAlerts(blocs) {
   const alerts = [];
   const morpho = blocs.filter(b=>b.morpho===true);
-  if(morpho.length) alerts.push({sev:'red',icon:'🔴',title:`${morpho.length} bloc${morpho.length>1?'s':''} signalé${morpho.length>1?'s':''} morpho`,desc:'À vérifier avec les ouvreurs.',items:morpho.map(b=>b.id)});
+  if(morpho.length) alerts.push({sev:'red',icon:'△',title:`${morpho.length} bloc${morpho.length>1?'s':''} signalé${morpho.length>1?'s':''} morpho`,desc:'À vérifier avec les ouvreurs.',items:morpho.map(b=>b.id)});
   const mismatch = blocs.filter(b=>{
     if(!b.cotation||!b.couleur) return false;
     const rank=ADMIN_COT_RANK[b.cotation.toUpperCase()];
     const range=ADMIN_COT_RANGE[b.couleur];
     return rank&&range&&rank>range.max+1;
   });
-  if(mismatch.length) alerts.push({sev:'yellow',icon:'🟡',title:`${mismatch.length} bloc${mismatch.length>1?'s':''} trop dur${mismatch.length>1?'s':''} pour leur couleur`,desc:'Cotation au-dessus du range attendu.',items:mismatch.map(b=>`${b.id} (${b.couleur}/${b.cotation})`)});
+  if(mismatch.length) alerts.push({sev:'yellow',icon:'◇',title:`${mismatch.length} bloc${mismatch.length>1?'s':''} trop dur${mismatch.length>1?'s':''} pour leur couleur`,desc:'Cotation au-dessus du range attendu.',items:mismatch.map(b=>`${b.id} (${b.couleur}/${b.cotation})`)});
   const sc={};
   const KS=['Athlétique','Technique','Dynamique','Coordination','Équilibre','Adhérence'];
   blocs.forEach(b=>(b.styles||[]).forEach(s=>{sc[s]=(sc[s]||0)+1;}));
   const miss=KS.filter(s=>!sc[s]||sc[s]<2);
-  if(miss.length) alerts.push({sev:'blue',icon:'🔵',title:'Styles sous-représentés (< 2 blocs)',desc:'',items:miss});
+  if(miss.length) alerts.push({sev:'blue',icon:'◇',title:'Styles sous-représentés (< 2 blocs)',desc:'',items:miss});
   const lc={1:0,2:0,3:0,4:0};
   blocs.forEach(b=>{const c=ADMIN_COLORS.find(x=>x.key===b.couleur);if(c)lc[c.level]++;});
   const tot=blocs.length||1;
   [1,2,3,4].forEach(k=>{
     const p=lc[k]/tot;
-    if(p>.5) alerts.push({sev:'yellow',icon:'🟡',title:`${ADMIN_LEVEL_LABELS[k]} sur-représenté (${Math.round(p*100)}%)`,desc:`Cible : ${Math.round(ADMIN_LEVEL_IDEAL[k]*100)}%`,items:[]});
-    if(p<.04&&tot>8) alerts.push({sev:'blue',icon:'🔵',title:`${ADMIN_LEVEL_LABELS[k]} sous-représenté (${Math.round(p*100)}%)`,desc:`Cible : ${Math.round(ADMIN_LEVEL_IDEAL[k]*100)}%`,items:[]});
+    if(p>.5) alerts.push({sev:'yellow',icon:'◇',title:`${ADMIN_LEVEL_LABELS[k]} sur-représenté (${Math.round(p*100)}%)`,desc:`Cible : ${Math.round(ADMIN_LEVEL_IDEAL[k]*100)}%`,items:[]});
+    if(p<.04&&tot>8) alerts.push({sev:'blue',icon:'◇',title:`${ADMIN_LEVEL_LABELS[k]} sous-représenté (${Math.round(p*100)}%)`,desc:`Cible : ${Math.round(ADMIN_LEVEL_IDEAL[k]*100)}%`,items:[]});
   });
   return alerts;
 }
@@ -5077,7 +5201,7 @@ function renderAdminTable(blocs) {
       <td>${b.cotation||'—'}</td>
       <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${(Array.isArray(b.styles)?b.styles:[b.style||'']).filter(Boolean).join(', ')||'—'}</td>
       <td style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${(Array.isArray(b.inclinaisons)?b.inclinaisons:[b.incl||'']).filter(Boolean).join(', ')||'—'}</td>
-      <td style="color:${b.morpho?'var(--yellow)':'var(--ink3)'}">${b.morpho?'⚠ Oui':'Non'}</td>
+      <td style="color:${b.morpho?'var(--yellow)':'var(--ink3)'}">${b.morpho?'△ Oui':'Non'}</td>
       <td>${b.ouvreur||'—'}</td>
       <td style="color:var(--yellow)">${b.etoiles?'★'.repeat(b.etoiles):'—'}</td>
     </tr>`;
@@ -5098,7 +5222,7 @@ function renderActuFeed() {
     const pct = tot>0 ? Math.round((h.ok||0)/tot*100) : 0;
     const pseudo = currentProfile?.pseudo || currentUser?.email?.split('@')[0] || 'Toi';
     items.push({
-      icon: pct>=70?'🔥':pct>=40?'💪':'😤',
+      icon: pct>=70?'△':pct>=40?'/':'',
       text: `<b>${pseudo}</b> — séance du ${h.date} : ${h.ok||0} blocs réussis sur ${tot} (${pct}%)`,
       type: 'seance'
     });
@@ -5114,13 +5238,13 @@ function renderActuFeed() {
       objectif_done:'Objectif atteint'
     };
     [...unlockedBadges].slice(-3).forEach(b => {
-      items.push({icon:'🏅', text:`Badge débloqué : <b>${BADGE_NAMES[b]||b}</b>`, type:'badge'});
+      items.push({icon:'◆', text:`Badge débloqué : <b>${BADGE_NAMES[b]||b}</b>`, type:'badge'});
     });
   }
 
   if(items.length === 0) {
     el.innerHTML = `<div class="empty" style="padding:24px 0">
-      <div style="font-size:24px;margin-bottom:8px">👋</div>
+      <div style="font-size:24px;margin-bottom:8px">/</div>
       Commence une séance pour voir ton activité ici.
     </div>`;
     return;
@@ -5160,7 +5284,7 @@ async function renderRanking(period) {
   if(myScoreEl) {
     if(!currentUser) {
       myScoreEl.innerHTML = `<div style="background:var(--accent-bg);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--accent);text-align:center">
-        🔑 Connecte-toi pour apparaître dans le classement</div>`;
+        ◆ Connecte-toi pour apparaître dans le classement</div>`;
     } else {
       const label = isMonth ? new Date().toLocaleString('fr-FR',{month:'long',year:'numeric'}) : yKey;
       myScoreEl.innerHTML = `<div style="background:var(--accent-bg);border-radius:10px;padding:10px 14px">
@@ -5183,7 +5307,7 @@ async function renderRanking(period) {
     const sorted = data.filter(d=>(d[col]||0)>0).sort((a,b)=>(b[col]||0)-(a[col]||0));
     if(!sorted.length){list.innerHTML='<div class="empty">Aucun score enregistré.</div>';return;}
     const topScore = sorted[0][col]||1;
-    const medals = ['🥇','🥈','🥉'];
+    const medals = ['①','②','③'];
     list.innerHTML = sorted.map((d,i)=>{
       const score = d[col]||0;
       const isMe = currentUser&&d.user_id===currentUser.id;
@@ -5462,7 +5586,7 @@ async function renderDefi() {
       if(board) board.innerHTML = '<div class="empty">Personne pour l\'instant. Sois le premier !</div>';
       return;
     }
-    const medals = ['🥇','🥈','🥉'];
+    const medals = ['①','②','③'];
     if(board) board.innerHTML = parts.map((p,i)=>`
       <div class="defi-participant">
         <div class="defi-rank${i<3?' top':''}">${i<3?medals[i]:'#'+(i+1)}</div>
@@ -5495,7 +5619,7 @@ async function toggleDefi() {
         pseudo,
         created_at: new Date().toISOString()
       }, currentToken);
-      showToast('💪 Défi relevé !');
+      showToast('/ Défi relevé !');
     }
     renderDefi();
   } catch(e) { showToast('Erreur réseau.'); }
@@ -5852,7 +5976,7 @@ async function sendFeedback() {
   btn.textContent = 'Envoi…';
 
   const pseudo = currentProfile?.pseudo || currentUser?.email || 'anonyme';
-  const typeLabel = {bug:'🐛 Bug',idee:'💡 Idée',avis:'⭐ Avis général',autre:'💬 Autre'}[_feedbackType] || _feedbackType;
+  const typeLabel = {bug:'Bug',idee:'Idée',avis:'Avis',autre:'Autre'}[_feedbackType] || _feedbackType;
   const noteLabel = _feedbackStar ? '★'.repeat(_feedbackStar) + '☆'.repeat(5-_feedbackStar) : 'non noté';
 
   // Email via FormSubmit (indépendant de Supabase)
@@ -5882,9 +6006,9 @@ async function sendFeedback() {
   } catch(e) { console.warn('Supabase feedback error:', e); }
 
   closeFeedback();
-  showToast(sent ? 'Merci pour ton feedback ! 🙏' : 'Feedback reçu, merci !');
+  showToast(sent ? 'Merci pour ton feedback' : 'Feedback reçu, merci !');
   btn.disabled = false;
-  btn.textContent = 'Envoyer 🚀';
+  btn.textContent = 'Envoyer →';
 }
 
 async function doLogout() {
@@ -6053,7 +6177,7 @@ function updateProfilCompletion() {
   if(hint) {
     const missing = checks.filter(c=>!c.ok).map(c=>c.label);
     if(missing.length > 0 && pct < 100) {
-      hint.textContent = '📋 Manque : ' + missing.join(', ') + ' — le coaching sera plus précis avec un profil complet.';
+      hint.textContent = '· Manque : ' + missing.join(', ') + ' — le coaching sera plus précis avec un profil complet.';
       hint.style.display = 'block';
     } else {
       hint.style.display = 'none';
@@ -6157,7 +6281,14 @@ function renderProfile() {
   const elB=document.getElementById('prof-badges'); if(elB) elB.textContent=unlockedBadges?.size||0;
   loadProfilUI();
 
-  // --- Graphique progression (SVG barres) ---
+  // --- Graphique progression ---
+  _currentChartTab = 'seances';
+  // Reset tab buttons
+  const st=document.getElementById('chart-tab-seances');const wt=document.getElementById('chart-tab-semaines');
+  if(st){st.style.background='var(--ink)';st.style.color='#fff';st.style.borderColor='var(--ink)';}
+  if(wt){wt.style.background='var(--white)';wt.style.color='var(--ink2)';wt.style.borderColor='var(--line2)';}
+  const cs=document.getElementById('prof-chart-seances');const cw=document.getElementById('prof-chart-semaines');
+  if(cs)cs.style.display='block';if(cw)cw.style.display='none';
   renderProfChart();
 
   // --- Par inclinaison ---
@@ -6178,35 +6309,194 @@ function renderProfile() {
   renderProfHisto();
 }
 
+let _currentChartTab = 'seances';
+
+function switchChartTab(tab) {
+  _currentChartTab = tab;
+  ['seances','semaines'].forEach(t=>{
+    const btn = document.getElementById('chart-tab-'+t);
+    const el = document.getElementById('prof-chart-'+t);
+    const active = t===tab;
+    if(btn) { btn.style.background=active?'var(--ink)':'var(--white)'; btn.style.color=active?'#fff':'var(--ink2)'; btn.style.borderColor=active?'var(--ink)':'var(--line2)'; }
+    if(el) el.style.display = active?'block':'none';
+  });
+  if(tab==='seances') renderChartSeances();
+  else renderChartSemaines();
+}
+
 function renderProfChart() {
-  const el = document.getElementById('prof-chart'); if(!el) return;
-  const last = historique.slice(0,10).reverse();
-  if(last.length===0){el.innerHTML='<div class="empty">Aucune séance enregistrée.</div>';return;}
+  renderChartSeances();
+  renderChartSemaines();
+  renderTrend();
+}
 
-  const maxVal = Math.max(...last.map(h=>(h.ok||0)+(h.nok||0)), 1);
-  const W=300, H=80, pad=4, barW=Math.floor((W-pad*(last.length+1))/last.length);
+function renderChartSeances() {
+  const el = document.getElementById('prof-chart-seances'); if(!el) return;
+  const last = historique.slice(0,14).reverse();
+  if(!last.length){el.innerHTML='<div class="empty">Aucune séance.</div>';return;}
 
-  let bars='', labels='', rates='';
-  last.forEach((h,i)=>{
-    const x = pad + i*(barW+pad);
-    const tot = (h.ok||0)+(h.nok||0);
-    const hOk = tot>0 ? Math.round((h.ok||0)/tot*(H-18)) : 0;
-    const hNok = tot>0 ? Math.round((h.nok||0)/tot*(H-18)) : 0;
-    const yBase = H-2;
-    bars += `<rect x="${x}" y="${yBase-hNok}" width="${barW}" height="${hNok}" fill="rgba(255,77,0,.35)" rx="2"/>`;
-    bars += `<rect x="${x}" y="${yBase-hOk-hNok}" width="${barW}" height="${hOk}" fill="rgba(22,163,74,.7)" rx="2"/>`;
-    const rate = tot>0 ? Math.round((h.ok||0)/tot*100) : 0;
-    rates += `<text x="${x+barW/2}" y="${yBase-hOk-hNok-3}" text-anchor="middle" font-size="7" fill="var(--ink3)">${tot>0?rate+'%':''}</text>`;
-    labels += `<text x="${x+barW/2}" y="${H}" text-anchor="middle" font-size="6.5" fill="var(--ink3)">${h.date.split(' ').slice(1).join(' ')}</text>`;
+  const W=340, H=110, padL=28, padB=20, padT=10, padR=8;
+  const cW = W-padL-padR, cH = H-padB-padT;
+
+  // Points du taux de réussite
+  const points = last.map((h,i)=>{
+    const tot=(h.ok||0)+(h.nok||0);
+    const rate=tot>0?Math.round((h.ok||0)/tot*100):null;
+    const x=padL+i/(Math.max(last.length-1,1))*cW;
+    const y=rate!==null?padT+(1-rate/100)*cH:null;
+    return {x,y,rate,ok:h.ok||0,nok:h.nok||0,date:h.date,tot};
   });
 
-  el.innerHTML = `<svg width="100%" viewBox="0 0 ${W} ${H+2}" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
-    ${bars}${rates}${labels}
+  // Ligne de tendance (régression simple)
+  const validPts = points.filter(p=>p.y!==null);
+  let trendLine='';
+  if(validPts.length>=3){
+    const n=validPts.length;
+    const sumX=validPts.reduce((s,p)=>s+p.x,0);
+    const sumY=validPts.reduce((s,p)=>s+p.y,0);
+    const sumXY=validPts.reduce((s,p)=>s+p.x*p.y,0);
+    const sumX2=validPts.reduce((s,p)=>s+p.x*p.x,0);
+    const m=(n*sumXY-sumX*sumY)/(n*sumX2-sumX*sumX);
+    const b=(sumY-m*sumX)/n;
+    const x0=validPts[0].x, x1=validPts[validPts.length-1].x;
+    const y0=m*x0+b, y1=m*x1+b;
+    const trendColor=m<0?'rgba(255,77,0,.4)':'rgba(22,163,74,.4)';
+    trendLine=`<line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y1}" stroke="${trendColor}" stroke-width="1.5" stroke-dasharray="4,3"/>`;
+  }
+
+  // Courbe lissée (polyline)
+  const linePoints=validPts.map(p=>`${p.x},${p.y}`).join(' ');
+  const line=validPts.length>=2?`<polyline points="${linePoints}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`:'';
+
+  // Aire sous la courbe
+  const areaPoints=validPts.length>=2?`${validPts[0].x},${padT+cH} ${linePoints} ${validPts[validPts.length-1].x},${padT+cH}`:'';
+  const area=areaPoints?`<polygon points="${areaPoints}" fill="var(--accent)" opacity=".08"/>`:'';
+
+  // Axes
+  const axisY=[0,25,50,75,100].map(v=>{
+    const y=padT+(1-v/100)*cH;
+    return `<line x1="${padL-4}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="var(--line)" stroke-width=".5"/>
+            <text x="${padL-6}" y="${y+3}" text-anchor="end" font-size="8" fill="var(--ink3)">${v}%</text>`;
+  }).join('');
+
+  // Points et labels date
+  const dots=points.map((p,i)=>{
+    if(p.y===null) return '';
+    const isLast=i===points.length-1;
+    const label=p.date.split(' ').slice(0,2).join(' ');
+    return `<circle cx="${p.x}" cy="${p.y}" r="${isLast?4:3}" fill="${p.rate>=70?'var(--green)':p.rate>=40?'var(--accent)':'var(--red)'}" stroke="var(--white)" stroke-width="1.5"/>
+            ${isLast||i===0?`<text x="${p.x}" y="${H-4}" text-anchor="${i===0?'start':'end'}" font-size="7.5" fill="var(--ink3)">${label}</text>`:''}`;
+  }).join('');
+
+  el.innerHTML=`<svg width="100%" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
+    ${axisY}${trendLine}${area}${line}${dots}
   </svg>
-  <div style="display:flex;gap:12px;margin-top:6px;font-size:11px;color:var(--ink3)">
-    <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:rgba(22,163,74,.7);border-radius:2px;display:inline-block"></span>Réussis</span>
-    <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:rgba(255,77,0,.35);border-radius:2px;display:inline-block"></span>Tentés</span>
+  <div style="display:flex;gap:16px;margin-top:8px;font-size:11px;color:var(--ink3)">
+    <span>● vert ≥70%</span><span>● orange 40–70%</span><span>● rouge &lt;40%</span>
+    <span style="margin-left:auto">- - tendance</span>
   </div>`;
+}
+
+function renderChartSemaines() {
+  const el = document.getElementById('prof-chart-semaines'); if(!el) return;
+  if(!historique.length){el.innerHTML='<div class="empty">Aucune séance.</div>';return;}
+
+  // Grouper par semaine (lundi)
+  const weekMap={};
+  historique.forEach(h=>{
+    if(!h.dateISO) return;
+    const d=new Date(h.dateISO);
+    const day=d.getDay();
+    const lundi=new Date(d); lundi.setDate(d.getDate()-(day===0?6:day-1));
+    const key=lundi.toISOString().slice(0,10);
+    if(!weekMap[key]) weekMap[key]={ok:0,nok:0,seances:0,label:lundi.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})};
+    weekMap[key].ok+=(h.ok||0); weekMap[key].nok+=(h.nok||0); weekMap[key].seances++;
+  });
+
+  const weeks=Object.entries(weekMap).sort((a,b)=>a[0].localeCompare(b[0])).slice(-12);
+  if(weeks.length<2){el.innerHTML='<div class="empty" style="font-size:12px">Pas encore assez de séances sur plusieurs semaines.</div>';return;}
+
+  const W=340,H=120,padL=30,padB=30,padT=10,padR=8;
+  const cW=W-padL-padR, cH=H-padB-padT;
+
+  const data=weeks.map(([,w])=>{const tot=w.ok+w.nok;return{rate:tot>0?Math.round(w.ok/tot*100):null,vol:tot,seances:w.seances,label:w.label};});
+
+  // Barres de volume en fond
+  const maxVol=Math.max(...data.map(d=>d.vol),1);
+  const barW=cW/data.length*0.6;
+  const bars=data.map((d,i)=>{
+    const x=padL+i/(data.length)*cW+barW*0.2;
+    const bh=d.vol/maxVol*cH*0.4;
+    return `<rect x="${x}" y="${padT+cH-bh}" width="${barW}" height="${bh}" fill="var(--accent)" opacity=".12" rx="2"/>`;
+  }).join('');
+
+  // Courbe taux
+  const pts=data.map((d,i)=>{
+    if(d.rate===null) return null;
+    return {x:padL+i/(data.length-1)*cW, y:padT+(1-d.rate/100)*cH, rate:d.rate, label:d.label};
+  }).filter(Boolean);
+
+  const line=pts.length>=2?`<polyline points="${pts.map(p=>`${p.x},${p.y}`).join(' ')}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`:'';
+  const area=pts.length>=2?`<polygon points="${pts[0].x},${padT+cH} ${pts.map(p=>`${p.x},${p.y}`).join(' ')} ${pts[pts.length-1].x},${padT+cH}" fill="var(--accent)" opacity=".07"/>`:'';
+
+  const axisY=[0,50,100].map(v=>`<text x="${padL-4}" y="${padT+(1-v/100)*cH+3}" text-anchor="end" font-size="8" fill="var(--ink3)">${v}%</text>`).join('');
+
+  const dots=pts.map((p,i)=>{
+    const isFirst=i===0, isLast=i===pts.length-1;
+    return `<circle cx="${p.x}" cy="${p.y}" r="3" fill="var(--accent)" stroke="var(--white)" stroke-width="1.5"/>
+    ${(isFirst||isLast)?`<text x="${p.x}" y="${H-10}" text-anchor="${isFirst?'start':isLast?'end':'middle'}" font-size="7.5" fill="var(--ink3)">${p.label}</text>`:''}
+    ${(isLast)?`<text x="${p.x}" y="${p.y-8}" text-anchor="end" font-size="8.5" font-weight="700" fill="var(--accent)">${p.rate}%</text>`:''}`;
+  }).join('');
+
+  el.innerHTML=`<svg width="100%" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
+    ${bars}${axisY}${area}${line}${dots}
+  </svg>
+  <div style="font-size:11px;color:var(--ink3);margin-top:6px">Barres = volume tenté · Courbe = taux de réussite</div>`;
+}
+
+function renderTrend() {
+  const el = document.getElementById('prof-trend'); if(!el) return;
+  if(historique.length < 4){el.innerHTML='';return;}
+
+  // Comparer les 5 dernières séances vs les 5 précédentes
+  const recent = historique.slice(0,5);
+  const older  = historique.slice(5,10);
+  if(!older.length){el.innerHTML='';return;}
+
+  const tauxRecent = recent.reduce((s,h)=>s+(h.ok||0),0) / Math.max(recent.reduce((s,h)=>s+(h.ok||0)+(h.nok||0),0),1) * 100;
+  const tauxOlder  = older.reduce((s,h)=>s+(h.ok||0),0)  / Math.max(older.reduce((s,h)=>s+(h.ok||0)+(h.nok||0),0),1)  * 100;
+  const diff = Math.round(tauxRecent - tauxOlder);
+  const trend = diff > 3 ? '↑' : diff < -3 ? '↓' : '→';
+  const color = diff > 3 ? 'var(--green)' : diff < -3 ? 'var(--red)' : 'var(--ink3)';
+
+  // Volume moyen par séance
+  const volRecent = Math.round(recent.reduce((s,h)=>(s+(h.ok||0)+(h.nok||0)),0)/recent.length);
+  const volOlder  = Math.round(older.reduce((s,h)=>(s+(h.ok||0)+(h.nok||0)),0)/older.length);
+  const volDiff = volRecent - volOlder;
+
+  el.innerHTML=`<div style="display:flex;gap:16px">
+    <div style="flex:1;text-align:center">
+      <div style="font-size:22px;font-weight:800;color:${color}">${trend} ${Math.round(tauxRecent)}%</div>
+      <div style="font-size:11px;color:var(--ink3)">Taux récent</div>
+      <div style="font-size:11px;color:${color};font-weight:600">${diff>0?'+':''}${diff}% vs avant</div>
+    </div>
+    <div style="width:1px;background:var(--line)"></div>
+    <div style="flex:1;text-align:center">
+      <div style="font-size:22px;font-weight:800;color:var(--ink)">${volRecent}</div>
+      <div style="font-size:11px;color:var(--ink3)">Blocs / séance</div>
+      <div style="font-size:11px;color:${volDiff>=0?'var(--green)':'var(--red)'};font-weight:600">${volDiff>=0?'+':''}${volDiff} vs avant</div>
+    </div>
+    <div style="width:1px;background:var(--line)"></div>
+    <div style="flex:1;text-align:center">
+      <div style="font-size:22px;font-weight:800;color:var(--ink)">${historique.length}</div>
+      <div style="font-size:11px;color:var(--ink3)">Séances total</div>
+    </div>
+  </div>`;
+}
+
+function renderProfChart() {
+  renderChartSeances();
+  renderTrend();
 }
 
 function renderProfBars(field, containerId, allKeys) {
@@ -6670,7 +6960,8 @@ function selectSeanceZone(name){
         +' data-bloc-couleur="'+col+'" data-bloc-secteur="'+name+'" onclick="onBlocRowClick(this)">'
         +'<div class="color-pill" style="background:'+(CCOLS[col]||'#888')+'"></div>'
         +'<div style="flex:1"><div class="bloc-id">'+nom+'</div></div>'
-        +'<div style="display:flex;gap:6px;align-items:center">'
+        +'<div style="display:flex;gap:8px;align-items:center">'
+        +(res==='ok'?'<span style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0"></span>':res==='nok'?'<span style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0"></span>':'<span style="width:8px;height:8px;border-radius:50%;background:var(--line2);flex-shrink:0"></span>')
         +'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>'
         +'</div></div>'
       );
@@ -6696,7 +6987,8 @@ function selectSeanceZone(name){
       +'<div style="flex:1"><div class="bloc-id">'+nom+'</div>'
       +(tags||b.cotation?'<div class="bloc-sub">'+(tags||'')+(b.cotation?' &middot; '+b.cotation:'')+'</div>':'')
       +'</div>'
-      +'<div style="display:flex;gap:6px;align-items:center">'
+      +'<div style="display:flex;gap:8px;align-items:center">'
+      +(res==='ok'?'<span style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0"></span>':res==='nok'?'<span style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0"></span>':'<span style="width:8px;height:8px;border-radius:50%;background:var(--line2);flex-shrink:0"></span>')
       +'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>'
       +'</div></div>'
     );
@@ -6754,10 +7046,12 @@ function setSeanceRes(key,val){
   if(mapResults[key])results[bk]=mapResults[key];else delete results[bk];
   updateSeanceCounts();updateObjSeanceBars();saveAll();
   selectSeanceZone(seanceSelZone);renderSeanceOverlays();
+  // Mettre à jour les boutons dans le detail sheet
+  renderDetailResult(key, 'map');
   // Proposer une raison si raté
   if(val==='nok' && prev!=='nok') {
     const nom = (parts[2]||'')+ ' #'+(parts[3]||'') + ' — ' + (parts[1]||'');
-    setTimeout(()=>showRaisonModal(key, nom), 200);
+    setTimeout(()=>showRaisonModal(key, nom), 300);
   }
 }
 function setSeanceResBloc(key,val){
@@ -6765,11 +7059,44 @@ function setSeanceResBloc(key,val){
   results[key]===val?delete results[key]:results[key]=val;
   updateSeanceCounts();updateObjSeanceBars();saveAll();
   selectSeanceZone(seanceSelZone);renderSeanceOverlays();
+  // Mettre à jour les boutons dans le detail sheet
+  renderDetailResult(key, 'bloc');
   // Proposer une raison si on vient de marquer comme raté
   if(val==='nok' && prev!=='nok') {
     const bloc = BLOCS.find(b=>b.id===key.split('|')[0]) || BLOCS.find(b=>b.id===key);
     const label = bloc ? `${bloc.id} — ${bloc.couleur}${bloc.cotation?' ('+bloc.cotation+')':''}` : key;
-    setTimeout(()=>showRaisonModal(key, label), 200);
+    setTimeout(()=>showRaisonModal(key, label), 300);
+  }
+}
+
+function renderDetailResult(key, type) {
+  const sheet = document.getElementById('bloc-detail-sheet');
+  if(!sheet) return;
+  const res = type==='map' ? mapResults[key] : results[key];
+
+  // Mettre à jour les classes des boutons Réussi/Raté
+  const rbtns = sheet.querySelectorAll('.rbtn');
+  if(rbtns.length >= 2) {
+    rbtns[0].className = 'rbtn' + (res==='ok' ? ' ok' : '');
+    rbtns[1].className = 'rbtn' + (res==='nok' ? ' nok' : '');
+  }
+
+  // Ajouter un badge de résultat visible en haut du sheet
+  let badge = sheet.querySelector('.detail-res-badge');
+  if(!badge) {
+    badge = document.createElement('div');
+    badge.className = 'detail-res-badge';
+    badge.style.cssText = 'text-align:center;padding:8px 0 4px;font-size:13px;font-weight:700;letter-spacing:.3px;transition:color .2s';
+    sheet.insertBefore(badge, sheet.firstChild);
+  }
+  if(res==='ok') {
+    badge.textContent = '✓ Réussi';
+    badge.style.color = 'var(--green)';
+  } else if(res==='nok') {
+    badge.textContent = '✗ Raté';
+    badge.style.color = 'var(--red)';
+  } else {
+    badge.textContent = '';
   }
 }
 function updateSeanceCounts(){
@@ -6826,7 +7153,7 @@ function openBlocDetail(bloc){
   if(m.betas&&m.betas.length) m.betas.forEach((b,bi)=>{
     const isIG = b.url&&b.url.includes('instagram');
     const isYT = b.url&&(b.url.includes('youtube')||b.url.includes('youtu.be'));
-    const icon = isIG?'📷':isYT?'▶️':'🔗';
+    const icon = isIG?'◷':isYT?'▷':'↗';
     mediaHtml+='<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--off);border-radius:var(--rs);margin-bottom:7px;border:1px solid var(--line)">'
       +'<a href="'+b.url+'" target="_blank" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink);flex:1">'
       +'<span style="font-size:18px">'+icon+'</span>'
@@ -6876,12 +7203,12 @@ function openBlocDetail(bloc){
     // Essais / étoiles / morpho
     +(function(){
       if(!bloc.essais && !bloc.etoiles && bloc.morpho!==true && bloc.morpho!==false) return '';
-      const essaisLabel = bloc.essais==='flash'?'⚡ Flash':bloc.essais==='projet'?'📌 Projet':bloc.essais?(bloc.essais+' essai'+(parseInt(bloc.essais)>1?'s':'')):'';
+      const essaisLabel = bloc.essais==='flash'?'→ Flash':bloc.essais==='projet'?'◎ Projet':bloc.essais?(bloc.essais+' essai'+(parseInt(bloc.essais)>1?'s':'')):'';
       const starsLabel = bloc.etoiles?('★'.repeat(bloc.etoiles)+'☆'.repeat(5-bloc.etoiles)):'';
       let h='<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">';
       if(essaisLabel) h+='<span style="background:var(--accent-bg);color:var(--accent);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600">'+essaisLabel+'</span>';
       if(starsLabel) h+='<span style="background:var(--off);border-radius:20px;padding:4px 12px;font-size:13px">'+starsLabel+'</span>';
-      if(bloc.morpho===true) h+='<span style="background:var(--off);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600">💪 Morpho</span>';
+      if(bloc.morpho===true) h+='<span style="background:var(--off);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600">/ Morpho</span>';
       if(bloc.morpho===false) h+='<span style="background:var(--off);border-radius:20px;padding:4px 12px;font-size:12px;color:var(--ink3)">Non morpho</span>';
       return h+'</div>';
     }())
@@ -6919,7 +7246,7 @@ function openBlocDetail(bloc){
     ? '<div class="bloc-tag-group" style="margin-top:4px"><div class="bloc-tag-group-label">Mon expérience</div>'
       +'<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--ink3);margin-bottom:5px">Essais</div>'
       +'<div style="display:flex;gap:6px;flex-wrap:wrap" id="bd-essais-btns">'
-      +['flash','1','2','3','+3','projet'].map(v=>'<button class="tag-btn '+(bloc.essais===v?'sel':'')+'" onclick="setBlocEssais(\''+v+'\',this,\''+bloc.id+'\')">'+( v==='flash'?'⚡ Flash':v==='projet'?'📌 Projet':v+' essai'+(parseInt(v)>1?'s':'') )+'</button>').join('')
+      +['flash','1','2','3','+3','projet'].map(v=>'<button class="tag-btn '+(bloc.essais===v?'sel':'')+'" onclick="setBlocEssais(\''+v+'\',this,\''+bloc.id+'\')">'+( v==='flash'?'→ Flash':v==='projet'?'◎ Projet':v+' essai'+(parseInt(v)>1?'s':'') )+'</button>').join('')
       +'</div></div>'
       +'<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--ink3);margin-bottom:5px">Note</div>'
       +'<div style="display:flex;gap:6px;font-size:26px" id="bd-etoiles-btns">'
@@ -6927,7 +7254,7 @@ function openBlocDetail(bloc){
       +'</div></div>'
       +'<div><div style="font-size:11px;color:var(--ink3);margin-bottom:5px">Morpho ?</div>'
       +'<div style="display:flex;gap:8px">'
-      +'<button class="tag-btn '+(bloc.morpho===true?'sel':'')+'" onclick="setBlocMorpho(true,\''+bloc.id+'\')">💪 Oui</button>'
+      +'<button class="tag-btn '+(bloc.morpho===true?'sel':'')+'" onclick="setBlocMorpho(true,\''+bloc.id+'\')">/ Oui</button>'
       +'<button class="tag-btn '+(bloc.morpho===false?'sel':'')+'" onclick="setBlocMorpho(false,\''+bloc.id+'\')">Non</button>'
       +'</div></div>'
       +'</div>'
@@ -7356,7 +7683,7 @@ function onbGoTo(step) {
   });
   // Button label
   const btn = document.getElementById('onb-btn');
-  btn.textContent = step === ONB_STEPS - 1 ? "C'est parti ! 🚀" : 'Suivant →';
+  btn.textContent = step === ONB_STEPS - 1 ? "C'est parti →" : 'Suivant →';
   onbCheckStep();
 }
 
@@ -7421,7 +7748,7 @@ function onbFinish() {
   }
   // Welcome toast
   const name = document.getElementById('onb-pseudo')?.value.trim() || 'grimpeur';
-  setTimeout(() => showToast('Bienvenue ' + name + ' ! 🧗'), 400);
+  setTimeout(() => showToast('Bienvenue ' + name + ' ! '), 400);
 }
 
 // ========== INIT ==========
@@ -7483,7 +7810,7 @@ function ouvertureZone() {
   overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:flex-end;justify-content:center';
   overlay.innerHTML=`
     <div style="background:var(--white);border-radius:20px 20px 0 0;width:100%;max-width:430px;padding:24px 20px 32px;box-shadow:0 -4px 30px rgba(0,0,0,.15)">
-      <div style="font-family:var(--display);font-size:18px;font-weight:700;color:var(--ink);margin-bottom:6px">🔄 Nouvelle ouverture</div>
+      <div style="font-family:var(--display);font-size:18px;font-weight:700;color:var(--ink);margin-bottom:6px">↺ Nouvelle ouverture</div>
       <div style="font-size:13px;color:var(--ink3);margin-bottom:16px;line-height:1.5">Sélectionne la zone à vider. Tous ses blocs seront supprimés et un événement d'ouverture sera créé dans l'historique.</div>
       <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Zone à vider</div>
       <select id="ouverture-zone-sel" style="width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid var(--line2);background:var(--off);color:var(--ink);font-size:14px;box-sizing:border-box;margin-bottom:16px">
@@ -7629,7 +7956,7 @@ function renderArchiveList() {
               : `${b.id}${b.couleur ? ' · '+b.couleur : ''}${b.cotation ? ' ('+b.cotation+')' : ''}`
             }
             <span class="arch-badge ${b.action==='added'?'arch-badge-add':b.action==='opening'?'arch-badge-add':'arch-badge-rm'}" style="${b.action==='opening'?'background:var(--accent);color:#fff;':''}">
-              ${b.action==='added'?'↑ Ajouté':b.action==='opening'?'🔄 Ouverture':'↓ Retiré'}
+              ${b.action==='added'?'↑ Ajouté':b.action==='opening'?'↺ Ouverture':'↓ Retiré'}
             </span>
           </div>
           <div class="arch-meta">Zone ${b.secteur}${b.ouvreur?' · '+b.ouvreur:''}</div>
