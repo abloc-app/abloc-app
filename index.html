@@ -1658,16 +1658,10 @@ textarea{resize:none;height:62px;line-height:1.5}
       <div id="mes-obj-list"><div class="empty">Aucun objectif — appuie sur + Ajouter.</div></div>
     </div>
     <div class="card" id="sugg-panel">
-      <div class="card-label" style="margin-bottom:10px">Suggestions</div>
-      <div class="chips">
-        <div class="chip active" onclick="filterSugg('all',this)">Tous</div>
-        <div class="chip" onclick="filterSugg('ct',this)">Court terme</div>
-        <div class="chip" onclick="filterSugg('lt',this)">Long terme</div>
-        <div class="chip" onclick="filterSugg('indoor',this)">Indoor</div>
-        <div class="chip" onclick="filterSugg('outdoor',this)">Outdoor</div>
-        <div class="chip" onclick="filterSugg('outils',this)">Outils</div>
-      </div>
-      <div id="sugg-list"></div>
+      <div class="card-label" style="margin-bottom:8px">Ajouter un objectif</div>
+      <input id="obj-libre-titre" type="text" placeholder="Ex: Réussir la dalle du secteur J, grimper 3x/semaine…" maxlength="60"
+        style="width:100%;padding:10px 12px;border-radius:var(--rs);border:1.5px solid var(--line2);background:var(--white);color:var(--ink);font-size:13px;font-family:var(--font);box-sizing:border-box;margin-bottom:8px">
+      <button onclick="addObjLibre()" style="width:100%;padding:10px;border-radius:var(--rs);background:var(--accent);color:#fff;border:none;font-size:13px;font-weight:600;cursor:pointer">+ Ajouter</button>
     </div>
     <div class="card" style="margin-top:0">
       <div class="card-label">Note pour le coaching</div>
@@ -2053,26 +2047,41 @@ const HANG_PROTOS = [
 ];
 
 const SUGGESTIONS = [
-  {id:'s1',titre:'Enchaîner 5 blocs rouges en séance',sub:'Endurance sur blocs difficiles',h:'ct',tags:['indoor','perf'],niveaux:['intermediaire'],col:'#ef4444',
-   auto:(res)=>BLOCS.filter(b=>b.couleur==='rouge'&&res[b.id]==='ok').length, cible:5},
-  {id:'s2',titre:'Réussir 3 blocs en dévers >30°',sub:'Force & technique en surplomb',h:'ct',tags:['indoor','tech'],niveaux:['intermediaire','avance'],col:'#a78bfa',
-   auto:(res)=>BLOCS.filter(b=>parseFloat(b.incl)>=30&&res[b.id]==='ok').length, cible:3},
-  {id:'s3',titre:'Sortie outdoor Fontainebleau',sub:'Premier projet sur rocher naturel',h:'lt',tags:['outdoor'],niveaux:['intermediaire','avance'],col:'#4ade80',
+  // ── Régularité & volume ──
+  {id:'reg1', titre:'Grimper régulièrement', sub:'Construire une habitude d\'entraînement stable', h:'lt', tags:['indoor'], niveaux:['debutant','intermediaire','avance','expert'], col:'#3b82f6',
+   auto:()=>historique.length, cible:8},
+  {id:'reg2', titre:'Augmenter mon volume de séances', sub:'Faire plus de séances ce mois-ci qu\'il y a un mois', h:'ct', tags:['indoor'], niveaux:['debutant','intermediaire','avance'], col:'#0ea5e9',
+   auto:()=>historique.filter(s=>{const d=new Date();const m=d.getMonth();const y=d.getFullYear();return s.date&&true;}).length, cible:6},
+
+  // ── Niveau & difficulté ──
+  {id:'niv1', titre:'Atteindre le niveau suivant', sub:'Réussir régulièrement des blocs plus difficiles que d\'habitude', h:'lt', tags:['indoor'], niveaux:['debutant','intermediaire','avance'], col:'#ef4444',
+   auto:(res)=>{const ORDRE=['vert','orange','rose','noir','bleu','mauve','jaune','rouge','blanc'];const idx=ORDRE.indexOf(niveau==='debutant'?'orange':niveau==='intermediaire'?'noir':niveau==='avance'?'jaune':'blanc');const cible=ORDRE[Math.min(idx+1,ORDRE.length-1)];return BLOCS.filter(b=>b.couleur===cible&&res[b.id]==='ok').length;}, cible:3},
+  {id:'niv2', titre:'Consolider mon niveau actuel', sub:'Réussir confortablement la majorité des blocs de ma cotation', h:'ct', tags:['indoor'], niveaux:['debutant','intermediaire','avance','expert'], col:'#22c55e',
+   auto:(res)=>{const COULEUR_NIVEAU={debutant:'orange',intermediaire:'noir',avance:'mauve',expert:'rouge'};const c=COULEUR_NIVEAU[niveau]||'noir';const t=BLOCS.filter(b=>b.couleur===c);return t.length?Math.round(t.filter(b=>res[b.id]==='ok').length/t.length*100):0;}, cible:70},
+
+  // ── Technique ──
+  {id:'tech1', titre:'Travailler un style qui me résiste', sub:'Identifier et améliorer mon point faible technique', h:'ct', tags:['indoor','tech'], niveaux:['debutant','intermediaire','avance','expert'], col:'#8b5cf6',
+   auto:(res)=>Object.values(res).filter(v=>v==='ok').length, cible:10},
+  {id:'tech2', titre:'Améliorer ma lecture de bloc', sub:'Réduire le nombre d\'essais avant de réussir', h:'lt', tags:['indoor','tech'], niveaux:['debutant','intermediaire','avance'], col:'#a78bfa',
+   auto:(res)=>Object.values(res).filter(v=>v==='ok').length, cible:8},
+  {id:'tech3', titre:'Explorer un type de prise inconnu', sub:'S\'exposer à des prises peu familières', h:'ct', tags:['indoor','tech'], niveaux:['debutant','intermediaire'], col:'#2dd4bf',
+   auto:(res)=>Object.values(res).filter(v=>v==='ok').length, cible:5},
+
+  // ── Entraînement spécifique ──
+  {id:'out1', titre:'Intégrer un outil d\'entraînement', sub:'Hangboard, campus board ou spraywall régulièrement', h:'lt', tags:['outils'], niveaux:['intermediaire','avance','expert'], col:'#f97316',
+   auto:()=>hangSessions.length+campusSessions.length+spraySessions.length, cible:5},
+  {id:'out2', titre:'Travailler la force spécifique', sub:'Développer la force des doigts et du haut du corps', h:'lt', tags:['outils'], niveaux:['intermediaire','avance','expert'], col:'#f87171',
+   auto:()=>hangSessions.length, cible:8},
+
+  // ── Outdoor / compétition ──
+  {id:'ext1', titre:'Grimper en extérieur', sub:'Amener sa progression sur du rocher naturel', h:'lt', tags:['outdoor'], niveaux:['debutant','intermediaire','avance','expert'], col:'#4ade80',
    auto:()=>0, cible:1},
-  {id:'s4',titre:'Compléter 80% des blocs orange',sub:'Consolider le niveau intermédiaire',h:'ct',tags:['indoor'],niveaux:['debutant','intermediaire'],col:'#f97316',
-   auto:(res)=>{const t=BLOCS.filter(b=>b.couleur==='orange');const ok=t.filter(b=>res[b.id]==='ok').length;return t.length?Math.round(ok/t.length*100):0;}, cible:80},
-  {id:'s5',titre:'Flasher un problème Moonboard 7A',sub:'Montée au premier essai',h:'ct',tags:['outils','indoor'],niveaux:['intermediaire','avance'],col:'#a78bfa',
-   auto:()=>Object.values(moonData).filter(v=>v&&v.res==='flash').length, cible:1},
-  {id:'s6',titre:'Compléter un circuit rouge entier',sub:'Endurance sur blocs difficiles',h:'ct',tags:['outils','indoor'],niveaux:['avance'],col:'#ef4444',
-   auto:()=>CIRCUITS.filter(c=>c.niveau==='avance'&&c.pct>=100).length, cible:1},
-  {id:'s7',titre:'10 sessions hangboard ce mois',sub:'Régularité pour progresser les doigts',h:'lt',tags:['outils'],niveaux:['intermediaire','avance'],col:'#f87171',
-   auto:()=>hangSessions.length, cible:10},
-  {id:'s8',titre:'Maîtriser la dalle négative',sub:'Placement de pied et équilibre',h:'ct',tags:['indoor','tech'],niveaux:['debutant','intermediaire'],col:'#2dd4bf',
-   auto:(res)=>BLOCS.filter(b=>parseFloat(b.incl)<0&&res[b.id]==='ok').length, cible:3},
-  {id:'s9',titre:'Participer à une compétition',sub:'Découvrir le format compétition',h:'lt',tags:['indoor'],niveaux:['intermediaire','avance','expert'],col:'#a78bfa',
+  {id:'ext2', titre:'Se mesurer à d\'autres grimpeurs', sub:'Compétition, défi ou session avec des grimpeurs de niveau différent', h:'lt', tags:['outdoor'], niveaux:['intermediaire','avance','expert'], col:'#fbbf24',
    auto:()=>0, cible:1},
-  {id:'s10',titre:'Sortie Ardennes (7a)',sub:'Projet ambitieux sur calcaire belge',h:'lt',tags:['outdoor'],niveaux:['avance','expert'],col:'#4ade80',
-   auto:()=>0, cible:1},
+
+  // ── Mental / approche ──
+  {id:'men1', titre:'Sortir de ma zone de confort', sub:'Tenter des blocs qui semblent hors de portée', h:'ct', tags:['indoor'], niveaux:['debutant','intermediaire','avance','expert'], col:'#ec4899',
+   auto:(res)=>Object.values(res).filter(v=>v==='ok').length, cible:3},
 ];
 
 // ========== STATE ==========
@@ -2719,7 +2728,7 @@ Réponds UNIQUEMENT avec ce JSON (sans markdown) :
       body: JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]})
     });
     const data = await res.json();
-    const text = (data.content?.[0]?.text||'').trim().replace(/```json|```/g,'');
+    const text = (data.content?.[0]?.text||'').trim().replace(/```[\w]*\n?/g,'').replace(/```/g,'');
     const protos = JSON.parse(text);
     window._aiHangProtos = protos;
 
@@ -2831,7 +2840,7 @@ Réponds UNIQUEMENT avec ce JSON (sans markdown) :
       body: JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]})
     });
     const data = await res.json();
-    const text = (data.content?.[0]?.text||'').trim().replace(/```json|```/g,'');
+    const text = (data.content?.[0]?.text||'').trim().replace(/```[\w]*\n?/g,'').replace(/```/g,'');
     const exos = JSON.parse(text);
 
     el.innerHTML = exos.map(e=>`
@@ -3038,22 +3047,17 @@ function renderMesObj() {
   const el = document.getElementById('mes-obj-list');
   if(!mesObjectifs.length){el.innerHTML='<div class="empty">Aucun objectif — appuie sur + Ajouter.</div>';return;}
   el.innerHTML = mesObjectifs.map(o=>`
-    <div class="obj-card ${o.done?'done':''} ${o.justDone?'just-done':''}">
-      <div style="display:flex;align-items:flex-start;gap:10px">
-        <div style="width:10px;height:10px;border-radius:50%;background:${o.col};flex-shrink:0;margin-top:4px"></div>
+    <div class="obj-card ${o.done?'done':''}">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:10px;height:10px;border-radius:50%;background:${o.col||'var(--accent)'};flex-shrink:0"></div>
         <div style="flex:1;min-width:0">
-          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px">${o.titre}</div>
-          <div style="margin-bottom:6px">
-            <span class="tag tag-${o.h==='ct'?'ct':'lt'}">${o.h==='ct'?'Court terme':'Long terme'}</span>
-            ${o.tags.map(t=>`<span class="tag tag-${t}">${{indoor:'Indoor',outdoor:'Outdoor',perf:'Perf',tech:'Tech',outils:'Outils'}[t]||t}</span>`).join('')}
-          </div>
-          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:3px">
-            <span>${o.done?'Atteint !':'Progression'}</span>
-            <span style="font-family:var(--mono);color:var(--accent)">${o.lastPct||0}%</span>
-          </div>
-          <div class="prog-wrap"><div class="prog" style="width:${o.lastPct||0}%;background:${o.col}"></div></div>
+          <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:${o.duree?'3px':'0'}">${o.titre}</div>
+          ${o.done ? '<div style="font-size:11px;color:var(--green);font-weight:600">✓ Atteint !</div>'
+          : o.duree ? `<div style="font-size:11px;color:var(--ink3)">⏱ ${o.duree}</div>`
+          : o.dureeLoading ? '<div style="font-size:11px;color:var(--ink3)">Estimation en cours...</div>'
+          : ''}
         </div>
-        <span style="font-size:18px;cursor:pointer;color:var(--text3);flex-shrink:0" onclick="removeObj('${o.id}')">×</span>
+        <span style="font-size:20px;cursor:pointer;color:var(--ink3);flex-shrink:0;line-height:1" onclick="removeObj('${o.id}')">×</span>
       </div>
     </div>`).join('');
 }
@@ -3066,7 +3070,9 @@ function filterSugg(f, el) {
 }
 
 function renderSuggList() {
-  let filtered = SUGGESTIONS.filter(s=>s.niveaux.includes(niveau)&&!mesObjectifs.find(o=>o.id===s.id));
+  // Exclure uniquement les suggestions dont l'ID exact est déjà dans mesObjectifs
+  const activeIds = new Set(mesObjectifs.map(o=>o.id));
+  let filtered = SUGGESTIONS.filter(s => s.niveaux.includes(niveau) && !activeIds.has(s.id));
   if(filterSuggType==='ct') filtered=filtered.filter(s=>s.h==='ct');
   else if(filterSuggType==='lt') filtered=filtered.filter(s=>s.h==='lt');
   else if(filterSuggType==='indoor') filtered=filtered.filter(s=>s.tags.includes('indoor'));
@@ -3089,6 +3095,65 @@ function renderSuggList() {
         </div>
       </div>`).join('')
     : '<div class="empty">Tous les objectifs disponibles sont déjà ajoutés.</div>';
+}
+
+function addObjLibre() {
+  const titre = document.getElementById('obj-libre-titre')?.value.trim();
+  if(!titre || titre.length < 3) { showToast('Écris un objectif d\'au moins 3 caractères'); return; }
+  const id = 'libre_' + Date.now();
+  const obj = {
+    id, titre,
+    col: 'var(--accent)',
+    lastPct: 0, done: false, justDone: false,
+    manuel: true,
+    duree: null,
+    dureeLoading: true,
+  };
+  mesObjectifs.push(obj);
+  document.getElementById('obj-libre-titre').value = '';
+  renderMesObj(); renderSuggList();
+  saveAll();
+  showToast('Objectif ajouté !');
+  // Demander à l'IA une estimation de durée
+  estimeeDureeObjectif(obj);
+}
+
+async function estimeeDureeObjectif(obj) {
+  try {
+    const pg = profilGrimpeur;
+    const profilCtx = [
+      'Niveau : '+niveau,
+      historique.length+' séances enregistrées',
+      pg.frequence ? pg.frequence+'/semaine' : null,
+      pg.anciennete || null,
+    ].filter(Boolean).join(', ');
+
+    const prompt = `Un grimpeur de bloc veut atteindre cet objectif : "${obj.titre}"
+Profil : ${profilCtx}
+Ordre des couleurs de la salle (difficulté croissante) : Vert (4) < Orange (5) < Rose (5+) < Noir (6A) < Bleu (6B) < Mauve (6C) < Jaune (7A) < Rouge (7B) < Blanc (7C+)
+
+Estime de façon réaliste et nuancée le temps nécessaire pour atteindre cet objectif. Sois honnête — ni trop optimiste ni trop pessimiste. Si l'objectif est vague ou non mesurable, dis-le brièvement.
+
+Réponds en UNE seule courte phrase (max 12 mots), en français, sans guillemets. Exemples : "Environ 2-3 mois à ce rythme" / "Réaliste en 4-6 semaines" / "Dépend de la régularité — compte 1-2 mois"`;
+
+    const res = await fetch('/.netlify/functions/coaching', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:60, messages:[{role:'user',content:prompt}]})
+    });
+    const data = await res.json();
+    const duree = (data.content?.[0]?.text||'').trim().replace(/^"|"$/g,'');
+    const idx = mesObjectifs.findIndex(o=>o.id===obj.id);
+    if(idx>=0 && duree) {
+      mesObjectifs[idx].duree = duree;
+      mesObjectifs[idx].dureeLoading = false;
+      saveAll();
+      renderMesObj();
+    }
+  } catch(e) {
+    const idx = mesObjectifs.findIndex(o=>o.id===obj.id);
+    if(idx>=0) { mesObjectifs[idx].dureeLoading = false; saveAll(); }
+  }
 }
 
 function addObj(id) {
@@ -3353,7 +3418,15 @@ function loadAll() {
     if (d.scoreMonthKey)  scoreMonthKey = d.scoreMonthKey;
     if (d.scoreYearKey)   scoreYearKey  = d.scoreYearKey;
     if (d.objDoneTotal)   objDoneTotal = d.objDoneTotal;
-    if (d.mesObjectifs)   mesObjectifs.push(...d.mesObjectifs);
+    if (d.mesObjectifs) {
+      const validSuggIds = new Set(SUGGESTIONS.map(s=>s.id));
+      d.mesObjectifs.forEach(o => {
+        // Garder les objectifs libres (id commence par 'libre_') et ceux dont l'ID existe encore
+        if(o.id.startsWith('libre_') || validSuggIds.has(o.id)) {
+          mesObjectifs.push(o);
+        }
+      });
+    }
     if (d.niveau)         niveau = d.niveau;
     if (d.moonData)       Object.assign(moonData, d.moonData);
     if (d.hangSessions)   hangSessions.push(...d.hangSessions);
@@ -3969,7 +4042,7 @@ Réponds UNIQUEMENT avec ce JSON :
 
     if(mode==='analyse') {
       try {
-        const clean = text.replace(/```json|```/g,'').trim();
+        const clean = text.replace(/```[\w]*\n?/g,'').replace(/```/g,'').trim();
         const parsed = JSON.parse(clean);
         // Update main bubble
         const el = document.getElementById('coach-main-text');
@@ -4002,7 +4075,7 @@ Réponds UNIQUEMENT avec ce JSON :
 
     else if(mode==='semaine') {
       try {
-        const clean = text.replace(/```json|```/g,'').trim();
+        const clean = text.replace(/```[\w]*\n?/g,'').replace(/```/g,'').trim();
         const plan = JSON.parse(clean);
         const DAY_LABELS = {lundi:'LUN',mardi:'MAR',mercredi:'MER',jeudi:'JEU',vendredi:'VEN',samedi:'SAM',dimanche:'DIM'};
         const isRest = t => t.toLowerCase().includes('repos');
@@ -4024,7 +4097,11 @@ Réponds UNIQUEMENT avec ce JSON :
 
     else if(mode==='plan') {
       try {
-        const clean = text.replace(/```json|```/g,'').trim();
+        // Nettoyage robuste : supprimer toutes les balises markdown même avec espaces/retours
+        let clean = text.replace(/```[\w]*\n?/g, '').replace(/```/g, '').trim();
+        // Extraire le JSON si du texte parasite précède ou suit
+        const jsonMatch = clean.match(/\{[\s\S]*\}/);
+        if(jsonMatch) clean = jsonMatch[0];
         const prog = JSON.parse(clean);
         const el = document.getElementById('coach-4w-plan');
         if(!el) return;
@@ -4053,8 +4130,10 @@ Réponds UNIQUEMENT avec ce JSON :
         const pi = document.getElementById('coach-plan-intro');
         if(pi) pi.textContent = 'Programme personnalisé généré selon ton niveau, tes points faibles et tes objectifs.';
       } catch(e) {
+        // Ne pas afficher le JSON brut — afficher un message d'erreur propre
         const el = document.getElementById('coach-plan-intro');
-        if(el) el.textContent = text;
+        if(el) el.textContent = 'Erreur lors du chargement du programme. Réessaie.';
+        console.warn('Plan JSON parse error:', e, text);
       }
     }
 
@@ -6563,7 +6642,7 @@ async function startGuidedSession() {
     });
     const data = await res.json();
     const text = (data.content?.[0]?.text||'').trim();
-    const parsed = JSON.parse(text.replace(/```json|```/g,'').trim());
+    const parsed = JSON.parse(text.replace(/```[\w]*\n?/g,'').replace(/```/g,'').trim());
     guidedBlocs = parsed.blocs || [];
     renderGuidedSession(parsed.message, guidedBlocs);
   } catch(e) {
