@@ -1103,7 +1103,14 @@ textarea{resize:none;height:62px;line-height:1.5}
 
   <!-- Profil grimpeur -->
   <div class="card">
-    <div class="card-label" style="margin-bottom:14px">Mon profil grimpeur</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div class="card-label" style="margin-bottom:0">Mon profil grimpeur</div>
+      <div id="prof-completion-badge" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:var(--off)">— %</div>
+    </div>
+    <div id="prof-completion-bar" style="height:4px;border-radius:2px;background:var(--line2);margin-bottom:14px;overflow:hidden">
+      <div id="prof-completion-fill" style="height:100%;border-radius:2px;background:var(--accent);width:0%;transition:width .4s"></div>
+    </div>
+    <div id="prof-completion-hint" style="font-size:12px;color:var(--ink3);margin-bottom:14px;display:none"></div>
 
     <!-- Physique -->
     <div style="font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">Physique</div>
@@ -1145,7 +1152,7 @@ textarea{resize:none;height:62px;line-height:1.5}
         <div class="chip" onclick="selectProfChip('frequence','4x+',this)">4x+ / sem</div>
       </div>
     </div>
-    <div style="margin-bottom:10px">
+    <div style="margin-bottom:12px">
       <div style="font-size:11px;color:var(--ink3);margin-bottom:6px">Pratique hors salle</div>
       <div style="display:flex;flex-wrap:wrap;gap:6px" id="prof-outdoor-chips">
         <div class="chip" onclick="selectProfChip('outdoor','falaise',this)">🪨 Falaise</div>
@@ -1155,9 +1162,63 @@ textarea{resize:none;height:62px;line-height:1.5}
       </div>
     </div>
 
-    <!-- Blessures -->
+    <!-- Niveau visé -->
+    <div style="font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;margin-top:4px">Objectif de niveau</div>
+    <div style="margin-bottom:12px">
+      <div style="font-size:11px;color:var(--ink3);margin-bottom:6px">Niveau que tu vises (à terme)</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px" id="prof-niveauVise-chips">
+        <div class="chip" onclick="selectProfChip('niveauVise','5',this)">5</div>
+        <div class="chip" onclick="selectProfChip('niveauVise','6A',this)">6A</div>
+        <div class="chip" onclick="selectProfChip('niveauVise','6B',this)">6B</div>
+        <div class="chip" onclick="selectProfChip('niveauVise','6C',this)">6C</div>
+        <div class="chip" onclick="selectProfChip('niveauVise','7A',this)">7A</div>
+        <div class="chip" onclick="selectProfChip('niveauVise','7B',this)">7B</div>
+        <div class="chip" onclick="selectProfChip('niveauVise','7C+',this)">7C+</div>
+      </div>
+    </div>
+
+    <!-- Auto-évaluation -->
+    <div style="font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;margin-top:4px">Ce que je sais de moi</div>
+    <div style="margin-bottom:10px">
+      <div style="font-size:11px;color:var(--ink3);margin-bottom:6px">Mes points forts (selon toi)</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px" id="prof-pointsForts-chips">
+        <div class="chip" onclick="selectProfChipMulti('pointsForts','force',this)">💪 Force</div>
+        <div class="chip" onclick="selectProfChipMulti('pointsForts','endurance',this)">🔋 Endurance</div>
+        <div class="chip" onclick="selectProfChipMulti('pointsForts','technique',this)">🎯 Technique</div>
+        <div class="chip" onclick="selectProfChipMulti('pointsForts','lecture',this)">👁 Lecture</div>
+        <div class="chip" onclick="selectProfChipMulti('pointsForts','mental',this)">🧠 Mental</div>
+        <div class="chip" onclick="selectProfChipMulti('pointsForts','souplesse',this)">🤸 Souplesse</div>
+      </div>
+    </div>
+    <div style="margin-bottom:12px">
+      <div style="font-size:11px;color:var(--ink3);margin-bottom:6px">Mes points à améliorer (selon toi)</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px" id="prof-pointsFaibles-chips">
+        <div class="chip" onclick="selectProfChipMulti('pointsFaibles','force',this)">💪 Force doigts</div>
+        <div class="chip" onclick="selectProfChipMulti('pointsFaibles','devers',this)">📐 Dévers</div>
+        <div class="chip" onclick="selectProfChipMulti('pointsFaibles','dalle',this)">⬜ Dalle</div>
+        <div class="chip" onclick="selectProfChipMulti('pointsFaibles','dynamique',this)">💥 Dynamique</div>
+        <div class="chip" onclick="selectProfChipMulti('pointsFaibles','lecture',this)">👁 Lecture</div>
+        <div class="chip" onclick="selectProfChipMulti('pointsFaibles','mental',this)">😬 Mental/Peur</div>
+        <div class="chip" onclick="selectProfChipMulti('pointsFaibles','souplesse',this)">🤸 Souplesse</div>
+        <div class="chip" onclick="selectProfChipMulti('pointsFaibles','endurance',this)">🔋 Endurance</div>
+      </div>
+    </div>
+
+    <!-- Blessures structurées -->
     <div style="font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;margin-top:4px">Blessures / contraintes</div>
-    <textarea id="prof-blessures" placeholder="Ex: poulie A2 gauche en rééducation, douleur épaule droite chronique..." rows="2" style="width:100%;padding:8px 10px;border-radius:8px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-size:13px;font-family:var(--font);resize:none;box-sizing:border-box;margin-bottom:12px"></textarea>
+    <div style="margin-bottom:8px">
+      <div style="font-size:11px;color:var(--ink3);margin-bottom:6px">Zones sensibles actuellement</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px" id="prof-blessures-chips">
+        <div class="chip" onclick="selectProfChipMulti('blessuresZones','poulies',this)">🖐 Poulies</div>
+        <div class="chip" onclick="selectProfChipMulti('blessuresZones','epaule',this)">💪 Épaule</div>
+        <div class="chip" onclick="selectProfChipMulti('blessuresZones','coude',this)">🦾 Coude</div>
+        <div class="chip" onclick="selectProfChipMulti('blessuresZones','poignet',this)">✋ Poignet</div>
+        <div class="chip" onclick="selectProfChipMulti('blessuresZones','genou',this)">🦵 Genou</div>
+        <div class="chip" onclick="selectProfChipMulti('blessuresZones','dos',this)">🔙 Dos</div>
+        <div class="chip" onclick="selectProfChipMulti('blessuresZones','aucune',this)">✓ Aucune</div>
+      </div>
+    </div>
+    <textarea id="prof-blessures" placeholder="Précisions si besoin (ex: poulie A2 main gauche, épaule chronique...)" rows="2" style="width:100%;padding:8px 10px;border-radius:8px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-size:13px;font-family:var(--font);resize:none;box-sizing:border-box;margin-bottom:12px"></textarea>
 
     <button class="btn btn-primary" onclick="saveProfil()" style="width:100%;margin-bottom:0">Sauvegarder mon profil</button>
   </div>
@@ -2200,7 +2261,7 @@ let yearScore  = 0;  // score cumulé de l'année en cours
 let scoreMonthKey = ''; // ex: "2026-04"
 let scoreYearKey  = ''; // ex: "2026"
 // Profil grimpeur physique
-let profilGrimpeur = {taille:null,poids:null,age:null,ape:null,anciennete:null,frequence:null,outdoor:[],blessures:''};
+let profilGrimpeur = {taille:null,poids:null,age:null,ape:null,anciennete:null,frequence:null,outdoor:[],blessures:'',niveauVise:null,pointsForts:[],pointsFaibles:[],blessuresZones:[]};
 
 // Poids par couleur de bloc (pondération niveau)
 const BLOC_WEIGHTS = {
@@ -4143,6 +4204,10 @@ async function callClaudeCoaching(mode) {
     pg.ape!=null ? 'Ape index: '+apeStr : null,
     pg.anciennete ? 'Ancienneté: '+pg.anciennete : null,
     pg.frequence  ? 'Fréquence: '+pg.frequence+'/semaine' : null,
+    pg.niveauVise ? 'Niveau visé: '+pg.niveauVise : null,
+    pg.pointsForts?.length ? 'Points forts (auto-déclarés): '+pg.pointsForts.join(', ') : null,
+    pg.pointsFaibles?.length ? 'Points faibles (auto-déclarés): '+pg.pointsFaibles.join(', ') : null,
+    pg.blessuresZones?.length ? 'Zones sensibles: '+pg.blessuresZones.join(', ') : null,
     pg.outdoor?.length ? 'Pratique hors salle: '+pg.outdoor.join(', ') : null,
     pg.blessures  ? 'Blessures/contraintes: '+pg.blessures : null,
   ].filter(Boolean).join('\n- ') || 'Non renseigné';
@@ -5933,16 +5998,66 @@ async function syncBlocsToSupabase() {
 }
 function selectProfChip(field, val, el) {
   if(field === 'outdoor') {
-    // Multi-select
     el.classList.toggle('active');
     const all = document.querySelectorAll('#prof-outdoor-chips .chip');
     profilGrimpeur.outdoor = [...all].filter(c=>c.classList.contains('active')).map(c=>c.dataset.val||c.textContent.trim());
   } else {
-    // Single select
     const container = el.closest('[id]');
     container.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
     el.classList.add('active');
     profilGrimpeur[field] = val;
+  }
+  updateProfilCompletion();
+}
+
+function selectProfChipMulti(field, val, el) {
+  if(!Array.isArray(profilGrimpeur[field])) profilGrimpeur[field] = [];
+  const idx = profilGrimpeur[field].indexOf(val);
+  if(idx >= 0) {
+    profilGrimpeur[field].splice(idx, 1);
+    el.classList.remove('active');
+  } else {
+    // "aucune" exclusif pour blessuresZones
+    if(val === 'aucune') { profilGrimpeur[field] = ['aucune']; document.querySelectorAll('#prof-blessures-chips .chip').forEach(c=>c.classList.remove('active')); el.classList.add('active'); return; }
+    if(field === 'blessuresZones') { profilGrimpeur[field] = profilGrimpeur[field].filter(v=>v!=='aucune'); document.querySelectorAll('#prof-blessures-chips .chip').forEach(c=>{if(c.textContent.includes('Aucune'))c.classList.remove('active');}); }
+    profilGrimpeur[field].push(val);
+    el.classList.add('active');
+  }
+  updateProfilCompletion();
+}
+
+function updateProfilCompletion() {
+  const p = profilGrimpeur;
+  const checks = [
+    {ok: !!p.taille, label: 'taille'},
+    {ok: !!p.poids, label: 'poids'},
+    {ok: !!p.age, label: 'âge'},
+    {ok: !!p.anciennete, label: 'ancienneté'},
+    {ok: !!p.frequence, label: 'fréquence'},
+    {ok: !!p.niveauVise, label: 'niveau visé'},
+    {ok: p.pointsForts?.length > 0, label: 'points forts'},
+    {ok: p.pointsFaibles?.length > 0, label: 'points faibles'},
+    {ok: p.blessuresZones?.length > 0, label: 'blessures'},
+  ];
+  const done = checks.filter(c=>c.ok).length;
+  const pct = Math.round(done / checks.length * 100);
+  const badge = document.getElementById('prof-completion-badge');
+  const fill = document.getElementById('prof-completion-fill');
+  const hint = document.getElementById('prof-completion-hint');
+  if(badge) {
+    badge.textContent = pct + '%';
+    badge.style.background = pct >= 80 ? 'var(--green-bg)' : pct >= 50 ? 'var(--accent-bg)' : 'var(--off)';
+    badge.style.color = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--accent)' : 'var(--ink3)';
+  }
+  if(fill) fill.style.width = pct + '%';
+  if(hint) {
+    const missing = checks.filter(c=>!c.ok).map(c=>c.label);
+    if(missing.length > 0 && pct < 100) {
+      hint.textContent = '📋 Manque : ' + missing.join(', ') + ' — le coaching sera plus précis avec un profil complet.';
+      hint.style.display = 'block';
+    } else {
+      hint.style.display = 'none';
+    }
   }
 }
 
@@ -5953,6 +6068,7 @@ function saveProfil() {
   profilGrimpeur.ape    = parseInt(document.getElementById('prof-ape')?.value)||null;
   profilGrimpeur.blessures = document.getElementById('prof-blessures')?.value?.trim()||'';
   saveAll();
+  updateProfilCompletion();
   showToast('Profil sauvegardé ✓');
 }
 
@@ -5983,6 +6099,35 @@ function loadProfilUI() {
       c.classList.toggle('active', p.outdoor.some(o=>label.includes(o)||o.includes(label)));
     });
   }
+  // Niveau visé
+  if(p.niveauVise) {
+    document.querySelectorAll('#prof-niveauVise-chips .chip').forEach(c=>{
+      c.classList.toggle('active', c.textContent.trim()===p.niveauVise);
+    });
+  }
+  // Points forts (multi)
+  const pfMap = {force:'Force',endurance:'Endurance',technique:'Technique',lecture:'Lecture',mental:'Mental',souplesse:'Souplesse'};
+  if(p.pointsForts?.length) {
+    document.querySelectorAll('#prof-pointsForts-chips .chip').forEach(c=>{
+      const txt = c.textContent.trim().replace(/^[^\w]+/,'').trim();
+      c.classList.toggle('active', p.pointsForts.some(v=>txt.toLowerCase().includes(v.toLowerCase())));
+    });
+  }
+  // Points faibles (multi)
+  if(p.pointsFaibles?.length) {
+    document.querySelectorAll('#prof-pointsFaibles-chips .chip').forEach(c=>{
+      const txt = c.textContent.trim().replace(/^[^\w]+/,'').trim();
+      c.classList.toggle('active', p.pointsFaibles.some(v=>txt.toLowerCase().includes(v.toLowerCase())));
+    });
+  }
+  // Blessures zones (multi)
+  if(p.blessuresZones?.length) {
+    document.querySelectorAll('#prof-blessures-chips .chip').forEach(c=>{
+      const txt = c.textContent.trim().replace(/^[^\w]+/,'').trim().toLowerCase();
+      c.classList.toggle('active', p.blessuresZones.some(v=>txt.includes(v.toLowerCase())||v.toLowerCase().includes(txt)));
+    });
+  }
+  updateProfilCompletion();
 }
 
 function renderProfile() {
