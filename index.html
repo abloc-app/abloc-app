@@ -3119,6 +3119,16 @@ function addObjLibre() {
 }
 
 async function estimeeDureeObjectif(obj) {
+  const apiKey = localStorage.getItem('adm_api_key') || '';
+  if(!apiKey) {
+    const idx = mesObjectifs.findIndex(o=>o.id===obj.id);
+    if(idx>=0) {
+      mesObjectifs[idx].duree = 'Ajoute une clé API dans le dashboard pour obtenir une estimation';
+      mesObjectifs[idx].dureeLoading = false;
+      saveAll(); renderMesObj();
+    }
+    return;
+  }
   try {
     const pg = profilGrimpeur;
     const profilCtx = [
@@ -3132,27 +3142,40 @@ async function estimeeDureeObjectif(obj) {
 Profil : ${profilCtx}
 Ordre des couleurs de la salle (difficulté croissante) : Vert (4) < Orange (5) < Rose (5+) < Noir (6A) < Bleu (6B) < Mauve (6C) < Jaune (7A) < Rouge (7B) < Blanc (7C+)
 
-Estime de façon réaliste et nuancée le temps nécessaire pour atteindre cet objectif. Sois honnête — ni trop optimiste ni trop pessimiste. Si l'objectif est vague ou non mesurable, dis-le brièvement.
+Estime de façon réaliste et nuancée le temps nécessaire. Sois honnête — ni trop optimiste ni trop pessimiste.
+Réponds en UNE seule courte phrase (max 12 mots), en français, sans guillemets. Ex : "Environ 2-3 mois à ce rythme" / "Réaliste en 4-6 semaines"`;
 
-Réponds en UNE seule courte phrase (max 12 mots), en français, sans guillemets. Exemples : "Environ 2-3 mois à ce rythme" / "Réaliste en 4-6 semaines" / "Dépend de la régularité — compte 1-2 mois"`;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
 
-    const res = await fetch('/.netlify/functions/coaching', {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:60, messages:[{role:'user',content:prompt}]})
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:60, messages:[{role:'user',content:prompt}]}),
+      signal: controller.signal,
     });
+    clearTimeout(timeout);
+
     const data = await res.json();
     const duree = (data.content?.[0]?.text||'').trim().replace(/^"|"$/g,'');
     const idx = mesObjectifs.findIndex(o=>o.id===obj.id);
-    if(idx>=0 && duree) {
-      mesObjectifs[idx].duree = duree;
+    if(idx>=0) {
+      mesObjectifs[idx].duree = duree || 'Estimation indisponible';
       mesObjectifs[idx].dureeLoading = false;
-      saveAll();
-      renderMesObj();
+      saveAll(); renderMesObj();
     }
   } catch(e) {
     const idx = mesObjectifs.findIndex(o=>o.id===obj.id);
-    if(idx>=0) { mesObjectifs[idx].dureeLoading = false; saveAll(); }
+    if(idx>=0) {
+      mesObjectifs[idx].duree = 'Estimation indisponible';
+      mesObjectifs[idx].dureeLoading = false;
+      saveAll(); renderMesObj();
+    }
   }
 }
 
@@ -6960,6 +6983,10 @@ renderHangProtocols();
 renderCampusExos();
 renderActuFeed();
 checkAllBadges();
+// Relancer l'estimation pour les objectifs bloqués en "loading"
+setTimeout(() => {
+  mesObjectifs.filter(o=>o.dureeLoading).forEach(o=>estimeeDureeObjectif(o));
+}, 1000);
 
 // Cacher la carte d'installation si l'app est déjà installée (mode standalone)
 (function() {
