@@ -1763,6 +1763,12 @@ textarea{resize:none;height:62px;line-height:1.5}
         <div class="card-label" style="margin-bottom:0">Objectifs actifs</div>
         <span style="color:var(--accent);font-size:12px;font-weight:700;cursor:pointer" onclick="document.getElementById('sugg-panel').scrollIntoView({behavior:'smooth'})">+ Ajouter</span>
       </div>
+      <!-- Projets automatiques -->
+      <div id="projets-auto-section" style="display:none;margin-bottom:12px">
+        <div style="font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">/ Projets en cours</div>
+        <div id="projets-auto-list"></div>
+      </div>
+      <!-- Objectifs manuels -->
       <div id="mes-obj-list"><div class="empty">Aucun objectif — appuie sur + Ajouter.</div></div>
     </div>
     <div class="card" id="sugg-panel">
@@ -3639,9 +3645,69 @@ function setNiveau(niv) {
   renderSuggList();
 }
 
+function renderProjetsAuto() {
+  // Compter les échecs par bloc sur toutes les séances
+  const echecCount = {};
+  const echecDates = {};
+  const reussiDates = {};
+
+  historique.forEach(s => {
+    (s.blocs||[]).forEach(b => {
+      if(b.res === 'nok') {
+        echecCount[b.id] = (echecCount[b.id]||0) + 1;
+        if(!echecDates[b.id]) echecDates[b.id] = [];
+        echecDates[b.id].push(s.dateISO || s.date);
+        // Infos du bloc
+        if(!echecDates[b.id+'_info']) echecDates[b.id+'_info'] = {couleur:b.couleur,cotation:b.cotation,inclinaisons:b.inclinaisons};
+      }
+      if(b.res === 'ok') {
+        if(!reussiDates[b.id]) reussiDates[b.id] = s.dateISO || s.date;
+      }
+    });
+  });
+
+  // Projets = ratés 2+ fois et pas encore réussis
+  const projets = Object.entries(echecCount)
+    .filter(([id, n]) => n >= 2 && !reussiDates[id])
+    .sort((a,b) => b[1]-a[1]) // plus d'essais en premier
+    .slice(0, 8)
+    .map(([id, n]) => {
+      const info = echecDates[id+'_info'] || {};
+      const bloc = BLOCS.find(b=>b.id===id);
+      const couleur = bloc?.couleur || info.couleur || '';
+      const cotation = bloc?.cotation || info.cotation || '';
+      const COULEUR_HEX = {vert:'#4ade80',orange:'#f97316',rose:'#ec4899',noir:'#94a3b8',bleu:'#3b82f6',mauve:'#a78bfa',jaune:'#fbbf24',rouge:'#ef4444',blanc:'#e2e8f0'};
+      const col = COULEUR_HEX[couleur] || 'var(--accent)';
+      const dernier = echecDates[id]?.[0] || '';
+      return {id, n, couleur, cotation, col, dernier};
+    });
+
+  const section = document.getElementById('projets-auto-section');
+  const list = document.getElementById('projets-auto-list');
+  if(!section || !list) return;
+
+  if(!projets.length) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+
+  list.innerHTML = projets.map(p => `
+    <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)">
+      <div style="width:8px;height:8px;border-radius:50%;background:${p.col};flex-shrink:0"></div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:600;color:var(--ink)">${p.id}${p.couleur?' · '+p.couleur:''}</div>
+        <div style="font-size:11px;color:var(--ink3)">${p.cotation||''}${p.cotation&&p.dernier?' · ':''}${p.dernier?'Dernier essai : '+p.dernier:''}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0">
+        <div style="font-size:14px;font-weight:800;color:var(--accent)">${p.n}</div>
+        <div style="font-size:9px;color:var(--ink3);font-weight:600;text-transform:uppercase;letter-spacing:.4px">essai${p.n>1?'s':''}</div>
+      </div>
+    </div>`).join('') +
+    `<div style="font-size:11px;color:var(--ink3);margin-top:8px;font-style:italic">Blocs ratés 2+ fois — ils se mettront à jour automatiquement.</div>`;
+}
+
 function renderMesObj() {
+  renderProjetsAuto();
   const el = document.getElementById('mes-obj-list');
-  if(!mesObjectifs.length){el.innerHTML='<div class="empty">Aucun objectif — appuie sur + Ajouter.</div>';return;}
+  if(!mesObjectifs.length){el.innerHTML='<div class="empty">Aucun objectif manuel — appuie sur + Ajouter.</div>';return;}
   el.innerHTML = mesObjectifs.map(o=>`
     <div class="obj-card ${o.done?'done':''}">
       <div style="display:flex;align-items:center;gap:10px">
@@ -3783,31 +3849,100 @@ function removeObj(id) {
 
 // ========== HISTORIQUE ==========
 function renderHisto() {
-  document.getElementById('h-seances').textContent = historique.length;
+  const seances = historique.filter(s=>!s.courte);
+  const seancesTotal = historique.length;
+  document.getElementById('h-seances').textContent = seancesTotal;
   document.getElementById('h-reussis').textContent = totalReussis;
   document.getElementById('h-obj-done').textContent = objDoneTotal;
+
+  const COULEUR_HEX = {vert:'#4ade80',orange:'#f97316',rose:'#ec4899',noir:'#94a3b8',bleu:'#3b82f6',mauve:'#a78bfa',jaune:'#fbbf24',rouge:'#ef4444',blanc:'#e2e8f0'};
+
   const hl = document.getElementById('histo-seances');
-  hl.innerHTML = historique.length
-    ? historique.map(s=>`
-      <div class="sess-item">
-        <div>
-          <div style="font-size:13px;font-weight:500;color:var(--text)">${s.date}</div>
-          <div style="font-size:11px;color:var(--text3)">${s.ok} réussis · ${s.nok} ratés · ${s.objTouch} obj. progressé(s)</div>
+  if(!historique.length) { hl.innerHTML = '<div class="empty">Aucune séance.</div>'; return; }
+
+  hl.innerHTML = historique.slice(0, 20).map((s, idx) => {
+    const tot = (s.ok||0) + (s.nok||0);
+    const taux = tot > 0 ? Math.round((s.ok||0)/tot*100) : 0;
+    const tauxColor = taux >= 70 ? 'var(--green)' : taux >= 40 ? 'var(--accent)' : 'var(--red)';
+    const courteTag = s.courte ? '<span style="font-size:9px;background:var(--off);color:var(--ink3);padding:2px 6px;border-radius:8px;font-weight:600;margin-left:6px">courte</span>' : '';
+
+    // Sous-stats
+    const ressentiEmoji = s.ressenti ? ['','Épuisé','Moyen','OK','Bien','Top'][s.ressenti]||'' : '';
+    const metaItems = [
+      s.ressenti ? `Ressenti : ${ressentiEmoji}` : null,
+      s.rpe ? `RPE ${s.rpe}/10` : null,
+      s.objectifSeance ? `Objectif : ${s.objectifSeance}` : null,
+      s.feedbackDiff ? `Séance ${s.feedbackDiff}` : null,
+      s.feedbackObj ? `Objectif atteint : ${s.feedbackObj}` : null,
+    ].filter(Boolean).join(' · ');
+
+    // Blocs réussis et ratés
+    const reussis = (s.blocs||[]).filter(b=>b.res==='ok');
+    const rates = (s.blocs||[]).filter(b=>b.res==='nok');
+
+    const blocLine = (blocs, col) => blocs.slice(0,6).map(b=>`
+      <span style="display:inline-flex;align-items:center;gap:4px;background:var(--off);border-radius:6px;padding:3px 7px;font-size:11px;color:var(--ink)">
+        <span style="width:6px;height:6px;border-radius:50%;background:${COULEUR_HEX[b.couleur]||'#888'};flex-shrink:0"></span>
+        ${b.id}${b.cotation?' <span style="color:var(--ink3)">'+b.cotation+'</span>':''}
+        ${b.raison?'<span style="color:var(--ink3);font-size:10px">('+b.raison+')</span>':''}
+      </span>`).join('') + (blocs.length>6?`<span style="font-size:11px;color:var(--ink3)"> +${blocs.length-6}</span>`:'');
+
+    const detailId = 'histo-detail-'+idx;
+    const hasDetail = reussis.length || rates.length || metaItems;
+
+    return `
+    <div style="border-bottom:1px solid var(--line);padding:12px 0">
+      <!-- Header ligne -->
+      <div style="display:flex;align-items:center;gap:10px;cursor:${hasDetail?'pointer':'default'}"
+           onclick="${hasDetail?`toggleHistoDetail('${detailId}')`:''}" >
+        <!-- Taux -->
+        <div style="width:42px;height:42px;border-radius:12px;background:var(--off);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0">
+          <div style="font-size:14px;font-weight:800;color:${tauxColor};line-height:1">${taux}%</div>
+          <div style="font-size:8px;color:var(--ink3);font-weight:600">${s.ok||0}/${tot}</div>
         </div>
-        <span class="badge badge-ok">+${s.ok}</span>
-      </div>`).join('')
-    : '<div class="empty">Aucune séance.</div>';
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600;color:var(--ink)">${s.date}${courteTag}</div>
+          <div style="font-size:11px;color:var(--ink3);margin-top:2px">${s.ok||0} réussis · ${s.nok||0} ratés${s.rpe?' · RPE '+s.rpe:''}${s.objectifSeance?' · '+s.objectifSeance:''}</div>
+        </div>
+        ${hasDetail?`<svg id="${detailId}-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="2" stroke-linecap="round" style="flex-shrink:0;transition:transform .25s"><polyline points="6 9 12 15 18 9"/></svg>`:''}
+      </div>
+      <!-- Détail expansible -->
+      <div id="${detailId}" style="display:none;padding-top:10px">
+        ${metaItems?`<div style="font-size:11px;color:var(--ink3);margin-bottom:8px">${metaItems}</div>`:''}
+        ${reussis.length?`
+          <div style="font-size:10px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">✓ Réussis</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">${blocLine(reussis,'green')}</div>
+        `:''}
+        ${rates.length?`
+          <div style="font-size:10px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">✗ Ratés</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;">${blocLine(rates,'red')}</div>
+        `:''}
+        ${!reussis.length && !rates.length && !metaItems?'<div style="font-size:12px;color:var(--ink3)">Pas de détail disponible pour cette séance.</div>':''}
+      </div>
+    </div>`;
+  }).join('');
+
+  // Objectifs atteints
   const done = mesObjectifs.filter(o=>o.done);
   document.getElementById('histo-obj').innerHTML = done.length
     ? done.map(o=>`
       <div class="sess-item">
         <div style="display:flex;align-items:center;gap:8px;flex:1">
-          <div style="width:8px;height:8px;border-radius:50%;background:${o.col}"></div>
-          <span style="font-size:13px;color:var(--text)">${o.titre}</span>
+          <div style="width:8px;height:8px;border-radius:50%;background:${o.col||'var(--accent)'}"></div>
+          <span style="font-size:13px;color:var(--ink)">${o.titre}</span>
         </div>
         <span class="badge badge-ok">Atteint</span>
       </div>`).join('')
     : '<div class="empty">Aucun objectif atteint.</div>';
+}
+
+function toggleHistoDetail(id) {
+  const el = document.getElementById(id);
+  const chev = document.getElementById(id+'-chev');
+  if(!el) return;
+  const open = el.style.display !== 'none';
+  el.style.display = open ? 'none' : 'block';
+  if(chev) chev.style.transform = open ? '' : 'rotate(180deg)';
 }
 
 // ========== UTILS ==========
