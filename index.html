@@ -4908,13 +4908,16 @@ ${ctx}
 
 Analyse les patterns récurrents dans les données, identifie 1-2 pistes de travail précises et contextualisées.`,
 
-    semaine: `Tu es un coach escalade de bloc. Génère un plan de semaine basé sur les données réelles.
+    semaine: `Tu es un coach escalade de bloc. Génère un plan de semaine réaliste.
 
-RÈGLES :
-- Adapte le volume à la fréquence habituelle du grimpeur. Ne propose pas 5 séances à quelqu'un qui vient 2x/semaine.
-- Justifie chaque choix avec une donnée du contexte, pas avec un principe général.
-- Si des blocs spécifiques sont pertinents, cite leurs IDs et explique pourquoi ce bloc en particulier.
-- Pas de langue de bois ("séance de récup bien méritée", "écoute ton corps").
+RÈGLES ABSOLUES :
+- Adapte strictement à la fréquence réelle du grimpeur (dans le profil). Si 2x/semaine → 2 jours actifs max, le reste en repos ou repos actif.
+- Hangboard : MAXIMUM 2x/semaine, jamais 2 jours consécutifs, jamais le même jour qu'une séance bloc intense. Ne le mets que si le grimpeur l'utilise déjà.
+- Campus : MAXIMUM 1x/semaine, uniquement si le grimpeur l'utilise déjà.
+- Les jours de repos sont réels — pas "récup active + étirements + mobilité" à chaque fois. Certains jours = rien.
+- Justifie chaque choix avec une donnée du contexte, pas un principe général.
+- Si des blocs spécifiques sont pertinents, cite leurs IDs avec une explication courte.
+- Pas de langue de bois ("écoute ton corps", "séance bien méritée").
 
 ${ctx}
 
@@ -4927,13 +4930,19 @@ Réponds UNIQUEMENT avec ce JSON :
 "samedi":{"titre":"...","focus":"...","exercices":"...","blocs_recommandes":"..."},
 "dimanche":{"titre":"Repos complet","focus":"récupération","exercices":"","blocs_recommandes":""}}`,
 
-    plan: `Tu es un coach escalade de bloc. Génère un programme 4 semaines.
+    plan: `Tu es un coach escalade de bloc. Génère un programme 4 semaines réaliste.
 
-RÈGLES :
-- La progression doit être justifiée par les données réelles du grimpeur, pas par un modèle générique.
-- Si le grimpeur a des blessures ou contraintes, intègre-les vraiment.
-- Cite des blocs spécifiques (IDs) quand c'est pertinent, avec une explication courte.
-- Semaine 4 = décharge si le volume est élevé, sinon consolidation.
+RÈGLES ABSOLUES — à respecter sans exception :
+- Ne génère QUE le nombre de séances cohérent avec la fréquence réelle du grimpeur (donnée dans le profil). Si le grimpeur grimpe 2x/semaine, génère 2 séances max par semaine, pas 3 ou 4.
+- Hangboard : MAXIMUM 2x/semaine, jamais 2 jours consécutifs, jamais le même jour qu'une séance de bloc intense. Si le grimpeur ne fait pas de hangboard, n'en mets pas.
+- Campus board : MAXIMUM 1-2x/semaine, uniquement si le grimpeur l'utilise déjà.
+- Pas plus de 3 jours d'entraînement consécutifs — intègre des jours de repos obligatoires.
+- Semaine 4 = volume réduit de 30-40% (décharge) pour consolider les adaptations.
+- Si le grimpeur a des blessures, évite EXPLICITEMENT les mouvements/styles concernés.
+- Ne cite un outil (hangboard, campus) que si le grimpeur l'utilise réellement (cf. données profil).
+- Les descriptions doivent être concrètes, pas génériques ("séance de force" sans détail est interdit).
+- Cite des IDs de blocs spécifiques de la salle quand c'est pertinent.
+- La progression doit être justifiée par les données réelles, pas un template.
 
 ${ctx}
 
@@ -7041,7 +7050,7 @@ function renderProfBars(field, containerId, allKeys) {
     });
   });
   const keys = allKeys.filter(k=>agg[k] && (agg[k].ok+agg[k].nok)>0);
-  if(keys.length===0){el.innerHTML='<div class="empty" style="font-size:12px;padding:8px 0">Pas encore de données — ajoute des blocs avec ces infos.</div>';return;}
+  if(keys.length===0){el.innerHTML='<div class="empty" style="font-size:12px;padding:8px 0">Ces données se remplissent automatiquement au fil des séances, à mesure que les blocs de la salle ont des inclinaisons/styles enregistrés.</div>';return;}
   // Sort by success rate desc
   keys.sort((a,b)=>{
     const ra=(agg[a].ok)/(agg[a].ok+agg[a].nok);
@@ -7066,40 +7075,40 @@ function renderProfBars(field, containerId, allKeys) {
 
 function renderProfColors() {
   const el = document.getElementById('prof-colors'); if(!el) return;
-  // Use colorStats (cumulative) + per-session nok to get totals
-  const colorNok = {};
+
+  // Agréger depuis historique (colorOk contient {couleur: {ok, nok}})
+  const agg = {};
   historique.forEach(h=>{
     Object.entries(h.colorOk||{}).forEach(([c,v])=>{
-      if(!colorNok[c]) colorNok[c]=0;
-      colorNok[c] += (v.nok||0);
+      if(!c) return;
+      if(!agg[c]) agg[c]={ok:0,nok:0};
+      agg[c].ok  += (v.ok||0);
+      agg[c].nok += (v.nok||0);
     });
   });
-  const allColors = Object.keys(colorStats).filter(c=>colorStats[c]>0);
-  if(allColors.length===0){el.innerHTML='<div class="empty" style="font-size:12px;padding:8px 0">Aucune donnée par couleur.</div>';return;}
 
-  const COLOR_NAMES = {
-    '#ef4444':'Rouge','#f97316':'Orange','#eab308':'Jaune','#22c55e':'Vert',
-    '#3b82f6':'Bleu','#8b5cf6':'Violet','#ec4899':'Rose','#ffffff':'Blanc',
-    '#000000':'Noir','#6b7280':'Gris','#854d0e':'Marron'
-  };
-  el.innerHTML = allColors.map(c=>{
-    const ok = colorStats[c]||0;
-    const nok = colorNok[c]||0;
+  const COULEUR_ORDER = ['vert','orange','rose','noir','bleu','mauve','jaune','rouge','blanc'];
+  const COULEUR_HEX = {vert:'#4ade80',orange:'#f97316',rose:'#ec4899',noir:'#94a3b8',bleu:'#3b82f6',mauve:'#a78bfa',jaune:'#fbbf24',rouge:'#ef4444',blanc:'#e2e8f0'};
+  const COULEUR_LABEL = {vert:'Vert · 4',orange:'Orange · 5',rose:'Rose · 5+',noir:'Noir · 6A',bleu:'Bleu · 6B',mauve:'Mauve · 6C',jaune:'Jaune · 7A',rouge:'Rouge · 7B',blanc:'Blanc · 7C+'};
+
+  const keys = COULEUR_ORDER.filter(c=>agg[c] && (agg[c].ok+agg[c].nok)>0);
+  if(!keys.length){el.innerHTML='<div class="empty" style="font-size:12px;padding:8px 0">Pas encore de données — complète des séances avec des blocs enregistrés.</div>';return;}
+
+  el.innerHTML = keys.map(c=>{
+    const {ok,nok} = agg[c];
     const tot = ok+nok;
-    const pct = tot>0 ? Math.round(ok/tot*100) : 100;
-    const name = COLOR_NAMES[c] || c;
-    const isDark = ['#000000','#1e293b','#374151','#1f2937'].includes(c);
-    const textC = isDark?'#fff':'#000';
-    return `<div style="margin-bottom:7px">
+    const pct = Math.round(ok/tot*100);
+    const color = pct>=70?'rgba(22,163,74,.75)':pct>=40?'rgba(249,115,22,.75)':'rgba(239,68,68,.65)';
+    return `<div style="margin-bottom:8px">
       <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:3px">
         <span style="display:flex;align-items:center;gap:6px">
-          <span style="width:14px;height:14px;border-radius:50%;background:${c};border:1.5px solid var(--line);display:inline-block"></span>
-          <span style="color:var(--ink);font-weight:500">${name}</span>
+          <span style="width:10px;height:10px;border-radius:50%;background:${COULEUR_HEX[c]};flex-shrink:0;display:inline-block"></span>
+          <span style="color:var(--ink);font-weight:500">${COULEUR_LABEL[c]||c}</span>
         </span>
         <span style="color:var(--ink3)">${ok}/${tot} — <b style="color:var(--ink)">${pct}%</b></span>
       </div>
-      <div style="background:var(--line);border-radius:4px;height:7px;overflow:hidden">
-        <div style="width:${pct}%;height:100%;background:${c};border-radius:4px;transition:.3s"></div>
+      <div style="background:var(--line);border-radius:4px;height:6px;overflow:hidden">
+        <div style="width:${pct}%;height:100%;background:${color};border-radius:4px;transition:.3s"></div>
       </div>
     </div>`;
   }).join('');
