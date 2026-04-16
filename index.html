@@ -150,6 +150,10 @@ body{font-family:var(--font);background:var(--off);color:var(--ink);-webkit-font
 }
 .bloc-id{font-family:var(--display);font-size:14px;font-weight:700;color:var(--ink)}
 .bloc-sub{font-size:11px;color:var(--ink3);margin-top:2px;font-weight:500}
+.toggle-track{position:absolute;inset:0;border-radius:11px;background:var(--line2);transition:background .2s}
+.toggle-track::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+input:checked+.toggle-track{background:var(--accent)}
+input:checked+.toggle-track::after{transform:translateX(18px)}
 .rbtn{
   padding:7px 13px;border-radius:20px;border:1.5px solid var(--line2);
   font-size:13px;cursor:pointer;background:var(--white);color:var(--ink3);
@@ -1101,6 +1105,40 @@ textarea{resize:none;height:62px;line-height:1.5}
   </div>
 
 
+  <!-- Notifications -->
+  <div class="card" style="margin-bottom:12px" id="notif-card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div class="card-label" style="margin-bottom:0">Rappels</div>
+      <div id="notif-status" style="font-size:11px;color:var(--ink3)"></div>
+    </div>
+    <div style="font-size:12px;color:var(--ink3);margin-bottom:12px;line-height:1.5">Reçois un rappel quand tu n'as pas grimpé depuis un moment, ou pour suivre ton plan de la semaine.</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+        <div style="position:relative;width:40px;height:22px;flex-shrink:0">
+          <input type="checkbox" id="notif-absence" style="opacity:0;width:0;height:0;position:absolute" onchange="saveNotifPrefs()">
+          <div class="toggle-track" id="track-absence"></div>
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--ink)">Rappel d'absence</div>
+          <div style="font-size:11px;color:var(--ink3)">Si tu n'as pas grimpé depuis 7 jours</div>
+        </div>
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+        <div style="position:relative;width:40px;height:22px;flex-shrink:0">
+          <input type="checkbox" id="notif-plan" style="opacity:0;width:0;height:0;position:absolute" onchange="saveNotifPrefs()">
+          <div class="toggle-track" id="track-plan"></div>
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--ink)">Rappel plan du jour</div>
+          <div style="font-size:11px;color:var(--ink3)">Quand un plan de semaine est actif</div>
+        </div>
+      </label>
+    </div>
+    <button id="notif-enable-btn" class="btn" style="width:100%;font-size:13px;color:var(--accent);border-color:var(--accent)" onclick="demanderPermissionNotifs()">
+      Activer les rappels
+    </button>
+  </div>
+
   <!-- Profil grimpeur -->
   <div class="card">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
@@ -1735,7 +1773,7 @@ textarea{resize:none;height:62px;line-height:1.5}
     </div>
     <div class="card" style="margin-top:0">
       <div class="card-label">Note pour le coaching</div>
-      <textarea id="objectif-note" placeholder="Tes contraintes, tes priorités, tes prochains objectifs de grimpe... L'IA s'en servira pour personnaliser ton coaching." style="width:100%;font-size:13px;min-height:90px;resize:vertical;border-radius:var(--rs);border:1.5px solid var(--line2);padding:10px 12px;font-family:var(--font);background:var(--white);margin-bottom:8px"></textarea>
+      <textarea id="objectif-note" placeholder="Tes contraintes, tes priorités, tes prochains objectifs de grimpe... Utilisé pour personnaliser ton coaching." style="width:100%;font-size:13px;min-height:90px;resize:vertical;border-radius:var(--rs);border:1.5px solid var(--line2);padding:10px 12px;font-family:var(--font);background:var(--white);margin-bottom:8px"></textarea>
       <button class="btn" style="width:auto;padding:8px 16px;margin:0;font-size:12px;color:var(--accent);border-color:var(--accent)" onclick="saveObjectifNote()">Sauver</button>
     </div>
   </div>
@@ -2102,6 +2140,10 @@ textarea{resize:none;height:62px;line-height:1.5}
 
     <div class="wow-actions">
       <button class="btn btn-primary" style="margin:0" onclick="closeWow('coaching')">Voir mon coaching complet</button>
+      <button id="wow-share-btn" class="btn" style="margin:0;color:var(--accent);border-color:var(--accent);display:none" onclick="partagerSeance()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+        Partager ma séance
+      </button>
       <button class="btn" style="margin:0;color:var(--ink3);border-color:var(--line)" onclick="closeWow('seance')">Retour à la séance</button>
     </div>
   </div>
@@ -2115,7 +2157,7 @@ textarea{resize:none;height:62px;line-height:1.5}
     <div style="font-family:var(--display);font-size:18px;font-weight:700;color:var(--ink);margin-bottom:4px">Avant de grimper</div>
     <div style="font-size:13px;color:var(--ink3);margin-bottom:16px">2 questions pour mieux te coacher</div>
 
-    <!-- Plan du jour depuis la planif IA -->
+    <!-- Plan du jour depuis la planification -->
     <div id="pre-plan-du-jour" style="display:none;background:var(--accent-bg);border:1.5px solid #ffd5c2;border-radius:12px;padding:12px 14px;margin-bottom:16px">
       <div style="font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Plan du jour</div>
       <div id="pre-plan-titre" style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:2px"></div>
@@ -2255,7 +2297,7 @@ let blocsArchive = []; // {id, couleur, col, secteur, cotation, ouvreur, action,
 let mesObjectifs = [];
 let historique = [];
 let moonData = {};
-let weekPlanData = null; // Plan de semaine IA stocké {lundi:{titre,focus,exercices,blocs_recommandes}, ...}
+let weekPlanData = null; // Plan de semaine stocké {lundi:{titre,focus,exercices,blocs_recommandes}, ...}
 let hangSessions = [];
 let campusSessions = [];
 let spraySessions = [];
@@ -2587,6 +2629,27 @@ function finirSeance() {
   const ok = Object.values(results).filter(v=>v==='ok').length;
   const nok = Object.values(results).filter(v=>v==='nok').length;
   if(ok+nok===0){showTab('coaching');return;}
+
+  // Détection séance courte (< 4 blocs)
+  if(ok+nok < 4) {
+    const overlay = document.createElement('div');
+    overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:900;display:flex;align-items:flex-end;justify-content:center';
+    overlay.innerHTML=`
+      <div style="background:var(--white);border-radius:20px 20px 0 0;width:100%;max-width:430px;padding:22px 20px calc(24px + env(safe-area-inset-bottom))">
+        <div style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:6px">Séance courte — ${ok+nok} bloc${ok+nok>1?'s':''}</div>
+        <div style="font-size:13px;color:var(--ink3);margin-bottom:18px;line-height:1.5">Avec seulement ${ok+nok} bloc${ok+nok>1?'s':''}, cette séance sera enregistrée mais exclue des analyses (pas assez de données pour tirer des conclusions).</div>
+        <button onclick="this.closest('[style*=fixed]').remove();_finirSeanceConfirme(true)" style="width:100%;padding:12px;border-radius:12px;background:var(--accent);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px">Enregistrer quand même</button>
+        <button onclick="this.closest('[style*=fixed]').remove()" style="width:100%;padding:11px;border-radius:12px;background:var(--off);color:var(--ink2);border:1.5px solid var(--line2);font-size:13px;font-weight:600;cursor:pointer">Continuer la séance</button>
+      </div>`;
+    document.body.appendChild(overlay);
+    return;
+  }
+  _finirSeanceConfirme(false);
+}
+
+function _finirSeanceConfirme(courte) {
+  const ok = Object.values(results).filter(v=>v==='ok').length;
+  const nok = Object.values(results).filter(v=>v==='nok').length;
   mesObjectifs.forEach(o=>{
     const sugg = SUGGESTIONS.find(s=>s.id===o.id);
     if(!sugg) return;
@@ -2676,6 +2739,7 @@ function finirSeance() {
     priseOk:_sPriseOk, mvtOk:_sMvtOk,
     morphoOk:_morphoOk, morphoTot:_morphoTot,
     blocs: _blocsSeance, // IDs exacts + résultats
+    courte: courte, // séance courte exclue des analyses
     // Données subjectives
     ressenti: seanceRessenti,
     objectifSeance: seanceObjectif,
@@ -2880,7 +2944,7 @@ async function loadCollectiveLacunes() {
     }
 
     el.innerHTML = html;
-    // Injecter dans le contexte IA
+    // Injecter dans le contexte
     window._adminLacunes = lacunes;
 
   } catch(e) {
@@ -2973,8 +3037,19 @@ async function showWowMoment(ok, nok, sessionScore) {
   const overlay = document.getElementById('wow-overlay');
   overlay.classList.add('open');
 
+  // Afficher le bouton partage (si API disponible ou fallback canvas)
+  const shareBtn = document.getElementById('wow-share-btn');
+  if(shareBtn) shareBtn.style.display = 'flex';
+
   // Message court
   const aiEl = document.getElementById('wow-ai-text');
+
+  // Si séance courte, ne pas appeler l'— afficher message simple
+  if(historique[0]?.courte) {
+    aiEl.textContent = `${ok+nok} blocs — séance courte enregistrée, non incluse dans les analyses coaching.`;
+    return;
+  }
+
   try {
     const pg = profilGrimpeur;
     const profilCtx = [
@@ -3020,6 +3095,124 @@ Juste le texte, pas de JSON.`;
   }
 }
 
+async function partagerSeance() {
+  const h = historique[0];
+  if(!h) return;
+
+  const ok  = h.ok  || 0;
+  const nok = h.nok || 0;
+  const tot = ok + nok;
+  const taux = tot > 0 ? Math.round(ok/tot*100) : 0;
+  const pseudo = currentProfile?.pseudo || 'Grimpeur';
+  const date = h.date || new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long'});
+  const projets = historique[0]?.blocs?.filter(b=>{
+    const prev = historique.slice(1).some(s=>(s.blocs||[]).find(x=>x.id===b.id&&x.res==='nok'));
+    return b.res==='ok' && prev;
+  }) || [];
+
+  // Couleur dominante (couleur la plus tentée)
+  const couleurCount = {};
+  (h.blocs||[]).forEach(b=>{ if(b.couleur) couleurCount[b.couleur]=(couleurCount[b.couleur]||0)+1; });
+  const COULEUR_HEX = {vert:'#4ade80',orange:'#f97316',rose:'#f472b6',noir:'#1e1e1e',bleu:'#60a5fa',mauve:'#a78bfa',jaune:'#fbbf24',rouge:'#ef4444',blanc:'#e5e7eb'};
+  const topCouleur = Object.entries(couleurCount).sort((a,b)=>b[1]-a[1])[0]?.[0] || 'orange';
+  const accentCol = COULEUR_HEX[topCouleur] || '#FF4D00';
+
+  // Bar segments pour les couleurs
+  const couleurs = ['vert','orange','rose','noir','bleu','mauve','jaune','rouge','blanc'];
+  const barSegs = [];
+  let bx = 40;
+  const barW = 320, barH = 8, barY = 155;
+  const total = Object.values(couleurCount).reduce((s,v)=>s+v,0)||1;
+  couleurs.forEach(c=>{
+    const n = couleurCount[c]||0;
+    if(!n) return;
+    const w = Math.round(n/total*barW);
+    barSegs.push(`<rect x="${bx}" y="${barY}" width="${w}" height="${barH}" fill="${COULEUR_HEX[c]||'#888'}" rx="2"/>`);
+    bx += w;
+  });
+
+  // Étoile de niveau emoji → cotation actuelle
+  const niveauLabel = niveau || '';
+
+  const W=400, H=240;
+  const svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,-apple-system,sans-serif">
+  <!-- Fond -->
+  <rect width="${W}" height="${H}" fill="#f7f6f4" rx="20"/>
+  <!-- Bande couleur top -->
+  <rect width="${W}" height="6" fill="${accentCol}" rx="0"/>
+  <rect x="0" y="0" width="${W}" height="6" fill="${accentCol}"/>
+  <!-- Score principal -->
+  <text x="40" y="72" font-size="58" font-weight="800" fill="#111" letter-spacing="-2">${ok}</text>
+  <text x="${ok>=10?108:92}" y="58" font-size="13" font-weight="600" fill="#888">blocs réussis</text>
+  <text x="${ok>=10?108:92}" y="76" font-size="13" fill="#aaa">${date}</text>
+  <!-- Pseudo -->
+  <text x="${W-40}" y="45" text-anchor="end" font-size="14" font-weight="700" fill="#333">${pseudo}</text>
+  <text x="${W-40}" y="63" text-anchor="end" font-size="12" fill="#aaa">${niveauLabel}</text>
+  <!-- Stats secondaires -->
+  <rect x="40" y="100" width="80" height="42" fill="#fff" rx="10"/>
+  <text x="80" y="120" text-anchor="middle" font-size="18" font-weight="800" fill="${taux>=70?'#16a34a':taux>=40?'#f97316':'#ef4444'}">${taux}%</text>
+  <text x="80" y="134" text-anchor="middle" font-size="9" fill="#aaa">réussite</text>
+
+  <rect x="132" y="100" width="80" height="42" fill="#fff" rx="10"/>
+  <text x="172" y="120" text-anchor="middle" font-size="18" font-weight="800" fill="#333">${tot}</text>
+  <text x="172" y="134" text-anchor="middle" font-size="9" fill="#aaa">tentés</text>
+
+  ${projets.length>0?`
+  <rect x="224" y="100" width="136" height="42" fill="${accentCol}22" rx="10"/>
+  <text x="292" y="117" text-anchor="middle" font-size="10" font-weight="700" fill="${accentCol}">★ PROJET RÉUSSI</text>
+  <text x="292" y="133" text-anchor="middle" font-size="10" fill="#555">${projets.slice(0,2).map(b=>b.id).join(', ')}</text>
+  `:''}
+
+  <!-- Barre couleurs -->
+  ${barSegs.join('')}
+
+  <!-- Footer -->
+  <text x="40" y="${H-14}" font-size="10" fill="#bbb" font-weight="600">À BLOC • abloc.brussels</text>
+  <text x="${W-40}" y="${H-14}" text-anchor="end" font-size="10" fill="#bbb">${historique.length} séances</text>
+</svg>`;
+
+  // Convertir SVG → Canvas → PNG → partage
+  try {
+    const blob = new Blob([svg], {type:'image/svg+xml'});
+    const url  = URL.createObjectURL(blob);
+    const img  = new Image();
+    img.onload = async () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = W*2; canvas.height = H*2;
+      const ctx = canvas.getContext('2d');
+      ctx.scale(2,2);
+      ctx.drawImage(img, 0, 0);
+      URL.revokeObjectURL(url);
+
+      canvas.toBlob(async blob2 => {
+        const file = new File([blob2], 'abloc-seance.png', {type:'image/png'});
+        if(navigator.share && navigator.canShare({files:[file]})) {
+          try {
+            await navigator.share({
+              title: `${pseudo} — ${ok} blocs réussis`,
+              text: `${ok} blocs réussis, ${taux}% de réussite — séance du ${date} sur À Bloc`,
+              files: [file],
+            });
+          } catch(e) { if(e.name!=='AbortError') downloadShareCard(canvas); }
+        } else {
+          downloadShareCard(canvas);
+        }
+      }, 'image/png');
+    };
+    img.src = url;
+  } catch(e) {
+    showToast('Partage non disponible sur ce navigateur');
+  }
+}
+
+function downloadShareCard(canvas) {
+  const a = document.createElement('a');
+  a.href = canvas.toDataURL('image/png');
+  a.download = 'abloc-seance.png';
+  a.click();
+  showToast('Image téléchargée !');
+}
+
 function closeWow(dest) {
   // Sauvegarder le feedback post-séance dans la séance courante
   if(historique[0]) {
@@ -3030,6 +3223,9 @@ function closeWow(dest) {
   }
   // Nettoyer le bloc projet inséré dynamiquement
   document.querySelector('.wow-sheet [style*="accent-bg"]')?.remove();
+  // Cacher le bouton partage
+  const shareBtn = document.getElementById('wow-share-btn');
+  if(shareBtn) shareBtn.style.display = 'none';
   const overlay = document.getElementById('wow-overlay');
   overlay.classList.remove('open');
   setTimeout(() => {
@@ -4161,9 +4357,14 @@ async function callClaudeCoaching(mode) {
   if(btn){btn.disabled=true;btn.innerHTML='<div class="streaming-cursor"></div> Génération en cours...';}
 
   // Build rich context
-  const totalOk = historique.reduce((a,s)=>a+s.ok,0);
-  const totalNok = historique.reduce((a,s)=>a+s.nok,0);
-  const tauxGlobal = totalOk+totalNok>0?Math.round(totalOk/(totalOk+totalNok)*100):0;
+  const totalOk = historique.reduce((a,s)=>a+(s.ok||0),0);
+  const totalNok = historique.reduce((a,s)=>a+(s.nok||0),0);
+  // Séances complètes uniquement pour les analyses (exclure séances courtes < 4 blocs)
+  const seancesCompletes = historique.filter(s=>!s.courte);
+  const nbCourtes = historique.length - seancesCompletes.length;
+  const tauxGlobal = seancesCompletes.length>0
+    ? Math.round(seancesCompletes.reduce((a,s)=>a+(s.ok||0),0)/Math.max(seancesCompletes.reduce((a,s)=>a+(s.ok||0)+(s.nok||0),0),1)*100)
+    : (totalOk+totalNok>0?Math.round(totalOk/(totalOk+totalNok)*100):0);
 
   // Color analysis
   const COULEURS = ['vert','orange','rose','noir','bleu','mauve','jaune','rouge','blanc'];
@@ -4197,7 +4398,7 @@ async function callClaudeCoaching(mode) {
   const objDone = mesObjectifs.filter(o=>o.done).length;
 
   // ── Contexte riche : séances détaillées ──
-  const seancesDetail = historique.slice(0,8).map(s=>{
+  const seancesDetail = seancesCompletes.slice(0,8).map(s=>{
     const parts = [s.date+': '+s.ok+'✓ '+s.nok+'✗'];
     // Données subjectives
     if(s.ressenti) parts.push('ressenti:'+s.ressenti+'/5');
@@ -4356,17 +4557,76 @@ async function callClaudeCoaching(mode) {
     buildCrossAnalysis(inclStats,    'INCLINAISONS'),
   ].filter(Boolean).join('\n');
 
-  // ── Stats mensuelles (2 derniers mois) ──
+  // ── Analyse temporelle sur 3 mois ──
   const now = new Date();
-  const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-  const lastMonthDate = new Date(now.getFullYear(), now.getMonth()-1, 1);
-  const lastMonth = `${lastMonthDate.getFullYear()}-${String(lastMonthDate.getMonth()+1).padStart(2,'0')}`;
   const parseMonth = s => { try { const d=new Date(s+'T00:00:00'); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; } catch(e){return '';} };
-  const statsMonth = (mKey) => {
-    const ss = historique.filter(s=>parseMonth(s.dateISO||'')||mKey); // approx
-    const m = historique.filter((_,i)=>i<20); // use last 20 entries as proxy
-    return m;
-  };
+
+  // Agréger par mois (clé YYYY-MM)
+  const byMonth = {};
+  historique.forEach(s => {
+    const mKey = s.dateISO ? parseMonth(s.dateISO) : '';
+    if(!mKey) return;
+    if(!byMonth[mKey]) byMonth[mKey] = {ok:0, nok:0, seances:0, rpeSum:0, rpeCount:0};
+    byMonth[mKey].ok    += (s.ok||0);
+    byMonth[mKey].nok   += (s.nok||0);
+    byMonth[mKey].seances++;
+    if(s.rpe) { byMonth[mKey].rpeSum+=s.rpe; byMonth[mKey].rpeCount++; }
+  });
+
+  const moisKeys = Object.keys(byMonth).sort().slice(-6); // 6 derniers mois max
+  const moisSummary = moisKeys.map(k => {
+    const m = byMonth[k];
+    const tot = m.ok + m.nok;
+    const taux = tot > 0 ? Math.round(m.ok/tot*100) : null;
+    const rpe = m.rpeCount > 0 ? Math.round(m.rpeSum/m.rpeCount*10)/10 : null;
+    const label = new Date(k+'-01').toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+    return `${label}: ${m.seances} séances, ${m.ok} blocs réussis${taux!==null?', taux '+taux+'%':''}${rpe?' RPE moy.'+rpe:''}`;
+  }).join('\n') || 'Pas assez de données avec dates enregistrées';
+
+  // Comparaison derniers 30j vs 30j précédents
+  let comparaisonPeriodes = '';
+  if(historique.length >= 4 && historique[0].dateISO) {
+    const cutoff30  = new Date(now); cutoff30.setDate(now.getDate()-30);
+    const cutoff60  = new Date(now); cutoff60.setDate(now.getDate()-60);
+    const recent30  = historique.filter(s=>s.dateISO && new Date(s.dateISO)>=cutoff30);
+    const prev30    = historique.filter(s=>s.dateISO && new Date(s.dateISO)>=cutoff60 && new Date(s.dateISO)<cutoff30);
+    if(recent30.length >= 2 && prev30.length >= 2) {
+      const tR30 = recent30.reduce((s,h)=>s+(h.ok||0),0) / Math.max(recent30.reduce((s,h)=>s+(h.ok||0)+(h.nok||0),0),1) * 100;
+      const tP30 = prev30.reduce((s,h)=>s+(h.ok||0),0)  / Math.max(prev30.reduce((s,h)=>s+(h.ok||0)+(h.nok||0),0),1)  * 100;
+      const diff  = Math.round(tR30 - tP30);
+      const volR  = Math.round(recent30.reduce((s,h)=>s+(h.ok||0)+(h.nok||0),0)/recent30.length);
+      const volP  = Math.round(prev30.reduce((s,h)=>s+(h.ok||0)+(h.nok||0),0)/prev30.length);
+      comparaisonPeriodes =
+        `30 derniers jours vs 30j précédents :\n`
+        +`- Taux : ${Math.round(tR30)}% vs ${Math.round(tP30)}% (${diff>=0?'+':''}${diff}%)\n`
+        +`- Volume/séance : ${volR} blocs vs ${volP} blocs\n`
+        +`- Séances : ${recent30.length} vs ${prev30.length}`;
+    }
+  }
+
+  // Tendance hebdomadaire (progression sur les 4 dernières semaines)
+  let tendanceHebdo = '';
+  if(historique.length >= 6) {
+    const semaines = [];
+    for(let i=0;i<4;i++){
+      const debut = new Date(now); debut.setDate(now.getDate()-7*(i+1));
+      const fin   = new Date(now); fin.setDate(now.getDate()-7*i);
+      const ss = historique.filter(s=>s.dateISO && new Date(s.dateISO)>=debut && new Date(s.dateISO)<fin);
+      if(ss.length) {
+        const tot = ss.reduce((s,h)=>s+(h.ok||0)+(h.nok||0),0);
+        const taux = tot>0?Math.round(ss.reduce((s,h)=>s+(h.ok||0),0)/tot*100):null;
+        semaines.unshift({i,seances:ss.length,taux});
+      }
+    }
+    if(semaines.length>=3) {
+      const tauxList = semaines.filter(s=>s.taux!==null).map(s=>s.taux);
+      const montee = tauxList.every((v,i)=>i===0||v>=tauxList[i-1]-5);
+      const descente = tauxList.every((v,i)=>i===0||v<=tauxList[i-1]+5);
+      tendanceHebdo = montee && tauxList[tauxList.length-1]>tauxList[0]+5 ? 'Tendance haussière sur 4 semaines'
+        : descente && tauxList[tauxList.length-1]<tauxList[0]-5 ? 'Tendance baissière sur 4 semaines — surveiller la fatigue ou la motivation'
+        : 'Taux stable sur 4 semaines';
+    }
+  }
 
   // Détection d'absence (jours depuis la dernière séance)
   let joursSansSeance = null;
@@ -4416,12 +4676,16 @@ async function callClaudeCoaching(mode) {
     +'- Niveau déclaré : '+niveau+'\n'
     +'- Niveau observé : '+niveauObserveCtx+'\n'
     +'- '+profilPhysique+'\n'
-    +'- Séances enregistrées dans l\'app : '+historique.length+' (≠ ancienneté réelle)\n'
+    +'- Séances enregistrées dans l\'app : '+historique.length+(nbCourtes>0?' (dont '+nbCourtes+' séances courtes exclues des analyses)':'')+' (≠ ancienneté réelle)\n'
     +(joursSansSeance!==null ? '- Jours depuis la dernière séance : '+joursSansSeance+(joursSansSeance>14?' — absence notable':'')+'\n' : '')
     +(signaleFatigue ? '- SIGNAL FATIGUE : taux décroissant ou RPE élevé sur 3 séances consécutives\n' : '')
     +(blocsRecurrents ? '- Blocs récurrents échoués (projets à travailler) : '+blocsRecurrents+'\n' : '')
     +'- Taux de réussite global : '+tauxGlobal+'%\n'
     +'- Blocs réussis / ratés : '+totalOk+' / '+totalNok+'\n\n'
+    +'ANALYSE TEMPORELLE (3 MOIS) :\n'
+    +(comparaisonPeriodes ? comparaisonPeriodes+'\n' : 'Pas assez de données datées\n')
+    +(tendanceHebdo ? 'Tendance 4 semaines : '+tendanceHebdo+'\n' : '')
+    +'\nDÉTAIL PAR MOIS :\n'+moisSummary+'\n\n'
     +'DONNÉES SUBJECTIVES RÉCENTES :\n'+ressentiRecent+'\n\n'
     +'RAISONS D\'ÉCHEC (cumulées) :\n'+raisonSummary+'\n\n'
     +'OBJECTIFS ACTIFS VS PROGRESSION :\n'+objVsPerf+'\n\n'
@@ -4465,7 +4729,7 @@ RÈGLES ABSOLUES :
 - Utilise les chiffres réels du contexte, ne les arrondis pas ni ne les dramatises.
 - Si les données sont insuffisantes (< 3 séances), dis-le honnêtement plutôt que de forcer une analyse.
 - IMPORTANT : le nombre de séances enregistrées dans l'app ne reflète PAS le niveau réel du grimpeur. Quelqu'un avec 1 séance loggée peut grimper depuis 10 ans. Fie-toi UNIQUEMENT au niveau déclaré dans le profil — et au niveau observé si les données sont suffisantes (3+ séances). Si le niveau observé diffère du niveau déclaré, mentionne-le subtilement sans en faire une conclusion définitive.
-- Ton : parle comme un pote qui grimpe et qui a regardé la séance, pas comme une IA qui coach. Pas de "félicitations", pas de "c'est normal", pas de "rappelle-toi que...".
+- Ton : parle comme un pote qui grimpe et qui a regardé la séance, pas comme une appli de coaching. Pas de "félicitations", pas de "c'est normal", pas de "rappelle-toi que...".
 - Sois court. Une observation précise vaut mieux qu'un paragraphe vague.
 - Tutoie, sois direct, pas condescendant.
 
@@ -4484,6 +4748,8 @@ CE QU'IL FAUT FAIRE :
 ✓ Si le grimpeur était absent >14 jours, adapte le ton — ne pas surcharger au retour.
 ✓ Si le ressenti avant séance était bas (1-2) mais les résultats bons, note-le positivement.
 ✓ Compare les résultats avec l'objectif déclaré en début de séance si disponible.
+✓ Utilise la comparaison 30j vs 30j précédents si disponible — formule comme "sur le mois dernier, ton taux est passé de X% à Y%".
+✓ Si la tendance 4 semaines est baissière, mentionne-le sans dramatiser et propose une semaine allégée.
 
 ${ctx}
 
@@ -6254,6 +6520,133 @@ function loadProfilUI() {
   updateProfilCompletion();
 }
 
+// ========== NOTIFICATIONS ==========
+const NOTIF_KEY = 'abloc_notif_prefs';
+
+function loadNotifPrefs() {
+  try { return JSON.parse(localStorage.getItem(NOTIF_KEY)||'{}'); } catch(e){ return {}; }
+}
+
+function saveNotifPrefs() {
+  const prefs = {
+    absence: document.getElementById('notif-absence')?.checked || false,
+    plan:    document.getElementById('notif-plan')?.checked    || false,
+  };
+  localStorage.setItem(NOTIF_KEY, JSON.stringify(prefs));
+  updateNotifUI();
+}
+
+function updateNotifUI() {
+  const perm = Notification.permission;
+  const prefs = loadNotifPrefs();
+  const btn = document.getElementById('notif-enable-btn');
+  const status = document.getElementById('notif-status');
+
+  const absEl = document.getElementById('notif-absence');
+  const planEl = document.getElementById('notif-plan');
+  if(absEl) absEl.checked  = prefs.absence || false;
+  if(planEl) planEl.checked = prefs.plan    || false;
+
+  if(perm === 'granted') {
+    if(btn) btn.style.display = 'none';
+    if(status) { status.textContent = 'Activés'; status.style.color = 'var(--green)'; }
+  } else if(perm === 'denied') {
+    if(btn) btn.style.display = 'none';
+    if(status) { status.textContent = 'Bloqués par le navigateur'; status.style.color = 'var(--red)'; }
+    if(absEl) absEl.disabled = true;
+    if(planEl) planEl.disabled = true;
+  } else {
+    if(btn) btn.style.display = 'block';
+    if(status) { status.textContent = ''; }
+  }
+}
+
+async function demanderPermissionNotifs() {
+  if(!('Notification' in window)) { showToast('Notifications non supportées sur ce navigateur'); return; }
+  const result = await Notification.requestPermission();
+  updateNotifUI();
+  if(result === 'granted') {
+    showToast('Rappels activés !');
+    // Enregistrer le service worker pour les notifications futures
+    enregistrerServiceWorker();
+  } else if(result === 'denied') {
+    showToast('Rappels bloqués — autorise-les dans les réglages du navigateur');
+  }
+}
+
+async function enregistrerServiceWorker() {
+  if(!('serviceWorker' in navigator)) return;
+  try {
+    // Service worker inline via blob
+    const swCode = `
+self.addEventListener('message', e => {
+  if(e.data.type === 'SCHEDULE_NOTIF') {
+    const {delay, title, body, tag} = e.data;
+    setTimeout(() => {
+      self.registration.showNotification(title, {
+        body, tag, icon: '/favicon.ico',
+        badge: '/favicon.ico',
+        vibrate: [200,100,200],
+      });
+    }, delay);
+  }
+});
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  e.waitUntil(clients.openWindow('/'));
+});
+    `;
+    const blob = new Blob([swCode], {type:'text/javascript'});
+    const swUrl = URL.createObjectURL(blob);
+    const reg = await navigator.serviceWorker.register(swUrl, {scope:'/'});
+    window._swReg = reg;
+  } catch(e) { console.warn('SW registration failed:', e); }
+}
+
+function verifierEtProgrammerNotifs() {
+  if(!('Notification' in window) || Notification.permission !== 'granted') return;
+  const prefs = loadNotifPrefs();
+  if(!prefs.absence && !prefs.plan) return;
+
+  const sw = navigator.serviceWorker?.controller || window._swReg?.active;
+
+  // Rappel absence (si pas grimpé depuis 7+ jours)
+  if(prefs.absence && historique.length > 0 && historique[0].dateISO) {
+    const last = new Date(historique[0].dateISO);
+    const jours = Math.round((Date.now() - last) / 86400000);
+    if(jours >= 7) {
+      const title = 'Tu grimpes quand ? ';
+      const body  = `Ça fait ${jours} jours — tes doigts commencent à rouiller.`;
+      if(sw) {
+        sw.postMessage({type:'SCHEDULE_NOTIF', delay:3000, title, body, tag:'absence'});
+      } else {
+        // Fallback direct
+        new Notification(title, {body, tag:'absence'});
+      }
+    }
+  }
+
+  // Rappel plan du jour (si plan de semaine actif)
+  if(prefs.plan && weekPlanData) {
+    const DAYS_FR = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+    const todayPlan = weekPlanData[DAYS_FR[new Date().getDay()]];
+    if(todayPlan && !todayPlan.titre?.toLowerCase().includes('repos')) {
+      // Vérifier qu'on n'a pas déjà grimpé aujourd'hui
+      const todayISO = new Date().toISOString().slice(0,10);
+      const dejaGrimpe = historique.some(s=>s.dateISO===todayISO);
+      if(!dejaGrimpe) {
+        const title = 'Séance du jour';
+        const body  = `${todayPlan.titre || 'Séance prévue'} — ${todayPlan.focus || ''}`;
+        if(sw) {
+          sw.postMessage({type:'SCHEDULE_NOTIF', delay:5000, title, body, tag:'plan'});
+        } else {
+          new Notification(title, {body, tag:'plan'});
+        }
+      }
+    }
+  }
+}
+
 function renderProfile() {
   // --- Identité ---
   const pseudo = currentProfile?.pseudo || currentUser?.email?.split('@')[0] || '—';
@@ -6270,6 +6663,9 @@ function renderProfile() {
   // Show add-bloc button in seance zone only for admins
   const addBlocBtn = document.getElementById('seance-add-bloc-btn');
   if(addBlocBtn) addBlocBtn.style.display = isAdmin() ? 'block' : 'none';
+  // Notifications
+  if('Notification' in window) updateNotifUI();
+  else { const nc=document.getElementById('notif-card'); if(nc) nc.style.display='none'; }
 
   // --- Stats globales ---
   const nbS = historique.length;
@@ -7405,7 +7801,7 @@ function toggleGuidedSession() {
 async function startGuidedSession() {
   const body = document.getElementById('guided-body');
   if(!body) return;
-  body.innerHTML = '<div class="guided-loading"><span class="g-spin"></span>L\'IA analyse ton profil...</div>';
+  body.innerHTML = '<div class="guided-loading"><span class="g-spin"></span>Analyse en cours...</div>';
 
   const totalOk = historique.reduce((a,s)=>a+s.ok,0);
   const totalNok = historique.reduce((a,s)=>a+s.nok,0);
@@ -7778,6 +8174,8 @@ checkAllBadges();
 setTimeout(() => {
   mesObjectifs.filter(o=>o.dureeLoading).forEach(o=>estimeeDureeObjectif(o));
 }, 1000);
+// Vérifier et programmer les notifications (après chargement des données)
+setTimeout(verifierEtProgrammerNotifs, 1500);
 
 // Cacher la carte d'installation si l'app est déjà installée (mode standalone)
 (function() {
