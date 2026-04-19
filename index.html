@@ -1348,6 +1348,7 @@ textarea{resize:none;height:62px;line-height:1.5}
       <button class="ctab active" id="ctab-annonces" onclick="switchCTab('annonces',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 8s-4-4-10-4S2 8 2 8v2c0 1 .9 2 2 2h1l1 8h12l1-8h1c1.1 0 2-1 2-2V8z"/><circle cx="12" cy="8" r="1"/></svg> Annonces</button>
       <button class="ctab" id="ctab-ranking"  onclick="switchCTab('ranking',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9H4.5a2.5 2.5 0 000 5H6"/><path d="M18 9h1.5a2.5 2.5 0 010 5H18"/><path d="M8 9h8v7a4 4 0 01-8 0V9z"/><path d="M12 17v4"/><path d="M8 21h8"/></svg> Ranking</button>
       <button class="ctab" id="ctab-defi"     onclick="switchCTab('defi',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Défi</button>
+      <button class="ctab" id="ctab-badges"   onclick="switchCTab('badges',this);renderCommunityBadges()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg> Badges</button>
       <button class="ctab" id="ctab-activite" onclick="switchCTab('activite',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg> Activité</button>
     </div>
     <div id="ct-annonces">
@@ -1393,6 +1394,10 @@ textarea{resize:none;height:62px;line-height:1.5}
         <div class="card-label">Qui l'a relevé ? <span id="defi-count" style="color:var(--accent)"></span></div>
         <div id="defi-leaderboard"><div class="empty">Personne pour l'instant. Sois le premier !</div></div>
       </div>
+    </div>
+    <!-- BADGES -->
+    <div id="ct-badges" style="display:none">
+      <div id="community-badges-wrap"></div>
     </div>
     <div id="ct-activite" style="display:none">
       <div id="activite-list"><div class="empty">Chargement...</div></div>
@@ -1450,9 +1455,9 @@ textarea{resize:none;height:62px;line-height:1.5}
           <button class="zone-panel-close" onclick="closeSeanceZone()">&#215;</button>
         </div>
       </div>
-      <div id="seance-zone-blocs"></div>
-      <!-- Vue mur 3D (zones 2-6 ancienne salle) -->
+      <!-- Vue mur (zones 2-6 ancienne salle) -->
       <div id="seance-wall-view" style="display:none;position:relative;overflow:hidden;border-radius:10px;margin:0 0 4px 0;background:#1a1a1a"></div>
+      <div id="seance-zone-blocs"></div>
       <div id="seance-add-bloc-btn" style="padding:10px 16px;border-top:1px solid var(--line);display:none">
         <button class="btn" style="margin:0;font-size:12px;padding:8px 14px;width:auto;color:var(--accent);border-color:var(--accent)" onclick="openAddBlocFromZone()">+ Ajouter un bloc ici</button>
       </div>
@@ -1836,6 +1841,23 @@ textarea{resize:none;height:62px;line-height:1.5}
       </div>
     </div>
 
+    <!-- COULEUR DU BLOC (couleur des prises) -->
+    <div class="addbloc-section">
+      <div class="addbloc-section-title">Couleur du bloc <span class="req">* obligatoire</span></div>
+      <div style="font-size:11px;color:var(--ink3);margin-bottom:8px">Couleur des prises visibles sur le mur</div>
+      <div class="color-selector" id="color-prises-selector">
+        <div class="color-opt" style="background:#22c55e" onclick="selectBlocColorPrises('vert','#22c55e',this)"><span>Vert</span></div>
+        <div class="color-opt" style="background:#f97316" onclick="selectBlocColorPrises('orange','#f97316',this)"><span>Orange</span></div>
+        <div class="color-opt" style="background:#ec4899" onclick="selectBlocColorPrises('rose','#ec4899',this)"><span>Rose</span></div>
+        <div class="color-opt" style="background:#111827" onclick="selectBlocColorPrises('noir','#111827',this)"><span>Noir</span></div>
+        <div class="color-opt" style="background:#3b82f6" onclick="selectBlocColorPrises('bleu','#3b82f6',this)"><span>Bleu</span></div>
+        <div class="color-opt" style="background:#8b5cf6" onclick="selectBlocColorPrises('mauve','#8b5cf6',this)"><span>Mauve</span></div>
+        <div class="color-opt" style="background:#fbbf24" onclick="selectBlocColorPrises('jaune','#fbbf24',this)"><span>Jaune</span></div>
+        <div class="color-opt" style="background:#ef4444" onclick="selectBlocColorPrises('rouge','#ef4444',this)"><span>Rouge</span></div>
+        <div class="color-opt" style="background:#9ca3af" onclick="selectBlocColorPrises('blanc','#9ca3af',this)"><span>Blanc</span></div>
+      </div>
+    </div>
+
     <!-- COULEUR (obligatoire) -->
     <div class="addbloc-section">
       <div class="addbloc-section-title">Couleur de l'étiquette <span class="req">* obligatoire</span></div>
@@ -1904,6 +1926,11 @@ textarea{resize:none;height:62px;line-height:1.5}
         <div class="tag-btn" onclick="toggleTag('inclinaison','Toit',this)">☁ Toit</div>
         <div class="tag-btn" onclick="toggleTag('inclinaison','Mixte',this)">⤢ Mixte</div>
       </div>
+      <div style="display:flex;gap:6px;margin-top:6px">
+        <input type="text" id="inclinaison-custom" placeholder="Autre inclinaison..." maxlength="30"
+          style="flex:1;padding:7px 10px;border-radius:var(--rs);border:1.5px solid var(--line2);background:var(--white);color:var(--ink);font-size:12px;font-family:var(--font)">
+        <button type="button" onclick="addCustomTag('inclinaison','inclinaison-custom')" style="padding:7px 12px;border-radius:var(--rs);background:var(--off);border:1.5px solid var(--line2);font-size:12px;font-weight:600;color:var(--ink2);cursor:pointer">+ Ajouter</button>
+      </div>
     </div>
 
     <!-- TYPE DE GRIMPE (obligatoire, multiple) -->
@@ -1912,6 +1939,7 @@ textarea{resize:none;height:62px;line-height:1.5}
       <div class="tag-grid" id="style-grid">
         <div class="tag-btn" onclick="toggleTag('style','Athlétique',this)">/ Athlétique</div>
         <div class="tag-btn" onclick="toggleTag('style','Explosif',this)">! Explosif</div>
+        <div class="tag-btn" onclick="toggleTag('style','Électrique',this)">⚡ Électrique</div>
         <div class="tag-btn" onclick="toggleTag('style','Technique',this)">Technique</div>
         <div class="tag-btn" onclick="toggleTag('style','Dynamique',this)">⚡ Dynamique</div>
         <div class="tag-btn" onclick="toggleTag('style','Coordination',this)">× Coordination</div>
@@ -1934,6 +1962,11 @@ textarea{resize:none;height:62px;line-height:1.5}
         <div class="tag-btn" onclick="toggleTag('style','Traversée',this)">↔️ Traversée</div>
         <div class="tag-btn" onclick="toggleTag('style','Sensation',this)">✨ Sensation</div>
         <div class="tag-btn" onclick="toggleTag('style','Fissure',this)">🪨 Fissure</div>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:6px">
+        <input type="text" id="style-custom" placeholder="Autre type..." maxlength="30"
+          style="flex:1;padding:7px 10px;border-radius:var(--rs);border:1.5px solid var(--line2);background:var(--white);color:var(--ink);font-size:12px;font-family:var(--font)">
+        <button type="button" onclick="addCustomTag('style','style-custom')" style="padding:7px 12px;border-radius:var(--rs);background:var(--off);border:1.5px solid var(--line2);font-size:12px;font-weight:600;color:var(--ink2);cursor:pointer">+ Ajouter</button>
       </div>
     </div>
 
@@ -1961,6 +1994,11 @@ textarea{resize:none;height:62px;line-height:1.5}
         <div class="tag-btn" onclick="toggleTag('prise','Volume',this)">▲ Volume</div>
         <div class="tag-btn" onclick="toggleTag('prise','Pied-main',this)">∧ Pied-main</div>
         <div class="tag-btn" onclick="toggleTag('prise','Porte',this)">⌐ Porte</div>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:6px">
+        <input type="text" id="prise-custom" placeholder="Autre prise..." maxlength="30"
+          style="flex:1;padding:7px 10px;border-radius:var(--rs);border:1.5px solid var(--line2);background:var(--white);color:var(--ink);font-size:12px;font-family:var(--font)">
+        <button type="button" onclick="addCustomTag('prise','prise-custom')" style="padding:7px 12px;border-radius:var(--rs);background:var(--off);border:1.5px solid var(--line2);font-size:12px;font-weight:600;color:var(--ink2);cursor:pointer">+ Ajouter</button>
       </div>
     </div>
 
@@ -2009,21 +2047,24 @@ textarea{resize:none;height:62px;line-height:1.5}
         <div class="tag-btn" onclick="toggleTag('mouvement','Run & jump',this)">→ Run & jump</div>
         <div class="tag-btn" onclick="toggleTag('mouvement','Quart externe',this)">↗ Quart externe</div>
       </div>
+      <div style="display:flex;gap:6px;margin-top:6px">
+        <input type="text" id="mouvement-custom" placeholder="Autre mouvement..." maxlength="30"
+          style="flex:1;padding:7px 10px;border-radius:var(--rs);border:1.5px solid var(--line2);background:var(--white);color:var(--ink);font-size:12px;font-family:var(--font)">
+        <button type="button" onclick="addCustomTag('mouvement','mouvement-custom')" style="padding:7px 12px;border-radius:var(--rs);background:var(--off);border:1.5px solid var(--line2);font-size:12px;font-weight:600;color:var(--ink2);cursor:pointer">+ Ajouter</button>
+      </div>
     </div>
 
     <!-- COTATION & OUVREUR (optionnel) -->
     <div class="addbloc-section">
       <div class="addbloc-section-title">Informations complémentaires</div>
       <div class="row" style="margin-bottom:10px">
-        <div class="label">Cotation estimée</div>
-        <select id="bloc-cotation">
-          <option value="">— Non renseignée</option>
-          <option>3</option><option>4</option><option>4+</option>
-          <option>5</option><option>5+</option>
-          <option>6A</option><option>6A+</option><option>6B</option><option>6B+</option><option>6C</option><option>6C+</option>
-          <option>7A</option><option>7A+</option><option>7B</option><option>7B+</option><option>7C</option><option>7C+</option>
-          <option>8A</option><option>8A+</option><option>8B</option>
-        </select>
+        <div class="label">Difficulté perçue</div>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <button type="button" class="tag-btn" id="cot-soft"  onclick="selectCotation('Soft',this)"  style="flex:1;padding:10px;font-size:13px">Soft</button>
+          <button type="button" class="tag-btn" id="cot-normal" onclick="selectCotation('Normal',this)" style="flex:1;padding:10px;font-size:13px">Normal</button>
+          <button type="button" class="tag-btn" id="cot-hard"  onclick="selectCotation('Hard',this)"  style="flex:1;padding:10px;font-size:13px">Hard</button>
+        </div>
+        <input type="hidden" id="bloc-cotation" value="">
       </div>
       <div class="row" style="margin-bottom:10px">
         <div class="label">Ouvreur</div>
@@ -2035,7 +2076,7 @@ textarea{resize:none;height:62px;line-height:1.5}
       </div>
     </div>
 
-    <div class="addbloc-required-msg" id="addbloc-required-msg">⚠ Remplis tous les champs obligatoires (couleur, secteur, inclinaison, type de grimpe, prises).</div>
+    <div class="addbloc-required-msg" id="addbloc-required-msg">⚠ Remplis tous les champs obligatoires (couleur du bloc, couleur de l'étiquette, secteur, inclinaison, type de grimpe, prises).</div>
 
     <button class="btn btn-primary" onclick="submitNewBloc()" style="margin-top:4px">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -3284,6 +3325,28 @@ function saveMoon() {
   showToast(moonResSel==='flash'?'Flash !':'Logué !');
 }
 
+
+// ── Appel API unifié (Netlify en priorité, fallback clé locale) ──
+async function callAPI(body) {
+  // Essai via Netlify function d'abord
+  try {
+    const r = await fetch('/.netlify/functions/coaching', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(body)
+    });
+    if(r.ok) return r.json();
+  } catch(e) {}
+  // Fallback : clé API locale
+  const apiKey = localStorage.getItem('adm_api_key') || '';
+  if(!apiKey) throw new Error('Aucune clé API — configure-la dans le profil admin');
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body: JSON.stringify(body)
+  });
+  return r.json();
+}
+
 // ========== HANGBOARD ==========
 async function generateHangProtocols() {
   const btn = document.getElementById('hang-ai-btn');
@@ -3326,12 +3389,7 @@ Réponds UNIQUEMENT avec ce JSON (sans markdown) :
 ]`;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]})
-    });
-    const data = await res.json();
+    const data = await callAPI({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]});
     const text = (data.content?.[0]?.text||'').trim().replace(/```[\w]*\n?/g,'').replace(/```/g,'');
     const protos = JSON.parse(text);
     window._aiHangProtos = protos;
@@ -3438,12 +3496,7 @@ Réponds UNIQUEMENT avec ce JSON (sans markdown) :
 ]`;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]})
-    });
-    const data = await res.json();
+    const data = await callAPI({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]});
     const text = (data.content?.[0]?.text||'').trim().replace(/```[\w]*\n?/g,'').replace(/```/g,'');
     const exos = JSON.parse(text);
 
@@ -4620,9 +4673,17 @@ async function callClaudeCoaching(mode) {
   const worstMvt   = worstOf(mvtStats);
 
   // ── Blocs de la salle ──
-  const blocsDispos = BLOCS.slice(0,40).map(b=>
-    '['+b.id+'] '+b.couleur+(b.cotation?' '+b.cotation:'')+' | '+(b.inclinaisons||[b.incl||'']).join('+')+' | '+(b.styles||[b.style||'']).join('+')+' | '+(Array.isArray(b.prises)?b.prises:[b.prises||'']).join('+')+(b.mouvements&&b.mouvements.length?' | mvt:'+b.mouvements.join('+'):'')
-  ).join('\n');
+  const blocsDispos = BLOCS.slice(0,40).map(b=> {
+    const diff = b.difficulte ? ` [${b.difficulte}]` : '';
+    const prises = b.couleurPrises ? `prises:${b.couleurPrises}` : '';
+    const incls = (b.inclinaisons||[b.incl||'']).filter(Boolean).join('+');
+    const styles = (b.styles||[b.style||'']).filter(Boolean).join('+');
+    const prisesType = (Array.isArray(b.prises)?b.prises:[b.prises||'']).filter(Boolean).join('+');
+    const mvts = b.mouvements&&b.mouvements.length ? 'mvt:'+b.mouvements.join('+') : '';
+    const stars = b.etoiles ? '★'.repeat(b.etoiles) : '';
+    const parts = [b.couleur+(b.cotation?' '+b.cotation:''), incls, styles, prisesType, mvts, prises, stars, diff].filter(Boolean);
+    return '['+b.id+'] '+parts.join(' | ');
+  }).join('\n');
 
   // ── Niveau observé à partir des performances réelles ──
   // Ordre de difficulté : vert(4) < orange(5) < rose(5+) < noir(6A) < bleu(6B) < mauve(6C) < jaune(7A) < rouge(7B) < blanc(7C+)
@@ -4824,6 +4885,16 @@ async function callClaudeCoaching(mode) {
   // Adéquation objectifs déclarés vs performance
   const objVsPerf = mesObjectifs.filter(o=>!o.done).map(o=>`"${o.titre}" — progression ${o.lastPct||0}%`).join(', ') || 'Aucun objectif actif';
 
+  // ── Feedbacks grimpeurs sur les blocs (difficulté perçue, essais, étoiles) ──
+  const blocsAvecFeedback = BLOCS.filter(b => b.difficulte || b.essais || b.etoiles);
+  const feedbackBlocs = blocsAvecFeedback.slice(0,20).map(b => {
+    const parts = ['['+b.id+'] '+b.couleur+(b.cotation?' '+b.cotation:'')];
+    if(b.difficulte) parts.push('perçu: '+b.difficulte);
+    if(b.essais) parts.push('essais: '+b.essais);
+    if(b.etoiles) parts.push('★'.repeat(b.etoiles));
+    return parts.join(' | ');
+  }).join('\n') || 'Aucun feedback encore';
+
   const ctx = 'PROFIL GRIMPEUR :\n'
     +'- Niveau déclaré : '+niveau+'\n'
     +'- Niveau observé : '+niveauObserveCtx+'\n'
@@ -4870,8 +4941,10 @@ async function callClaudeCoaching(mode) {
     +'OBJECTIFS ACTIFS : '+objActifs+'\n'
     +'OBJECTIFS ATTEINTS : '+objDone+'\n\n'
     +'HISTORIQUE 8 DERNIÈRES SÉANCES :\n'+seancesDetail+'\n\n'
-    +'BLOCS DISPONIBLES EN SALLE (ID | couleur cotation | inclinaison | style | prises | mouvements) :\n'+(blocsDispos||'Non disponible')+'\n\n'
-    +'NOTE GRIMPEUR : '+(notePerso||'Aucune');
+    +'FEEDBACKS GRIMPEURS SUR LES BLOCS (difficulté perçue : Soft=plus facile que la couleur, Hard=plus dur) :\n'+feedbackBlocs+'\n\n'
+    +'BLOCS DISPONIBLES EN SALLE (ID | couleur cotation | inclinaisons | styles | prises | couleurPrises | étoiles | difficulté perçue) :\n'+(blocsDispos||'Non disponible')+'\n\n'
+    +'NOTE GRIMPEUR : '+(notePerso||'Aucune')
+    +(currentLang==='en'?'\n\nLANGUE : Réponds en anglais.':'');
 
   const PROMPTS = {
     analyse: `Tu es un coach escalade de bloc. Ton rôle : observer, nuancer, suggérer — pas donner des leçons.
@@ -5106,18 +5179,78 @@ Réponds UNIQUEMENT avec ce JSON :
 
 // ========== BADGES ==========
 const ALL_BADGES = [
-  {id:'first_seance',name:'Première séance',desc:'Complète ta 1ère séance',icon:'sun',col:'#fbbf24',bg:'#fffbeb',condition:()=>historique.length>=1},
-  {id:'first_avis',name:'Critique',desc:'Donne ton 1er avis',icon:'star',col:'#d97706',bg:'#fffbeb',condition:()=>Object.keys(myAvis).length>=1},
-  {id:'first_resa',name:'Premier cours',desc:'Réserve un cours',icon:'calendar',col:'#16a34a',bg:'#f0fdf4',condition:()=>mesResas.size>=1},
-  {id:'defi',name:'Challenger',desc:'Participe au défi du mois',icon:'trophy',col:'#dc2626',bg:'#fef2f2',condition:()=>defiParticipating},
-  {id:'5_seances',name:'Régulier',desc:'5 séances complétées',icon:'repeat',col:'#2563eb',bg:'#eff6ff',condition:()=>historique.length>=5},
-  {id:'10_blocs',name:'Bloc hunter',desc:'10 blocs réussis en 1 séance',icon:'zap',col:'#7c3aed',bg:'#f5f3ff',condition:()=>historique.some(s=>s.ok>=10)},
-  {id:'moonflash',name:'Moon flasher',desc:'Flash un problème Moonboard',icon:'grid',col:'#7c3aed',bg:'#f5f3ff',condition:()=>Object.values(moonData).some(v=>v&&v.res==='flash')},
-  {id:'all_tools',name:'Polyvalent',desc:'Utilise tous les outils',icon:'layers',col:'#0891b2',bg:'#ecfeff',condition:()=>hangSessions.length>0&&campusSessions.length>0&&spraySessions.length>0},
-  {id:'objectif',name:'Focalisé',desc:'Atteins un objectif',icon:'check',col:'#16a34a',bg:'#f0fdf4',condition:()=>mesObjectifs.some(o=>o.done)},
-  {id:'10_seances',name:'Assidu',desc:'10 séances au compteur',icon:'award',col:'#FF4D00',bg:'#fff3ee',condition:()=>historique.length>=10},
-  {id:'circuit',name:'Circuit breaker',desc:'Complète un circuit à 100%',icon:'clock',col:'#16a34a',bg:'#f0fdf4',condition:()=>CIRCUITS.some(c=>c.pct>=100)},
-  {id:'bonne_note',name:'Populaire',desc:'Un de tes avis reçoit 5 likes',icon:'heart',col:'#dc2626',bg:'#fef2f2',condition:()=>false},
+  // — SÉANCES —
+  {id:'first_seance',  cat:'Séances', name:'Première séance',    desc:'Complète ta 1ère séance',              emoji:'🌅', col:'#fbbf24',bg:'#fffbeb', condition:()=>historique.length>=1},
+  {id:'5_seances',     cat:'Séances', name:'Régulier',           desc:'5 séances complétées',                 emoji:'🔁', col:'#2563eb',bg:'#eff6ff', condition:()=>historique.length>=5},
+  {id:'10_seances',    cat:'Séances', name:'Assidu',             desc:'10 séances au compteur',               emoji:'🏅', col:'#FF4D00',bg:'#fff3ee', condition:()=>historique.length>=10},
+  {id:'25_seances',    cat:'Séances', name:'Bloc addict',        desc:'25 séances complétées',                emoji:'🔥', col:'#dc2626',bg:'#fef2f2', condition:()=>historique.length>=25},
+  {id:'50_seances',    cat:'Séances', name:'Légende',            desc:'50 séances — respect.',                emoji:'💎', col:'#7c3aed',bg:'#f5f3ff', condition:()=>historique.length>=50},
+  {id:'streak_3',      cat:'Séances', name:'Sur une lancée',     desc:'3 séances sur 7 jours consécutifs',    emoji:'⚡', col:'#f97316',bg:'#fff7ed', condition:()=>{
+    if(historique.length<3) return false;
+    const now=Date.now();
+    return historique.slice(0,3).every(s=>s.dateISO&&(now-new Date(s.dateISO).getTime())<7*86400000);
+  }},
+  // — PERFORMANCE —
+  {id:'10_blocs',      cat:'Perf', name:'Bloc hunter',       desc:'10 blocs réussis en 1 séance',         emoji:'⚡', col:'#7c3aed',bg:'#f5f3ff', condition:()=>historique.some(s=>s.ok>=10)},
+  {id:'20_blocs',      cat:'Perf', name:'Machine',           desc:'20 blocs réussis en 1 séance',         emoji:'🤖', col:'#0891b2',bg:'#ecfeff', condition:()=>historique.some(s=>s.ok>=20)},
+  {id:'50pct',         cat:'Perf', name:'Solide',            desc:'Taux de réussite ≥ 50% (10+ séances)', emoji:'💪', col:'#16a34a',bg:'#f0fdf4', condition:()=>{
+    const s=historique.filter(x=>!x.courte);
+    if(s.length<10) return false;
+    const ok=s.reduce((a,x)=>a+(x.ok||0),0),tot=s.reduce((a,x)=>a+(x.ok||0)+(x.nok||0),0);
+    return tot>0&&ok/tot>=0.5;
+  }},
+  {id:'70pct',         cat:'Perf', name:'Efficace',          desc:'Taux de réussite ≥ 70% (10+ séances)', emoji:'🎯', col:'#16a34a',bg:'#f0fdf4', condition:()=>{
+    const s=historique.filter(x=>!x.courte);
+    if(s.length<10) return false;
+    const ok=s.reduce((a,x)=>a+(x.ok||0),0),tot=s.reduce((a,x)=>a+(x.ok||0)+(x.nok||0),0);
+    return tot>0&&ok/tot>=0.7;
+  }},
+  {id:'projet',        cat:'Perf', name:'Projet réussi',     desc:'Réussi un bloc après 3+ essais',        emoji:'🧗', col:'#FF4D00',bg:'#fff3ee', condition:()=>{
+    const echecs={};
+    historique.forEach(s=>(s.blocs||[]).forEach(b=>{if(b.res==='nok')echecs[b.id]=(echecs[b.id]||0)+1;}));
+    return historique.some(s=>(s.blocs||[]).some(b=>b.res==='ok'&&(echecs[b.id]||0)>=2));
+  }},
+  {id:'flash_dur',     cat:'Perf', name:'Flasheur',          desc:'Flash un Hard du premier coup',         emoji:'⚡', col:'#fbbf24',bg:'#fffbeb', condition:()=>{
+    return BLOCS.filter(b=>b.difficulte==='Hard').some(b=>{
+      const res=results[b.id+'|'+b.couleur]||results[b.id];
+      return res==='ok'&&!historique.slice(1).some(s=>(s.blocs||[]).find(x=>x.id===b.id&&x.res==='nok'));
+    });
+  }},
+  // — EXPLORATION —
+  {id:'all_sectors',   cat:'Explorer', name:'Explorateur',      desc:'Grimpe dans 5 secteurs différents',    emoji:'🗺️', col:'#0891b2',bg:'#ecfeff', condition:()=>{
+    const secs=new Set();
+    historique.forEach(s=>(s.blocs||[]).forEach(b=>{if(b.secteur)secs.add(b.secteur);}));
+    return secs.size>=5;
+  }},
+  {id:'all_colors',    cat:'Explorer', name:'Arc-en-ciel',      desc:'Réussi un bloc de chaque couleur',     emoji:'🌈', col:'#ec4899',bg:'#fdf4ff', condition:()=>{
+    const colors=['vert','orange','rose','noir','bleu','mauve','jaune','rouge','blanc'];
+    return colors.every(c=>historique.some(s=>(s.blocs||[]).some(b=>b.couleur===c&&b.res==='ok')));
+  }},
+  {id:'devers_king',   cat:'Explorer', name:'Roi du dévers',    desc:'Réussi 5 blocs en dévers gros',        emoji:'🦁', col:'#dc2626',bg:'#fef2f2', condition:()=>{
+    return BLOCS.filter(b=>toArr(b.inclinaisons).some(i=>i.includes('Gros'))).filter(b=>{
+      const res=results[b.id+'|'+b.couleur]||results[b.id];
+      return res==='ok';
+    }).length>=5;
+  }},
+  {id:'slab_master',   cat:'Explorer', name:'Dalle master',     desc:'Réussi 5 blocs en dalle',              emoji:'🧱', col:'#6b7280',bg:'#f9fafb', condition:()=>{
+    return BLOCS.filter(b=>toArr(b.inclinaisons).some(i=>i==='Dalle')).filter(b=>{
+      const res=results[b.id+'|'+b.couleur]||results[b.id];
+      return res==='ok';
+    }).length>=5;
+  }},
+  // — OUTILS —
+  {id:'all_tools',     cat:'Outils', name:'Polyvalent',       desc:'Utilise tous les outils (hang+campus+spray)', emoji:'🛠️', col:'#0891b2',bg:'#ecfeff', condition:()=>hangSessions.length>0&&campusSessions.length>0&&spraySessions.length>0},
+  {id:'moonflash',     cat:'Outils', name:'Moon flasher',     desc:'Flash un problème Moonboard',           emoji:'🌙', col:'#7c3aed',bg:'#f5f3ff', condition:()=>Object.values(moonData).some(v=>v&&v.res==='flash')},
+  {id:'circuit',       cat:'Outils', name:'Circuit breaker',  desc:'Complète un circuit à 100%',            emoji:'✅', col:'#16a34a',bg:'#f0fdf4', condition:()=>CIRCUITS.some(c=>c.pct>=100)},
+  {id:'hangboard_10',  cat:'Outils', name:'Iron fingers',     desc:'10 sessions hangboard',                 emoji:'🤌', col:'#92400e',bg:'#fef3c7', condition:()=>hangSessions.length>=10},
+  // — COMMUNAUTÉ —
+  {id:'first_avis',    cat:'Communauté', name:'Critique',     desc:'Donne ton 1er avis sur un bloc',        emoji:'⭐', col:'#d97706',bg:'#fffbeb', condition:()=>Object.keys(myAvis).length>=1},
+  {id:'first_resa',    cat:'Communauté', name:'Premier cours',desc:'Réserve un cours',                      emoji:'📅', col:'#16a34a',bg:'#f0fdf4', condition:()=>(mesResas&&(mesResas.size||mesResas.length||0))>=1},
+  {id:'defi',          cat:'Communauté', name:'Challenger',   desc:'Participe au défi du mois',             emoji:'🏆', col:'#dc2626',bg:'#fef2f2', condition:()=>defiParticipating},
+  // — MENTAL —
+  {id:'objectif',      cat:'Mental', name:'Focalisé',         desc:'Atteins un objectif',                   emoji:'🎯', col:'#16a34a',bg:'#f0fdf4', condition:()=>mesObjectifs.some(o=>o.done)},
+  {id:'feedback_5',    cat:'Mental', name:'Conscient',        desc:'Remplis le feedback de 5 séances',      emoji:'🧠', col:'#2563eb',bg:'#eff6ff', condition:()=>historique.filter(s=>s.rpe||s.ressenti).length>=5},
+  {id:'no_easy',       cat:'Mental', name:'Ambitieux',        desc:'Réussi un bloc Noir ou plus en débutant', emoji:'🦅', col:'#1e293b',bg:'#f1f5f9', condition:()=>niveau==='debutant'&&historique.some(s=>(s.blocs||[]).some(b=>['noir','bleu','mauve','jaune','rouge','blanc'].includes(b.couleur)&&b.res==='ok'))},
 ];
 let unlockedBadges = new Set();
 let defiParticipating = false;
@@ -5146,7 +5279,7 @@ function checkBadge(id) {
   if(b.condition()) {
     unlockedBadges.add(id);
     saveAll();
-    showToast('Badge débloqué : ' + b.name + ' !');
+    showToast((b.emoji||'🏅') + ' Badge débloqué : ' + b.name + ' !');
   }
 }
 
@@ -5906,7 +6039,7 @@ function toggleResa(id) {
 
 // ========== COMMUNAUTÉ ==========
 function switchCTab(tab, el) {
-  ['annonces','ranking','defi','activite'].forEach(t=>{
+  ['annonces','ranking','defi','badges','activite'].forEach(t=>{
     const ct=document.getElementById('ct-'+t);
     if(ct) ct.style.display = t===tab?'block':'none';
     const btn=document.getElementById('ctab-'+t);
@@ -5917,6 +6050,55 @@ function switchCTab(tab, el) {
   if(tab==='ranking')  renderRanking('month');
   if(tab==='defi')     renderDefi();
   if(tab==='activite') renderActivite();
+  if(tab==='badges')   renderCommunityBadges();
+}
+
+function renderCommunityBadges() {
+  checkAllBadges();
+  const el = document.getElementById('community-badges-wrap');
+  if(!el) return;
+
+  const cats = [...new Set(ALL_BADGES.map(b=>b.cat))];
+  const total = ALL_BADGES.length;
+  const unlocked = ALL_BADGES.filter(b=>unlockedBadges.has(b.id)).length;
+
+  let html = `
+    <!-- Header -->
+    <div style="background:var(--accent);border-radius:16px;padding:20px;margin-bottom:16px;color:#fff;text-align:center">
+      <div style="font-family:var(--display);font-size:36px;font-weight:800;line-height:1">${unlocked}</div>
+      <div style="font-size:13px;opacity:.85;margin-top:4px">badges débloqués sur ${total}</div>
+      <div style="margin-top:12px;background:rgba(255,255,255,.2);border-radius:8px;height:6px;overflow:hidden">
+        <div style="width:${Math.round(unlocked/total*100)}%;height:100%;background:#fff;border-radius:8px;transition:.5s"></div>
+      </div>
+    </div>`;
+
+  cats.forEach(cat => {
+    const catBadges = ALL_BADGES.filter(b=>b.cat===cat);
+    html += `<div style="margin-bottom:4px">
+      <div style="font-size:10px;font-weight:800;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;padding:8px 0 6px">${cat}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">`;
+
+    catBadges.forEach(b => {
+      const got = unlockedBadges.has(b.id);
+      html += `
+        <div style="
+          background:${got ? b.bg : 'var(--off)'};
+          border:1.5px solid ${got ? b.col+'44' : 'var(--line)'};
+          border-radius:14px;padding:12px;
+          opacity:${got ? '1' : '0.55'};
+          position:relative;overflow:hidden;
+        ">
+          ${got ? `<div style="position:absolute;top:6px;right:8px;font-size:9px;font-weight:800;color:${b.col};text-transform:uppercase;letter-spacing:.5px">✓</div>` : `<div style="position:absolute;top:6px;right:8px;font-size:12px;opacity:.4">🔒</div>`}
+          <div style="font-size:26px;margin-bottom:6px;line-height:1">${b.emoji}</div>
+          <div style="font-size:12px;font-weight:800;color:${got?b.col:'var(--ink3)'};line-height:1.2;margin-bottom:3px">${b.name}</div>
+          <div style="font-size:10px;color:var(--ink3);line-height:1.4">${b.desc}</div>
+        </div>`;
+    });
+
+    html += `</div></div>`;
+  });
+
+  el.innerHTML = html;
 }
 
 // ── ANNONCES ──────────────────────────────────────────
@@ -6481,7 +6663,7 @@ function updateUserPill() {
   const adminWrap = document.getElementById('admin-btn-wrap');
   if(adminWrap) adminWrap.style.display = isAdmin() ? 'block' : 'none';
   const addBlocBtn = document.getElementById('seance-add-bloc-btn');
-  if(addBlocBtn) addBlocBtn.style.display = isAdmin() ? 'block' : 'none';
+  if(addBlocBtn) addBlocBtn.style.display = 'block';
 }
 
 // ── Profile screen ──
@@ -6823,7 +7005,7 @@ function renderProfile() {
   if(syncBtn) syncBtn.style.display = isAdmin() ? 'block' : 'none';
   // Show add-bloc button in seance zone only for admins
   const addBlocBtn = document.getElementById('seance-add-bloc-btn');
-  if(addBlocBtn) addBlocBtn.style.display = isAdmin() ? 'block' : 'none';
+  if(addBlocBtn) addBlocBtn.style.display = 'block';
   // Notifications
   if('Notification' in window) updateNotifUI();
   else { const nc=document.getElementById('notif-card'); if(nc) nc.style.display='none'; }
@@ -7189,6 +7371,8 @@ document.addEventListener('keydown', e => {
 let newBlocData = {
   couleur: null,
   couleurHex: null,
+  couleurPrises: null,
+  couleurPrisesHex: null,
   secteur: null,
   inclinaison: [],
   style: [],
@@ -7202,12 +7386,57 @@ let newBlocData = {
   morpho: null,
 };
 
+// ── Cotation ──
+function selectCotation(val, el) {
+  document.querySelectorAll('#cot-soft,#cot-normal,#cot-hard').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  const hidden = document.getElementById('bloc-cotation');
+  if(hidden) hidden.value = val;
+  updateBlocPreview();
+}
+
+// ── Tag personnalisé (texte libre) ──
+function addCustomTag(field, inputId) {
+  const input = document.getElementById(inputId);
+  if(!input) return;
+  const val = input.value.trim();
+  if(!val) return;
+  // Vérifier qu'il n'existe pas déjà
+  if(newBlocData[field === 'inclinaison' ? 'inclinaison' : field === 'style' ? 'style' : field === 'prise' ? 'prise' : 'mouvement'].includes(val)) {
+    input.value = '';
+    return;
+  }
+  // Trouver le grid correspondant
+  const gridMap = {inclinaison:'inclinaison-grid', style:'style-grid', prise:'prise-grid', mouvement:'mouvement-grid'};
+  const grid = document.getElementById(gridMap[field]);
+  if(!grid) return;
+  // Créer et ajouter le tag
+  const div = document.createElement('div');
+  div.className = 'tag-btn sel';
+  div.textContent = val;
+  div.onclick = function() { toggleTag(field, val, this); };
+  grid.appendChild(div);
+  // Ajouter aux données
+  const key = field === 'inclinaison' ? 'inclinaison' : field === 'style' ? 'style' : field === 'prise' ? 'prise' : 'mouvement';
+  if(!newBlocData[key].includes(val)) newBlocData[key].push(val);
+  input.value = '';
+  updateBlocPreview();
+}
+
 // ── Couleur ──
 function selectBlocColor(nom, hex, el) {
   document.querySelectorAll('#color-selector .color-opt').forEach(e=>e.classList.remove('sel'));
   el.classList.add('sel');
   newBlocData.couleur = nom;
   newBlocData.couleurHex = hex;
+  updateBlocPreview();
+}
+
+function selectBlocColorPrises(nom, hex, el) {
+  document.querySelectorAll('#color-prises-selector .color-opt').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  newBlocData.couleurPrises = nom;
+  newBlocData.couleurPrisesHex = hex;
   updateBlocPreview();
 }
 
@@ -7291,13 +7520,47 @@ function updateBlocPreview() {
 function submitNewBloc() {
   const req = document.getElementById('addbloc-required-msg');
   // Validate
-  if(!newBlocData.couleur || !newBlocData.secteur ||
+  if(!newBlocData.couleurPrises || !newBlocData.couleur || !newBlocData.secteur ||
      !newBlocData.inclinaison.length || !newBlocData.style.length || !newBlocData.prise.length) {
     req.classList.add('show');
     req.scrollIntoView({behavior:'smooth',block:'nearest'});
     return;
   }
   req.classList.remove('show');
+
+  // Mode ÉDITION — mettre à jour le bloc existant
+  if(_editingBlocId) {
+    const idx = BLOCS.findIndex(b => b.id === _editingBlocId);
+    if(idx !== -1) {
+      const COLS = {jaune:'#fbbf24',orange:'#f97316',rose:'#ec4899',rouge:'#ef4444',bleu:'#3b82f6',vert:'#22c55e',noir:'#111827',blanc:'#9ca3af',mauve:'#8b5cf6'};
+      Object.assign(BLOCS[idx], {
+        couleur: newBlocData.couleur,
+        col: newBlocData.couleurHex || COLS[newBlocData.couleur] || '#888',
+        couleurPrises: newBlocData.couleurPrises,
+        couleurPrisesHex: newBlocData.couleurPrisesHex || '#888888',
+        secteur: newBlocData.secteur,
+        inclinaisons: [...newBlocData.inclinaison],
+        styles: [...newBlocData.style],
+        prises: [...newBlocData.prise],
+        mouvements: [...newBlocData.mouvement],
+        cotation: document.getElementById('bloc-cotation')?.value || '',
+        ouvreur: document.getElementById('bloc-ouvreur')?.value?.trim() || '',
+        note: document.getElementById('bloc-note')?.value?.trim() || '',
+      });
+      saveAll();
+      // Sync Supabase
+      if(currentToken) supa.insertBloc({...BLOCS[idx], actif:true, added_by:BLOCS[idx].addedBy}).catch(()=>{});
+    }
+    _editingBlocId = null;
+    showToast('Bloc modifié ✓');
+    // Reset form and go back
+    const submitBtn = document.querySelector('[onclick="submitNewBloc()"]');
+    if(submitBtn) submitBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Ajouter ce bloc à la salle';
+    resetAddBlocForm();
+    showTab('seance');
+    setTimeout(() => seanceSelZone && selectSeanceZone(seanceSelZone), 200);
+    return;
+  }
 
   // Build bloc object
   const secteurCode = newBlocData.secteur.replace('Zone ','Z').replace(/\s/g,'');
@@ -7307,6 +7570,8 @@ function submitNewBloc() {
     id,
     couleur: newBlocData.couleur,
     col: newBlocData.couleurHex || COLS[newBlocData.couleur] || '#888',
+    couleurPrises: newBlocData.couleurPrises,
+    couleurPrisesHex: newBlocData.couleurPrisesHex || '#888888',
     secteur: newBlocData.secteur,
     // Multi-tags stored as arrays
     inclinaisons: [...newBlocData.inclinaison],
@@ -7334,6 +7599,8 @@ function submitNewBloc() {
     id: bloc.id,
     couleur: bloc.couleur,
     col: bloc.col,
+    couleur_prises: bloc.couleurPrises,
+    couleur_prises_hex: bloc.couleurPrisesHex,
     secteur: bloc.secteur,
     hall: newBlocData.hall||seanceHall||'ancienne',
     inclinaisons: bloc.inclinaisons,
@@ -7402,7 +7669,7 @@ function submitNewBloc() {
 }
 
 function resetBlocForm() {
-  newBlocData = {couleur:null,couleurHex:null,secteur:null,hall:'ancienne',inclinaison:[],style:[],prise:[],mouvement:[],cotation:'',ouvreur:'',note:'',essais:null,etoiles:0,morpho:null};
+  _editingBlocId = null; newBlocData = {couleur:null,couleurHex:null,couleurPrises:null,couleurPrisesHex:null,secteur:null,hall:'ancienne',inclinaison:[],style:[],prise:[],mouvement:[],cotation:'',ouvreur:'',note:'',essais:null,etoiles:0,morpho:null};
   document.querySelectorAll('#addbloc-hall-anc, #addbloc-hall-nouv').forEach(b=>b.classList.remove('active'));
   document.getElementById('addbloc-hall-anc')?.classList.add('active');
   document.querySelectorAll('#essais-btns .tag-btn').forEach(b=>b.classList.remove('sel'));
@@ -7519,7 +7786,18 @@ function selectSeanceZone(name){
     BLOCS.filter(b=>b.secteur===name||b.secteur===name.replace('Zone ','')).forEach(b=>{
       const key=b.id+'|'+b.couleur;
       const res=results[key]||results[b.id]||'';
-      zoneDots.push({couleur:b.couleur,res,id:b.id,col:b.col||CCOLS[b.couleur]||'#888'});
+      // Couleur du mur = couleurPrises uniquement (pas la couleur d'étiquette)
+      const dispCol = b.couleurPrisesHex || (b.couleurPrises ? CCOLS[b.couleurPrises] : null) || '#888888';
+      const dispNom = b.couleurPrises || '?';
+      zoneDots.push({
+        couleur: dispNom, res, id: b.id,
+        col: dispCol,
+        cotation:b.cotation||'', ouvreur:b.ouvreur||'',
+        date:b.date||'', note:b.note||'',
+        inclinaisons:toArr(b.inclinaisons),
+        styles:toArr(b.styles), prises:toArr(b.prises),
+        secteur:name
+      });
     });
     // From map blocs
     Object.entries(blocs).forEach(([col,n])=>{
@@ -7530,7 +7808,9 @@ function selectSeanceZone(name){
       }
     });
 
-    // Lignes verticales — une par bloc, espacées dans la zone
+    // Stocker les blocs dans un registre global pour accès par index
+    window._wallBlocs = zoneDots;
+
     const n = zoneDots.length;
     const lines = zoneDots.map((b, i) => {
       // Répartir les lignes uniformément dans la zone
@@ -7563,7 +7843,7 @@ function selectSeanceZone(name){
           ${glow}
           z-index:2;
           cursor:pointer;
-        " onclick="event.stopPropagation()">
+        " onclick="event.stopPropagation();wallLineClick(${i})">
           <!-- Marqueur haut -->
           <div style="
             position:absolute;top:-2px;left:50%;transform:translateX(-50%);
@@ -7645,21 +7925,24 @@ function selectSeanceZone(name){
     rows.push(
       '<div class="bloc-row" style="cursor:pointer;padding:11px 16px;border-bottom:1px solid var(--line)"'
       +' data-bloc-id="'+b.id+'" data-bloc-nom="'+nom+'" data-bloc-col="'+(b.col||CCOLS[b.couleur]||'#888')+'"'
-      +' data-bloc-couleur="'+b.couleur+'" data-bloc-secteur="'+name+'"'
+      +' data-bloc-couleur="'+b.couleur+'" data-bloc-couleur-prises="'+(b.couleurPrises||'')+'" data-bloc-secteur="'+name+'"'
       +' data-bloc-cotation="'+(b.cotation||'')+'" data-bloc-ouvreur="'+(b.ouvreur||'')+'"'
       +' data-bloc-date="'+(b.date||'')+'" data-bloc-note="'+(b.note||'').replace(/"/g,'&quot;')+'"'
       +' data-bloc-incl="'+(Array.isArray(b.inclinaisons)?b.inclinaisons:[b.incl||'']).filter(Boolean).join('|')+'"'
       +' data-bloc-styles="'+(Array.isArray(b.styles)?b.styles:[b.style||'']).filter(Boolean).join('|')+'"'
       +' data-bloc-prises="'+(Array.isArray(b.prises)?b.prises:[b.prises_legacy||b.prises||'']).filter(Boolean).join('|')+'"'
       +' onclick="onBlocRowClick(this)">'
-      +'<div class="color-pill" style="background:'+(b.col||CCOLS[b.couleur]||'#888')+'"></div>'
+      +'<div class="color-pill" style="background:'+(b.couleurPrisesHex||CCOLS[b.couleurPrises]||b.col||CCOLS[b.couleur]||'#888')+'"></div>'
       +'<div style="flex:1"><div class="bloc-id">'+nom+'</div>'
       +(tags||b.cotation?'<div class="bloc-sub">'+(tags||'')+(b.cotation?' &middot; '+b.cotation:'')+'</div>':'')
       +'</div>'
-      +'<div style="display:flex;gap:8px;align-items:center">'
+      +'<div style="display:flex;gap:4px;align-items:center" onclick="event.stopPropagation()">'
+      +'<button style="width:26px;height:26px;border-radius:6px;border:1px solid var(--line2);background:var(--off);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0" onclick="moveBlocInZone(\''+b.id+'\',\'up\')">↑</button>'
+      +'<button style="width:26px;height:26px;border-radius:6px;border:1px solid var(--line2);background:var(--off);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0" onclick="moveBlocInZone(\''+b.id+'\',\'down\')">↓</button>'
+      +'<div style="display:flex;gap:4px;align-items:center;cursor:pointer" onclick="onBlocRowClick(this.closest(\'.bloc-row\'))">'
       +(res==='ok'?'<span style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0"></span>':res==='nok'?'<span style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0"></span>':'<span style="width:8px;height:8px;border-radius:50%;background:var(--line2);flex-shrink:0"></span>')
       +'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>'
-      +'</div></div>'
+      +'</div></div></div>'
     );
   });
   const p=document.getElementById('seance-zone-blocs');
@@ -7673,6 +7956,30 @@ function selectSeanceZone(name){
   zp.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
+function wallLineClick(idx) {
+  const b = (window._wallBlocs || [])[idx];
+  if(!b) return;
+  // Retrouver le bloc complet depuis BLOCS si possible
+  const full = b.id ? BLOCS.find(bl => bl.id === b.id) : null;
+  if(full) { openBlocDetail(full); return; }
+  // Sinon construire un objet bloc depuis les données disponibles
+  const bloc = {
+    nom: b.id || b.couleur,
+    col: b.col || CCOLS[b.couleur] || '#888',
+    couleur: b.couleur || '',
+    secteur: b.secteur || seanceSelZone || '',
+    cotation: b.cotation || '',
+    ouvreur: b.ouvreur || '',
+    date: b.date || '',
+    note: b.note || '',
+    inclinaisons: b.inclinaisons || [],
+    styles: b.styles || [],
+    prises: b.prises || [],
+    id: b.id || '',
+  };
+  openBlocDetail(bloc);
+}
+
 function onBlocRowClick(el){
   // Construire l'objet bloc depuis les data-* attributes
   const d=el.dataset;
@@ -7680,6 +7987,8 @@ function onBlocRowClick(el){
     nom: d.blocNom||'',
     col: d.blocCol||'#888',
     couleur: d.blocCouleur||'',
+    couleurPrises: d.blocCouleurPrises||'',
+    couleurPrisesHex: d.blocCouleurPrisesHex||'',
     secteur: d.blocSecteur||'',
     cotation: d.blocCotation||'',
     ouvreur: d.blocOuvreur||'',
@@ -7783,6 +8092,96 @@ function closeSeanceZone(){
   const ht=document.getElementById('seance-howto');if(ht)ht.style.display='flex';
   renderSeanceOverlays();
 }
+function moveBlocInZone(id, dir) {
+  // Trouver le bloc dans BLOCS et le déplacer dans la liste de sa zone
+  const idx = BLOCS.findIndex(b => b.id === id);
+  if(idx === -1) return;
+
+  const zone = BLOCS[idx].secteur;
+  // Indices des blocs de la même zone dans BLOCS[]
+  const zoneIdxs = BLOCS.map((b,i) => b.secteur === zone ? i : -1).filter(i => i !== -1);
+  const posInZone = zoneIdxs.indexOf(idx);
+
+  if(dir === 'up' && posInZone > 0) {
+    const swapIdx = zoneIdxs[posInZone - 1];
+    [BLOCS[idx], BLOCS[swapIdx]] = [BLOCS[swapIdx], BLOCS[idx]];
+  } else if(dir === 'down' && posInZone < zoneIdxs.length - 1) {
+    const swapIdx = zoneIdxs[posInZone + 1];
+    [BLOCS[idx], BLOCS[swapIdx]] = [BLOCS[swapIdx], BLOCS[idx]];
+  } else return;
+
+  saveAll();
+  selectSeanceZone(seanceSelZone); // Re-render
+}
+
+let _editingBlocId = null;
+
+function openEditBloc(id) {
+  const b = BLOCS.find(bl => bl.id === id);
+  if(!b) return;
+  _editingBlocId = id;
+
+  closeBlocDetail();
+
+  // Pré-remplir le formulaire avec les données du bloc
+  newBlocData = {
+    couleur: b.couleur || null,
+    couleurHex: b.col || null,
+    couleurPrises: b.couleurPrises || null,
+    couleurPrisesHex: b.couleurPrisesHex || null,
+    secteur: b.secteur || null,
+    hall: b.hall || seanceHall || 'ancienne',
+    inclinaison: toArr(b.inclinaisons),
+    style: toArr(b.styles),
+    prise: toArr(b.prises),
+    mouvement: toArr(b.mouvements||b.mouvement||[]),
+    cotation: b.cotation || '',
+    ouvreur: b.ouvreur || '',
+    note: b.note || '',
+    essais: b.essais || null,
+    etoiles: b.etoiles || 0,
+    morpho: b.morpho ?? null,
+  };
+
+  showTab('addbloc');
+  document.getElementById('main-title').textContent = 'Modifier ' + id;
+
+  setTimeout(() => {
+    // Couleur du bloc (prises)
+    if(b.couleurPrises) {
+      document.querySelectorAll('#color-prises-selector .color-opt').forEach(el => {
+        if(el.querySelector('span')?.textContent.toLowerCase() === b.couleurPrises) el.classList.add('sel');
+      });
+    }
+    // Couleur étiquette
+    if(b.couleur) {
+      document.querySelectorAll('#color-selector .color-opt').forEach(el => {
+        if(el.querySelector('span')?.textContent.toLowerCase() === b.couleur) el.classList.add('sel');
+      });
+    }
+    // Secteur
+    if(b.secteur) {
+      const shortZone = b.secteur.replace(/^Zone\s*/,'');
+      document.querySelectorAll('.secteur-btn').forEach(btn => {
+        if(btn.textContent.trim() === b.secteur || btn.textContent.trim() === shortZone) btn.click();
+      });
+    }
+    // Inclinaisons, styles, prises
+    toArr(b.inclinaisons).forEach(v => document.querySelectorAll('[onclick*="toggleTag(\'incl"]').forEach(el => { if(el.textContent.trim()===v) el.classList.add('sel'); }));
+    toArr(b.styles).forEach(v => document.querySelectorAll('[onclick*="toggleTag(\'style"]').forEach(el => { if(el.textContent.trim()===v) el.classList.add('sel'); }));
+    toArr(b.prises).forEach(v => document.querySelectorAll('[onclick*="toggleTag(\'prise"]').forEach(el => { if(el.textContent.trim()===v) el.classList.add('sel'); }));
+    toArr(b.mouvements||[]).forEach(v => document.querySelectorAll('[onclick*="toggleTag(\'mvt"]').forEach(el => { if(el.textContent.trim()===v) el.classList.add('sel'); }));
+    // Cotation, ouvreur, note
+    const cotEl = document.getElementById('bloc-cotation'); if(cotEl) cotEl.value = b.cotation||'';
+    const ouvrEl = document.getElementById('bloc-ouvreur'); if(ouvrEl) ouvrEl.value = b.ouvreur||'';
+    const noteEl = document.getElementById('bloc-note'); if(noteEl) noteEl.value = b.note||'';
+    // Changer le bouton submit
+    const submitBtn = document.querySelector('[onclick="submitNewBloc()"]');
+    if(submitBtn) { submitBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg> Sauvegarder les modifications'; }
+    updateBlocPreview();
+  }, 150);
+}
+
 function openAddBlocFromZone(){
   // Close any séance overlays that might block scroll
   document.getElementById('bloc-detail-overlay')?.classList.remove('open');
@@ -7853,11 +8252,16 @@ function openBlocDetail(bloc){
 
     // En-tête
     +'<div class="bloc-detail-top">'
-    +'<div class="bloc-detail-color" style="background:'+(bloc.col||'#888')+'"></div>'
+    +'<div class="bloc-detail-color" style="background:'+(bloc.couleurPrisesHex||CCOLS[bloc.couleurPrises]||bloc.col||'#888')+'"></div>'
     +'<div><div class="bloc-detail-name">'+(bloc.nom||bloc.id||'Bloc')+'</div>'
     +'<div class="bloc-detail-sub">Secteur '+(bloc.secteur||'')
     +(bloc.cotation?' · '+bloc.cotation:'')
-    +(bloc.ouvreur?' · '+bloc.ouvreur:'')+'</div></div></div>'
+    +(bloc.ouvreur?' · '+bloc.ouvreur:'')+'</div>'
+    +((bloc.couleur)?'<div style="font-size:11px;color:var(--ink3);margin-top:3px;display:flex;align-items:center;gap:5px">'
+      +'<span style="width:8px;height:8px;border-radius:50%;display:inline-block;background:'+(bloc.col||CCOLS[bloc.couleur]||'#888')+'"></span>'
+      +'Étiquette : '+(bloc.couleur.charAt(0).toUpperCase()+bloc.couleur.slice(1))
+      +'</div>':'')
+    +'</div></div>'
     +(bloc.date?'<div style="font-size:11px;color:var(--ink3);margin-bottom:12px">Ouverture : '+bloc.date+'</div>':'')
 
     // Tags
@@ -7909,10 +8313,19 @@ function openBlocDetail(bloc){
       ? '<button class="btn" onclick="deleteUserBloc(\''+bloc.id+'\',\''+bloc.secteur+'\')" style="margin-top:8px;color:var(--red);border-color:var(--red)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:middle;margin-right:4px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg> Supprimer ce bloc</button>'
       : ''
     )
+    // Bouton modifier (disponible pour tous si bloc a un id)
+    +(bloc.id
+      ? '<button class="btn" onclick="openEditBloc(\''+bloc.id+'\')" style="margin-top:8px;color:var(--accent);border-color:var(--accent)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:middle;margin-right:4px"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Modifier ce bloc</button>'
+      : ''
+    )
 
   // Section essais / étoiles / morpho éditable (blocs utilisateur)
   +(bloc.addedBy
     ? '<div class="bloc-tag-group" style="margin-top:4px"><div class="bloc-tag-group-label">Mon expérience</div>'
+      +'<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--ink3);margin-bottom:5px">Difficulté perçue</div>'
+      +'<div style="display:flex;gap:6px" id="bd-diff-btns">'
+      +['Soft','Normal','Hard'].map(v=>'<button class="tag-btn '+(bloc.difficulte===v?'sel':'')+'" onclick="setBlocDifficulte(\''+v+'\',this,\''+bloc.id+'\')" style="flex:1;padding:9px;font-size:12px">'+v+'</button>').join('')
+      +'</div></div>'
       +'<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--ink3);margin-bottom:5px">Essais</div>'
       +'<div style="display:flex;gap:6px;flex-wrap:wrap" id="bd-essais-btns">'
       +['flash','1','2','3','+3','projet'].map(v=>'<button class="tag-btn '+(bloc.essais===v?'sel':'')+'" onclick="setBlocEssais(\''+v+'\',this,\''+bloc.id+'\')">'+( v==='flash'?'→ Flash':v==='projet'?'◎ Projet':v+' essai'+(parseInt(v)>1?'s':'') )+'</button>').join('')
@@ -8044,8 +8457,15 @@ function setBlocMorpho(val, id) {
   const bloc = BLOCS.find(b=>b.id===id); if(!bloc) return;
   bloc.morpho = (bloc.morpho===val) ? null : val;
   saveAll();
-  document.querySelectorAll('#bd-essais-btns').length; // force refresh
   openBlocDetail(bloc);
+}
+
+function setBlocDifficulte(val, el, id) {
+  const bloc = BLOCS.find(b=>b.id===id); if(!bloc) return;
+  bloc.difficulte = (bloc.difficulte===val) ? null : val;
+  saveAll();
+  document.querySelectorAll('#bd-diff-btns .tag-btn').forEach(b=>b.classList.remove('sel'));
+  if(bloc.difficulte) el.classList.add('sel');
 }
 
 
