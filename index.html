@@ -7530,37 +7530,56 @@ function selectSeanceZone(name){
       }
     });
 
-    // Generate random-ish but deterministic positions for dots within the zone
-    const seed = name.charCodeAt(name.length-1);
-    const dots = zoneDots.map((b,i)=>{
-      // Spread dots across the zone section
-      const cols = Math.max(3, Math.ceil(Math.sqrt(zoneDots.length+1)));
-      const row = Math.floor(i/cols);
-      const col = i % cols;
-      // x: within zone slice (15%-85% of zone width, distributed in columns)
-      const xRel = 15 + (col / Math.max(cols-1,1)) * 70;
-      // y: distributed in rows (20%-80% height)
-      const rows = Math.ceil(zoneDots.length/cols);
-      const yRel = 20 + (row / Math.max(rows-1,1)) * 60;
-      const dotColor = b.res==='ok'?'#22c55e':b.res==='nok'?'#ef4444':b.col;
-      const border = b.res?'3px solid rgba(255,255,255,.9)':'2px solid rgba(255,255,255,.5)';
-      const size = b.res?22:18;
-      // x position in full image = xPct + xRel% of wPct
-      const xImg = xPct + (xRel/100)*wPct;
-      return `<div title="${b.id}" style="
-        position:absolute;
-        left:${xImg}%;top:${yRel}%;
-        width:${size}px;height:${size}px;
-        border-radius:50%;
-        background:${dotColor};
-        border:${border};
-        transform:translate(-50%,-50%);
-        box-shadow:0 2px 6px rgba(0,0,0,.5);
-        cursor:pointer;
-        z-index:2;
-        display:flex;align-items:center;justify-content:center;
-        font-size:8px;font-weight:800;color:#fff;
-      " onclick="event.stopPropagation()">${b.res==='ok'?'✓':b.res==='nok'?'✗':''}</div>`;
+    // Lignes verticales — une par bloc, espacées dans la zone
+    const n = zoneDots.length;
+    const lines = zoneDots.map((b, i) => {
+      // Répartir les lignes uniformément dans la zone
+      const xRel = n <= 1 ? 50 : 10 + (i / (n - 1)) * 80;
+      const xImg = xPct + (xRel / 100) * wPct;
+
+      // Couleur : résultat > couleur du bloc
+      const lineColor = b.res === 'ok'  ? '#22c55e'
+                      : b.res === 'nok' ? '#ef4444'
+                      : b.col;
+
+      const opacity = b.res ? '1' : '0.75';
+      const lineW   = b.res ? '4px' : '3px';
+      const glow    = b.res ? `box-shadow:0 0 8px ${lineColor}88;` : '';
+
+      // Étiquette en bas de la ligne
+      const label = b.couleur ? (b.couleur.charAt(0).toUpperCase()) : '';
+
+      return `
+        <div title="${b.id}" style="
+          position:absolute;
+          left:${xImg}%;
+          top:8%;
+          width:${lineW};
+          height:84%;
+          background:${lineColor};
+          opacity:${opacity};
+          transform:translateX(-50%);
+          border-radius:3px;
+          ${glow}
+          z-index:2;
+          cursor:pointer;
+        " onclick="event.stopPropagation()">
+          <!-- Marqueur haut -->
+          <div style="
+            position:absolute;top:-2px;left:50%;transform:translateX(-50%);
+            width:10px;height:10px;border-radius:50%;
+            background:${lineColor};
+            border:2px solid rgba(255,255,255,.9);
+          "></div>
+          <!-- Marqueur bas avec résultat -->
+          <div style="
+            position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);
+            background:${lineColor};color:#fff;
+            font-size:8px;font-weight:800;
+            padding:1px 4px;border-radius:4px;
+            white-space:nowrap;letter-spacing:.3px;
+          ">${b.res === 'ok' ? '✓' : b.res === 'nok' ? '✗' : label}</div>
+        </div>`;
     }).join('');
 
     // Zone highlight overlay
@@ -7588,7 +7607,7 @@ function selectSeanceZone(name){
         <img src="${wallData.image}" style="width:100%;display:block;opacity:.92;border-radius:10px;" draggable="false">
         ${zoneHL}
         ${zoneLabel}
-        ${dots}
+        ${lines}
       </div>
       <div style="font-size:10px;color:var(--ink3);text-align:right;padding:4px 6px 0">
         Section 5 · ${name} · 21,98m total
