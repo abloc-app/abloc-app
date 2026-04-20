@@ -8004,7 +8004,7 @@ function selectSeanceZone(name){
     else if(WALL_ZONE_NOUV_L && WALL_ZONE_NOUV_L.zones.includes(name)) wallData = WALL_ZONE_NOUV_L;
     else if(WALL_ZONE_NOUV_M && WALL_ZONE_NOUV_M.zones.includes(name)) wallData = WALL_ZONE_NOUV_M;
   }
-  if(wallData.zones.includes(name) && seanceHall==='ancienne') {
+  if(wallData && wallData.zones.includes(name)) {
     const slice = wallData.slices[name]; // [xStart%, xEnd%]
     const xPct = slice[0];
     const wPct = slice[1] - slice[0];
@@ -8040,10 +8040,16 @@ function selectSeanceZone(name){
     // Stocker les blocs dans un registre global pour accès par index
     window._wallBlocs = zoneDots;
 
+    // Charger les positions sauvegardées
+    const WALL_POS_KEY = 'abloc_wall_pos';
+    let wallPositions = {};
+    try { wallPositions = JSON.parse(localStorage.getItem(WALL_POS_KEY)||'{}'); } catch(e) {}
+
     const n = zoneDots.length;
     const lines = zoneDots.map((b, i) => {
-      // Répartir les lignes uniformément dans la zone
-      const xRel = n <= 1 ? 50 : 10 + (i / (n - 1)) * 80;
+      // Position : sauvegardée ou calculée uniformément
+      const defaultX = n <= 1 ? 50 : 10 + (i / (n - 1)) * 80;
+      const xRel = (wallPositions[b.id] !== undefined) ? wallPositions[b.id] : defaultX;
       const xImg = xPct + (xRel / 100) * wPct;
 
       // Couleur : résultat > couleur du bloc
@@ -8059,7 +8065,7 @@ function selectSeanceZone(name){
       const label = b.couleur ? (b.couleur.charAt(0).toUpperCase()) : '';
 
       return `
-        <div title="${b.id}" style="
+        <div title="${b.id}" data-bloc-line-id="${b.id}" data-xpct="${xPct}" data-wpct="${wPct}" style="
           position:absolute;
           left:${xImg}%;
           top:8%;
@@ -8071,8 +8077,12 @@ function selectSeanceZone(name){
           border-radius:3px;
           ${glow}
           z-index:2;
-          cursor:pointer;
-        " onclick="event.stopPropagation();wallLineClick(${i})">
+          cursor:grab;
+          touch-action:none;
+        "
+        onclick="event.stopPropagation();wallLineClick(${i})"
+        onmousedown="startWallLineDrag(event,${i})"
+        ontouchstart="startWallLineDrag(event,${i})">
           <!-- Marqueur haut -->
           <div style="
             position:absolute;top:-2px;left:50%;transform:translateX(-50%);
@@ -8119,7 +8129,7 @@ function selectSeanceZone(name){
         ${lines}
       </div>
       <div style="font-size:10px;color:var(--ink3);text-align:right;padding:4px 6px 0">
-        Section 5 · ${name} · 21,98m total
+        ${seanceHall==='ancienne'?'Section 5 · ':''}${name}
       </div>`;
   } else {
     wallView.style.display='none';
@@ -8183,6 +8193,72 @@ function selectSeanceZone(name){
   const zp=document.getElementById('seance-zone-panel');zp.style.display='block';
   const ht=document.getElementById('seance-howto');if(ht)ht.style.display='none';
   zp.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+const WALL_POS_KEY = 'abloc_wall_pos';
+let _dragLine = null; // {el, blocId, container, xpct, wpct, startClientX, startLeft}
+
+function startWallLineDrag(e, idx) {
+  const b = (window._wallBlocs || [])[idx];
+  if(!b) return;
+  const el = e.currentTarget;
+  const container = el.closest('[style*="position:relative"]');
+  if(!container) return;
+
+  // Distinguish click vs drag — track movement
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  _dragLine = {
+    el, blocId: b.id,
+    container,
+    xpct: parseFloat(el.dataset.xpct||0),
+    wpct: parseFloat(el.dataset.wpct||100),
+    startClientX: clientX,
+    startLeft: parseFloat(el.style.left),
+    moved: false,
+  };
+
+  document.addEventListener('mousemove', onWallLineDrag);
+  document.addEventListener('mouseup',   endWallLineDrag);
+  document.addEventListener('touchmove', onWallLineDrag, {passive:false});
+  document.addEventListener('touchend',  endWallLineDrag);
+  e.preventDefault();
+}
+
+function onWallLineDrag(e) {
+  if(!_dragLine) return;
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const dx = clientX - _dragLine.startClientX;
+  if(Math.abs(dx) > 4) _dragLine.moved = true;
+  if(!_dragLine.moved) return;
+
+  const cw = _dragLine.container.offsetWidth;
+  // Convert px delta to % of image width
+  const dxPct = (dx / cw) * 100;
+  const newLeft = Math.max(0, Math.min(100, _dragLine.startLeft + dxPct));
+  _dragLine.el.style.left = newLeft + '%';
+  if(e.cancelable) e.preventDefault();
+}
+
+function endWallLineDrag(e) {
+  if(!_dragLine) return;
+  document.removeEventListener('mousemove', onWallLineDrag);
+  document.removeEventListener('mouseup',   endWallLineDrag);
+  document.removeEventListener('touchmove', onWallLineDrag);
+  document.removeEventListener('touchend',  endWallLineDrag);
+
+  if(_dragLine.moved) {
+    // Save position: convert absolute % back to relative % within zone
+    const finalLeft = parseFloat(_dragLine.el.style.left);
+    const xpct = _dragLine.xpct, wpct = _dragLine.wpct;
+    const xRel = wpct > 0 ? ((finalLeft - xpct) / wpct) * 100 : 50;
+    const clamped = Math.max(0, Math.min(100, xRel));
+
+    let positions = {};
+    try { positions = JSON.parse(localStorage.getItem(WALL_POS_KEY)||'{}'); } catch(e2){}
+    positions[_dragLine.blocId] = clamped;
+    localStorage.setItem(WALL_POS_KEY, JSON.stringify(positions));
+  }
+  _dragLine = null;
 }
 
 function wallLineClick(idx) {
