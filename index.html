@@ -6703,20 +6703,27 @@ async function doRegister() {
   try {
     const res = await supa.signUp(email, pass);
     if(res.error){ errEl.textContent=translateError(res.error.message); errEl.className='auth-error show'; return; }
-    // Auto sign-in after register
+
+    // Essayer de se connecter directement (si confirmation email désactivée)
     const loginRes = await supa.signIn(email, pass);
     if(loginRes.access_token) {
       saveAuthState(loginRes.user, loginRes.access_token, loginRes.expires_at, loginRes.refresh_token);
-      // Save pseudo
       await supa.upsertProfile(loginRes.user.id, {pseudo}, loginRes.access_token);
       currentProfile = {id: loginRes.user.id, pseudo};
       onAuthSuccess();
+    } else if(loginRes.error && (loginRes.error.message||'').toLowerCase().includes('email')) {
+      // Email confirmation requise
+      sucEl.textContent = '✓ Compte créé ! Vérifie tes emails pour confirmer ton inscription, puis connecte-toi.';
+      sucEl.className = 'auth-success show';
+      setTimeout(()=>switchAuthTab('login'), 3000);
     } else {
-      sucEl.textContent='Compte créé ! Vérifie tes emails pour confirmer ton inscription.';
-      sucEl.className='auth-success show';
+      // Compte créé mais login échoué — afficher succès quand même
+      sucEl.textContent = '✓ Compte créé ! Tu peux maintenant te connecter.';
+      sucEl.className = 'auth-success show';
+      setTimeout(()=>switchAuthTab('login'), 2000);
     }
   } catch(e) {
-    errEl.textContent='Erreur de connexion. Réessaie.';
+    errEl.textContent = 'Erreur réseau : ' + (e.message || 'Réessaie.');
     errEl.className='auth-error show';
   } finally {
     btn.disabled=false; btn.textContent='Créer mon compte';
