@@ -993,7 +993,9 @@ textarea{resize:none;height:62px;line-height:1.5}
       <div style="font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Clé API Anthropic</div>
       <input id="adm-api-key" type="password" placeholder="sk-ant-..." autocomplete="off"
         style="width:100%;padding:8px 12px;border-radius:8px;border:1.5px solid var(--line2);background:var(--white);color:var(--ink);font-size:12px;font-family:monospace;box-sizing:border-box"
-        oninput="localStorage.setItem('adm_api_key',this.value)"
+        oninput="localStorage.setItem('adm_api_key',this.value.trim())"
+        onchange="localStorage.setItem('adm_api_key',this.value.trim())"
+        onblur="localStorage.setItem('adm_api_key',this.value.trim())"
         value="">
       <div style="font-size:10px;color:var(--ink3);margin-top:4px">Stockée localement uniquement. Obtenir sur <a href="https://console.anthropic.com" target="_blank" style="color:var(--accent)">console.anthropic.com</a></div>
     </div>
@@ -3130,7 +3132,7 @@ async function showWowMoment(ok, nok, sessionScore) {
 
 Juste le texte, pas de JSON.`;
 
-    const data = await callAPI({model:'claude-sonnet-4-20250514',max_tokens:80,messages:[{role:'user',content:prompt}]});
+    const data = await callAPI({model:'claude-sonnet-4-5',max_tokens:80,messages:[{role:'user',content:prompt}]});
     const text = (data.content?.[0]?.text||'').trim();
     if(text) aiEl.textContent = text;
     else aiEl.textContent = `${taux}% ce soir — ${ok} blocs dans la poche.`;
@@ -3337,8 +3339,12 @@ async function callAPI(body) {
     }
   } catch(e) {}
   // Fallback : clé API locale
-  const apiKey = localStorage.getItem('adm_api_key') || '';
-  if(!apiKey) throw new Error('Aucune clé API — configure-la dans Profil → ⚙');
+  const apiKey = localStorage.getItem('adm_api_key') 
+    || document.getElementById('adm-api-key')?.value?.trim() 
+    || '';
+  if(!apiKey) throw new Error('Clé API manquante — configure-la dans Profil → Dashboard ouvreurs → clé API');
+  // S'assurer qu'elle est bien sauvegardée pour les prochains appels
+  if(apiKey) localStorage.setItem('adm_api_key', apiKey);
   const r = await fetch('https://api.anthropic.com/v1/messages', {
     method:'POST',
     headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
@@ -3391,7 +3397,7 @@ Réponds UNIQUEMENT avec ce JSON (sans markdown) :
 ]`;
 
   try {
-    const data = await callAPI({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]});
+    const data = await callAPI({model:'claude-sonnet-4-5',max_tokens:600,messages:[{role:'user',content:prompt}]});
     const text = (data.content?.[0]?.text||'').trim().replace(/```[\w]*\n?/g,'').replace(/```/g,'');
     const protos = JSON.parse(text);
     window._aiHangProtos = protos;
@@ -3498,7 +3504,7 @@ Réponds UNIQUEMENT avec ce JSON (sans markdown) :
 ]`;
 
   try {
-    const data = await callAPI({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]});
+    const data = await callAPI({model:'claude-sonnet-4-5',max_tokens:600,messages:[{role:'user',content:prompt}]});
     const text = (data.content?.[0]?.text||'').trim().replace(/```[\w]*\n?/g,'').replace(/```/g,'');
     const exos = JSON.parse(text);
 
@@ -3871,7 +3877,7 @@ Réponds en UNE seule courte phrase (max 12 mots), en français, sans guillemets
         'anthropic-version': '2023-06-01',
         'anthropic-dangerous-direct-browser-access': 'true',
       },
-      body: JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:60, messages:[{role:'user',content:prompt}]}),
+      body: JSON.stringify({model:'claude-sonnet-4-5', max_tokens:60, messages:[{role:'user',content:prompt}]}),
       signal: controller.signal,
     });
     clearTimeout(timeout);
@@ -5260,7 +5266,7 @@ Réponds UNIQUEMENT avec ce JSON :
 
   try {
     const data = await callAPI({
-      model:'claude-sonnet-4-20250514',
+      model:'claude-sonnet-4-5',
       max_tokens:800,
       messages:[{role:'user',content:PROMPTS[mode]}]
     });
@@ -5369,8 +5375,18 @@ Réponds UNIQUEMENT avec ce JSON :
     if(historique[0]) historique[0].aiCoaching = text;
     saveAll();
   } catch(e) {
-    const errEl = document.getElementById('coach-main-text') || document.getElementById('coach-weakness-text');
-    if(errEl) errEl.textContent = 'Erreur de connexion. Vérifie ta connexion internet.';
+    const msg = e.message || 'Erreur de connexion';
+    showToast('⚠ ' + msg);
+    // Afficher aussi dans le texte du mode actif
+    const targets = {
+      analyse: 'coach-main-text',
+      points: 'coach-weakness-text',
+      semaine: 'coach-week-text',
+      plan: 'coach-plan-intro',
+    };
+    const errEl = document.getElementById(targets[mode] || 'coach-main-text');
+    if(errEl) errEl.textContent = msg;
+    console.error('callClaudeCoaching error:', e);
   } finally {
     if(btn){btn.disabled=false;}
     // Restore button text
@@ -5704,7 +5720,7 @@ Format : utilise des bullet points courts (max 15 mots chacun), pas de blabla in
         'anthropic-dangerous-direct-browser-access': 'true',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-5',
         max_tokens: 1000,
         messages: [{role: 'user', content: prompt}]
       })
@@ -8871,7 +8887,7 @@ async function startGuidedSession() {
   const prompt = 'Tu es un coach escalade de bloc expert et bienveillant. Le grimpeur est en séance MAINTENANT.\n\nORDRE DE DIFFICULTÉ DES COULEURS DE LA SALLE (du plus facile au plus difficile) :\nVert (4) < Orange (5) < Rose (5+) < Noir (6A) < Bleu (6B) < Mauve (6C) < Jaune (7A) < Rouge (7B) < Blanc (7C+)\nUtilise cet ordre pour interpréter les performances par couleur.\n\nPROFIL :\n- Niveau : '+niveau+'\n- '+profilPhysique+'\n- Taux réussite global : '+tauxGlobal+'% ('+totalOk+' ok / '+totalNok+' ratés)\n- Points faibles — Inclinaisons : '+(worstIncl||'insuffisant')+' | Styles : '+(worstStyle||'insuffisant')+' | Couleurs : '+(worstColors||'insuffisant')+'\n- Historique : '+historique.length+' séances\n\nSÉANCE EN COURS :\n- Blocs réussis : '+okNow+', blocs ratés : '+nokNow+'\n- Hall actuel : '+(seanceHall||'non défini')+'\n- Blocs guidés déjà travaillés : '+guidedDone+'\n\nBLOCS DISPONIBLES (ID | couleur cotation | inclinaison | style | secteur) :\n'+(blocsDispos||'Non disponible')+'\n\nRecommande exactement 8 blocs précis à travailler MAINTENANT. Cible les points faibles. Pour chaque bloc, explique POURQUOI en 1 phrase courte (max 12 mots).\n\nRéponds UNIQUEMENT avec ce JSON (sans markdown) :\n{"message":"1-2 phrases de coaching motivant et personnalisé","blocs":[{"id":"BLOC_ID","couleur":"couleur","cotation":"cotation ou vide","why":"pourquoi ce bloc en 1 phrase"}]}';
 
   try {
-    const data = await callAPI({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]});
+    const data = await callAPI({model:'claude-sonnet-4-5',max_tokens:600,messages:[{role:'user',content:prompt}]});
     const text = (data.content?.[0]?.text||'').trim();
     const parsed = JSON.parse(text.replace(/```[\w]*\n?/g,'').replace(/```/g,'').trim());
     guidedBlocs = parsed.blocs || [];
