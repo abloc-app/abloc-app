@@ -3130,12 +3130,7 @@ async function showWowMoment(ok, nok, sessionScore) {
 
 Juste le texte, pas de JSON.`;
 
-    const res = await fetch('/.netlify/functions/coaching', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:80,messages:[{role:'user',content:prompt}]})
-    });
-    const data = await res.json();
+    const data = await callAPI({model:'claude-sonnet-4-20250514',max_tokens:80,messages:[{role:'user',content:prompt}]});
     const text = (data.content?.[0]?.text||'').trim();
     if(text) aiEl.textContent = text;
     else aiEl.textContent = `${taux}% ce soir — ${ok} blocs dans la poche.`;
@@ -5250,16 +5245,11 @@ Réponds UNIQUEMENT avec ce JSON :
   };
 
   try {
-    const res = await fetch('/.netlify/functions/coaching', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:800,
-        messages:[{role:'user',content:PROMPTS[mode]}]
-      })
+    const data = await callAPI({
+      model:'claude-sonnet-4-20250514',
+      max_tokens:800,
+      messages:[{role:'user',content:PROMPTS[mode]}]
     });
-    const data = await res.json();
     const text = (data.content?.[0]?.text || '').trim();
 
     if(mode==='analyse') {
@@ -6910,7 +6900,15 @@ async function syncBlocsToSupabase() {
       cotation: b.cotation||null,
       ouvreur: b.ouvreur||null,
       note: b.note||null,
-      essais: b.essais||null,
+      essais: (() => {
+        const e = b.essais;
+        if(!e) return null;
+        if(e === 'flash') return 0;
+        if(e === 'projet') return 99;
+        if(e === '+3') return 4;
+        const n = parseInt(e);
+        return isNaN(n) ? null : n;
+      })(),
       etoiles: typeof b.etoiles==='number'?b.etoiles:0,
       morpho: b.morpho===true?true:b.morpho===false?false:null,
       date: b.date||null,
@@ -8859,12 +8857,7 @@ async function startGuidedSession() {
   const prompt = 'Tu es un coach escalade de bloc expert et bienveillant. Le grimpeur est en séance MAINTENANT.\n\nORDRE DE DIFFICULTÉ DES COULEURS DE LA SALLE (du plus facile au plus difficile) :\nVert (4) < Orange (5) < Rose (5+) < Noir (6A) < Bleu (6B) < Mauve (6C) < Jaune (7A) < Rouge (7B) < Blanc (7C+)\nUtilise cet ordre pour interpréter les performances par couleur.\n\nPROFIL :\n- Niveau : '+niveau+'\n- '+profilPhysique+'\n- Taux réussite global : '+tauxGlobal+'% ('+totalOk+' ok / '+totalNok+' ratés)\n- Points faibles — Inclinaisons : '+(worstIncl||'insuffisant')+' | Styles : '+(worstStyle||'insuffisant')+' | Couleurs : '+(worstColors||'insuffisant')+'\n- Historique : '+historique.length+' séances\n\nSÉANCE EN COURS :\n- Blocs réussis : '+okNow+', blocs ratés : '+nokNow+'\n- Hall actuel : '+(seanceHall||'non défini')+'\n- Blocs guidés déjà travaillés : '+guidedDone+'\n\nBLOCS DISPONIBLES (ID | couleur cotation | inclinaison | style | secteur) :\n'+(blocsDispos||'Non disponible')+'\n\nRecommande exactement 8 blocs précis à travailler MAINTENANT. Cible les points faibles. Pour chaque bloc, explique POURQUOI en 1 phrase courte (max 12 mots).\n\nRéponds UNIQUEMENT avec ce JSON (sans markdown) :\n{"message":"1-2 phrases de coaching motivant et personnalisé","blocs":[{"id":"BLOC_ID","couleur":"couleur","cotation":"cotation ou vide","why":"pourquoi ce bloc en 1 phrase"}]}';
 
   try {
-    const res = await fetch('/.netlify/functions/coaching', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]})
-    });
-    const data = await res.json();
+    const data = await callAPI({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]});
     const text = (data.content?.[0]?.text||'').trim();
     const parsed = JSON.parse(text.replace(/```[\w]*\n?/g,'').replace(/```/g,'').trim());
     guidedBlocs = parsed.blocs || [];
