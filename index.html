@@ -8080,9 +8080,9 @@ function selectSeanceZone(name){
           cursor:grab;
           touch-action:none;
         "
-        onclick="event.stopPropagation();wallLineClick(${i})"
         onmousedown="startWallLineDrag(event,${i})"
-        ontouchstart="startWallLineDrag(event,${i})">
+        ontouchstart="startWallLineDrag(event,${i})"
+        onclick="if(!('ontouchstart' in window)){event.stopPropagation();wallLineClick(${i})}">
           <!-- Marqueur haut -->
           <div style="
             position:absolute;top:-2px;left:50%;transform:translateX(-50%);
@@ -8196,7 +8196,7 @@ function selectSeanceZone(name){
 }
 
 const WALL_POS_KEY = 'abloc_wall_pos';
-let _dragLine = null; // {el, blocId, container, xpct, wpct, startClientX, startLeft}
+let _dragLine = null; // {el, blocId, idx, container, xpct, wpct, startClientX, startLeft, moved}
 
 function startWallLineDrag(e, idx) {
   const b = (window._wallBlocs || [])[idx];
@@ -8205,10 +8205,9 @@ function startWallLineDrag(e, idx) {
   const container = el.closest('[style*="position:relative"]');
   if(!container) return;
 
-  // Distinguish click vs drag — track movement
   const clientX = e.touches ? e.touches[0].clientX : e.clientX;
   _dragLine = {
-    el, blocId: b.id,
+    el, blocId: b.id, idx,
     container,
     xpct: parseFloat(el.dataset.xpct||0),
     wpct: parseFloat(el.dataset.wpct||100),
@@ -8221,18 +8220,17 @@ function startWallLineDrag(e, idx) {
   document.addEventListener('mouseup',   endWallLineDrag);
   document.addEventListener('touchmove', onWallLineDrag, {passive:false});
   document.addEventListener('touchend',  endWallLineDrag);
-  e.preventDefault();
+  // Ne PAS appeler preventDefault ici — laisser le tap natif fonctionner sur iOS
 }
 
 function onWallLineDrag(e) {
   if(!_dragLine) return;
   const clientX = e.touches ? e.touches[0].clientX : e.clientX;
   const dx = clientX - _dragLine.startClientX;
-  if(Math.abs(dx) > 4) _dragLine.moved = true;
+  if(Math.abs(dx) > 8) _dragLine.moved = true; // seuil plus élevé pour iOS
   if(!_dragLine.moved) return;
 
   const cw = _dragLine.container.offsetWidth;
-  // Convert px delta to % of image width
   const dxPct = (dx / cw) * 100;
   const newLeft = Math.max(0, Math.min(100, _dragLine.startLeft + dxPct));
   _dragLine.el.style.left = newLeft + '%';
@@ -8246,19 +8244,28 @@ function endWallLineDrag(e) {
   document.removeEventListener('touchmove', onWallLineDrag);
   document.removeEventListener('touchend',  endWallLineDrag);
 
+  const wasTap = !_dragLine.moved;
+  const idx = _dragLine.idx;
+
   if(_dragLine.moved) {
-    // Save position: convert absolute % back to relative % within zone
+    // Sauvegarder la position
     const finalLeft = parseFloat(_dragLine.el.style.left);
     const xpct = _dragLine.xpct, wpct = _dragLine.wpct;
     const xRel = wpct > 0 ? ((finalLeft - xpct) / wpct) * 100 : 50;
     const clamped = Math.max(0, Math.min(100, xRel));
-
     let positions = {};
     try { positions = JSON.parse(localStorage.getItem(WALL_POS_KEY)||'{}'); } catch(e2){}
     positions[_dragLine.blocId] = clamped;
     localStorage.setItem(WALL_POS_KEY, JSON.stringify(positions));
   }
+
   _dragLine = null;
+
+  // Sur touch : si c'était un tap (pas de mouvement), ouvrir le détail
+  if(wasTap && e.type === 'touchend') {
+    e.preventDefault(); // empêcher le click synthétique double
+    wallLineClick(idx);
+  }
 }
 
 function wallLineClick(idx) {
