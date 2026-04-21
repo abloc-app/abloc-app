@@ -8048,7 +8048,7 @@ function selectSeanceZone(name){
     const n = zoneDots.length;
     const lines = zoneDots.map((b, i) => {
       // Position : sauvegardée ou calculée uniformément
-      const defaultX = n <= 1 ? 50 : 10 + (i / (n - 1)) * 80;
+      const defaultX = n <= 1 ? 50 : 10 + ((n - 1 - i) / (n - 1)) * 80;
       const xRel = (wallPositions[b.id] !== undefined) ? wallPositions[b.id] : defaultX;
       const xImg = xPct + (xRel / 100) * wPct;
 
