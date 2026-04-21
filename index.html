@@ -2076,7 +2076,7 @@ textarea{resize:none;height:62px;line-height:1.5}
       </div>
     </div>
 
-    <div class="addbloc-required-msg" id="addbloc-required-msg">⚠ Remplis tous les champs obligatoires (couleur du bloc, couleur de l'étiquette, secteur, inclinaison, type de grimpe, prises).</div>
+    <div class="addbloc-required-msg" id="addbloc-required-msg">⚠ Remplis les champs obligatoires : couleur du bloc, couleur de l'étiquette et secteur.</div>
 
     <button class="btn btn-primary" onclick="submitNewBloc()" style="margin-top:4px">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -7717,14 +7717,16 @@ function updateBlocPreview() {
     ...newBlocData.prise,
   ];
   tags.textContent = tagParts.length ? tagParts.join(' · ') : 'Complète le formulaire ci-dessous';
+  // Effacer le message d'erreur dès qu'on modifie quelque chose
+  const req = document.getElementById('addbloc-required-msg');
+  if(req) req.classList.remove('show');
 }
 
 // ── Submit ──
 function submitNewBloc() {
   const req = document.getElementById('addbloc-required-msg');
-  // Validate
-  if(!newBlocData.couleurPrises || !newBlocData.couleur || !newBlocData.secteur ||
-     !newBlocData.inclinaison.length || !newBlocData.style.length || !newBlocData.prise.length) {
+  // Seuls couleur des prises, étiquette et secteur sont obligatoires
+  if(!newBlocData.couleurPrises || !newBlocData.couleur || !newBlocData.secteur) {
     req.classList.add('show');
     req.scrollIntoView({behavior:'smooth',block:'nearest'});
     return;
