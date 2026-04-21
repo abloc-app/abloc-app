@@ -2515,7 +2515,7 @@ function updateObjSeanceBars() {
   if(!actifs.length){panel.style.display='none';return;}
   panel.style.display='block';
   let touched = 0;
-  document.getElementById('obj-seance-bars').innerHTML = actifs.map(o=>{
+  const _oseq=document.getElementById('obj-seance-bars');if(_oseq)_oseq.innerHTML = actifs.map(o=>{
     const sugg = SUGGESTIONS.find(s=>s.id===o.id);
     const val = sugg ? sugg.auto(results) : 0;
     const pct = Math.min(100, sugg ? Math.round(val/sugg.cible*100) : 0);
@@ -3018,8 +3018,7 @@ async function showWowMoment(ok, nok, sessionScore) {
   document.getElementById('wow-sub').textContent = ok > 1 ? 'blocs réussis aujourd\'hui' : 'bloc réussi aujourd\'hui';
   document.getElementById('wow-taux').textContent = taux + '%';
   const deltaEl = document.getElementById('wow-delta');
-  deltaEl.textContent = deltaStr;
-  deltaEl.style.color = deltaColor;
+  if(deltaEl) { deltaEl.textContent = deltaStr; deltaEl.style.color = deltaColor; }
   document.getElementById('wow-total').textContent = totalReussis;
 
   // ── Détection projets réussis ce jour ──
@@ -3076,8 +3075,9 @@ async function showWowMoment(ok, nok, sessionScore) {
   });
   if(newBadge && historique.length === 1) {
     const badge = ALL_BADGES.find(x => x.id === newBadge);
-    if(badge) {
-      document.getElementById('wow-badge-name').textContent = badge.name;
+    const badgeNameEl = document.getElementById('wow-badge-name');
+    if(badge && badgeRow && badgeNameEl) {
+      badgeNameEl.textContent = badge.name;
       badgeRow.style.display = 'flex';
     }
   }
@@ -3329,17 +3329,24 @@ async function callAPI(body) {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify(body)
     });
-    if(r.ok) return r.json();
+    if(r.ok) {
+      const data = await r.json();
+      // Vérifier que la réponse contient bien du contenu (pas une erreur Anthropic)
+      if(data.content && data.content.length > 0) return data;
+      // Si erreur dans la réponse, tomber dans le fallback
+    }
   } catch(e) {}
   // Fallback : clé API locale
   const apiKey = localStorage.getItem('adm_api_key') || '';
-  if(!apiKey) throw new Error('Aucune clé API — configure-la dans le profil admin');
+  if(!apiKey) throw new Error('Aucune clé API — configure-la dans Profil → ⚙');
   const r = await fetch('https://api.anthropic.com/v1/messages', {
     method:'POST',
     headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
     body: JSON.stringify(body)
   });
-  return r.json();
+  const data = await r.json();
+  if(data.error) throw new Error(data.error.message || 'Erreur API Anthropic');
+  return data;
 }
 
 // ========== HANGBOARD ==========
@@ -3562,7 +3569,7 @@ function filterCircuits(f, el) {
 
 function renderCircuits() {
   const visible = filterCirc==='all' ? CIRCUITS : CIRCUITS.filter(c=>c.niveau===filterCirc);
-  document.getElementById('circuits-list').innerHTML = visible.map(c=>`
+  const _clist=document.getElementById('circuits-list');if(_clist)_clist.innerHTML = visible.map(c=>`
     <div class="circ-row">
       <div style="width:10px;height:10px;border-radius:50%;background:${c.col};flex-shrink:0"></div>
       <div style="flex:1;min-width:0">
@@ -3615,22 +3622,25 @@ function renderOutilsReco() {
 // ========== COACHING ==========
 function renderCoaching() {
   const last = historique[0];
+  const mainEl = document.getElementById('coach-main-text');
+  const afterEl = document.getElementById('coach-after-seance');
   if(!last){
-    document.getElementById('coach-main-text').textContent='Complète une séance pour recevoir ton coaching personnalisé.';
-    document.getElementById('coach-after-seance').style.display='none';
+    if(mainEl) mainEl.textContent='Complète une séance pour recevoir ton coaching personnalisé.';
+    if(afterEl) afterEl.style.display='none';
   } else {
-    document.getElementById('coach-after-seance').style.display='block';
+    if(afterEl) afterEl.style.display='block';
     const pct = last.ok+last.nok>0?Math.round(last.ok/(last.ok+last.nok)*100):0;
     const justDone = mesObjectifs.filter(o=>o.justDone);
     let msg = pct>=80?`Excellente séance — ${pct}% de réussite ! Tu es en forme, c'est le moment d'attaquer tes projets les plus difficiles.`
       :pct>=55?`Bonne séance, ${pct}% de réussite. ${last.objTouch>0?last.objTouch+' objectif(s) progressé(s).':''} Continue la régularité.`
       :`Séance exigeante — ${pct}% de réussite. Les blocs difficiles d'aujourd'hui seront tes réussites de demain. Travaille la récupération.`;
     if(justDone.length) msg+=' Bravo — '+justDone.length+' objectif(s) atteint(s) !';
-    document.getElementById('coach-main-text').textContent=msg;
+    if(mainEl) mainEl.textContent=msg;
     justDone.forEach(o=>o.justDone=false);
 
     const actifs = mesObjectifs.filter(o=>o.lastPct!==undefined&&o.lastPct>0);
-    document.getElementById('coach-obj-bars').innerHTML = actifs.length
+    const objBarsEl = document.getElementById('coach-obj-bars');
+    if(objBarsEl) objBarsEl.innerHTML = actifs.length
       ? actifs.map(o=>`<div style="margin-bottom:8px">
           <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:3px">
             <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:240px">${o.titre}</span>
@@ -3640,7 +3650,8 @@ function renderCoaching() {
         </div>`).join('')
       : '<div class="empty">Ajoute des objectifs pour voir leur progression.</div>';
 
-    document.getElementById('coach-plan').innerHTML = `
+    const coachPlanEl = document.getElementById('coach-plan');
+    if(coachPlanEl) coachPlanEl.innerHTML = `
       <div class="circ-row"><div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0"></div>
         <div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--text)">Séance technique</div><div style="font-size:11px;color:var(--text3)">Focus dalle & réglettes · Mardi</div></div></div>
       <div class="circ-row"><div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0"></div>
@@ -3653,7 +3664,7 @@ function renderCoaching() {
 
   const colors = ['jaune','orange','rouge','bleu','vert','noir','blanc'];
   const colorMeta = {jaune:'#fbbf24',orange:'#f97316',rouge:'#ef4444',bleu:'#3b82f6',vert:'#22c55e',noir:'#94a3b8',blanc:'#e2e8f0'};
-  document.getElementById('coach-color-bars').innerHTML = colors.map(c=>{
+  const _ccb=document.getElementById('coach-color-bars');if(_ccb)_ccb.innerHTML = colors.map(c=>{
     const total = BLOCS.filter(b=>b.couleur===c).length;
     if(!total) return '';
     const okCount = colorStats[c]||0;
@@ -3675,7 +3686,7 @@ function renderCoaching() {
     {nom:'Circuits',n:CIRCUITS.filter(c=>c.pct>0).length,col:'var(--teal)'}
   ];
   const outilsActifs = outils.filter(o=>o.n>0).length;
-  document.getElementById('coach-outils-bars').innerHTML = outils.map(o=>`
+  const _cob=document.getElementById('coach-outils-bars');if(_cob)_cob.innerHTML = outils.map(o=>`
     <div style="margin-bottom:8px">
       <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:3px">
         <span>${o.nom}</span><span style="font-family:var(--mono);color:var(--text3)">${o.n} session${o.n>1?'s':''}</span>
@@ -3787,7 +3798,7 @@ function renderSuggList() {
   else if(filterSuggType==='indoor') filtered=filtered.filter(s=>s.tags.includes('indoor'));
   else if(filterSuggType==='outdoor') filtered=filtered.filter(s=>s.tags.includes('outdoor'));
   else if(filterSuggType==='outils') filtered=filtered.filter(s=>s.tags.includes('outils'));
-  document.getElementById('sugg-list').innerHTML = filtered.length
+  const _sl=document.getElementById('sugg-list');if(_sl)_sl.innerHTML = filtered.length
     ? filtered.map(s=>`
       <div class="sugg-card" onclick="addObj('${s.id}')">
         <div style="display:flex;align-items:flex-start;gap:10px">
@@ -3974,7 +3985,7 @@ function renderHisto() {
 
   // Objectifs atteints
   const done = mesObjectifs.filter(o=>o.done);
-  document.getElementById('histo-obj').innerHTML = done.length
+  const _hobj=document.getElementById('histo-obj');if(_hobj)_hobj.innerHTML = done.length
     ? done.map(o=>`
       <div class="sess-item">
         <div style="display:flex;align-items:center;gap:8px;flex:1">
@@ -4334,7 +4345,7 @@ function selectMapZone(name) {
       </div>`);
     }
   });
-  document.getElementById('map-detail-results').innerHTML = (rows.length ? rows.join('') : '<div class="empty">Aucun bloc ici.</div>') + renderBlocMediaSection(name) + renderAvisSection(name);
+  const _mdr=document.getElementById('map-detail-results');if(_mdr)_mdr.innerHTML = (rows.length ? rows.join('') : '<div class="empty">Aucun bloc ici.</div>') + renderBlocMediaSection(name) + renderAvisSection(name);
   const panel = document.getElementById('map-detail');
   panel.classList.add('open');
   panel.scrollIntoView({behavior:'smooth',block:'nearest'});
@@ -4607,11 +4618,14 @@ function removeBeta(blocId, idx) {
 function switchCoachTab(tab, el) {
   document.querySelectorAll('.coach-section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.coach-tab').forEach(b=>b.classList.remove('active'));
-  document.getElementById('cs-'+tab).classList.add('active');
-  el.classList.add('active');
+  const csEl = document.getElementById('cs-'+tab);
+  if(csEl) csEl.classList.add('active');
+  if(el) el.classList.add('active');
   if(tab==='points') renderColorBars();
-  if(tab==='semaine' && !document.getElementById('coach-week-plan').innerHTML) renderWeekPreview();
-  if(tab==='plan' && !document.getElementById('coach-4w-plan').innerHTML) renderPlan4wPreview();
+  const weekPlanEl = document.getElementById('coach-week-plan');
+  if(tab==='semaine' && weekPlanEl && !weekPlanEl.innerHTML) renderWeekPreview();
+  const planEl = document.getElementById('coach-4w-plan');
+  if(tab==='plan' && planEl && !planEl.innerHTML) renderPlan4wPreview();
   renderCoachStats();
 }
 
@@ -8231,13 +8245,13 @@ function startWallLineDrag(e, idx) {
 }
 
 function onWallLineDrag(e) {
-  if(!_dragLine) return;
+  if(!_dragLine || !_dragLine.el) return;
   const clientX = e.touches ? e.touches[0].clientX : e.clientX;
   const dx = clientX - _dragLine.startClientX;
-  if(Math.abs(dx) > 8) _dragLine.moved = true; // seuil plus élevé pour iOS
+  if(Math.abs(dx) > 8) _dragLine.moved = true;
   if(!_dragLine.moved) return;
 
-  const cw = _dragLine.container.offsetWidth;
+  const cw = _dragLine.container?.offsetWidth || 1;
   const dxPct = (dx / cw) * 100;
   const newLeft = Math.max(0, Math.min(100, _dragLine.startLeft + dxPct));
   _dragLine.el.style.left = newLeft + '%';
@@ -9023,7 +9037,10 @@ async function loadBlocsFromSupabase() {
       renderSeanceOverlays();
     }
   } catch(e) {
-    console.warn('loadBlocsFromSupabase error:', e);
+    // Failed to fetch = offline ou Supabase inaccessible — silencieux, les blocs locaux sont déjà chargés
+    if(!e.message?.includes('Failed to fetch')) {
+      console.warn('loadBlocsFromSupabase error:', e);
+    }
   }
 }
 
