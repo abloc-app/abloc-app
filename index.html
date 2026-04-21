@@ -4772,6 +4772,7 @@ async function callClaudeCoaching(mode) {
   const btn = document.getElementById(btnMap[mode]);
   if(btn){btn.disabled=true;btn.innerHTML='<div class="streaming-cursor"></div> Génération en cours...';}
 
+  try {
   // Build rich context
   const totalOk = historique.reduce((a,s)=>a+(s.ok||0),0);
   const totalNok = historique.reduce((a,s)=>a+(s.nok||0),0);
@@ -5161,8 +5162,7 @@ async function callClaudeCoaching(mode) {
       return `${z}: ${v.join('°, ')}° — moy.${avg}°`;
     }).join(' | ')+'\n\n'
     +'BLOCS DISPONIBLES EN SALLE (ID | couleur cotation | inclinaisons | styles | prises | couleurPrises | étoiles | difficulté perçue | inclinaison réelle du mur) :\n'+(blocsDispos||'Non disponible')+'\n\n'
-    +'NOTE GRIMPEUR : '+(notePerso||'Aucune')
-    +(currentLang==='en'?'\n\nLANGUE : Réponds en anglais.':'');
+    +'NOTE GRIMPEUR : '+(notePerso||'Aucune');
 
   const PROMPTS = {
     analyse: `Tu es un coach escalade de bloc. Ton rôle : observer, nuancer, suggérer — pas donner des leçons.
@@ -5264,7 +5264,6 @@ Réponds UNIQUEMENT avec ce JSON :
 "semaine4":{"focus":"Décharge / consolidation","objectif":"...","sessions":[...]}}`
   };
 
-  try {
     const data = await callAPI({
       model:'claude-sonnet-4-5',
       max_tokens:800,
