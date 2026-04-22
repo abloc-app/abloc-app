@@ -9008,11 +9008,13 @@ async function loadBlocsFromSupabase() {
     let added = 0;
     data.forEach(b => {
       // Convertir format Supabase -> format app
-      const SUPABASE_CCOLS = {vert:'#22c55e',orange:'#f97316',rose:'#ec4899',rouge:'#ef4444',bleu:'#3b82f6',noir:'#475569',blanc:'#9ca3af',mauve:'#8b5cf6',jaune:'#fbbf24'};
+      const SUPABASE_CCOLS = {vert:'#22c55e',orange:'#f97316',rose:'#ec4899',rouge:'#ef4444',bleu:'#3b82f6',noir:'#111827',blanc:'#9ca3af',mauve:'#8b5cf6',jaune:'#fbbf24'};
       const bloc = {
         id: b.id,
         couleur: b.couleur,
         col: b.col || SUPABASE_CCOLS[b.couleur] || '#888',
+        couleurPrises: b.couleur_prises || b.couleurPrises || null,
+        couleurPrisesHex: b.couleur_prises_hex || b.couleurPrisesHex || (b.couleur_prises ? SUPABASE_CCOLS[b.couleur_prises] : null) || null,
         secteur: b.secteur,
         hall: b.hall || 'ancienne',
         inclinaisons: b.inclinaisons || [],
