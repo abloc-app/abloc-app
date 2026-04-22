@@ -61,7 +61,7 @@ body{font-family:var(--font);background:var(--off);color:var(--ink);-webkit-font
   border-bottom:1px solid var(--line);
   position:sticky;top:0;z-index:40;
 }
-.topbar-title{font-family:var(--display);font-size:22px;font-weight:700;color:var(--ink);letter-spacing:-.5px;line-height:1}
+.topbar-title{font-family:var(--display);font-size:26px;font-weight:700;color:var(--ink);letter-spacing:-.5px;line-height:1}
 .topbar-sub{font-size:12px;color:var(--ink3);font-weight:500;letter-spacing:.2px}
 .topbar-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);margin-bottom:3px}
 
@@ -1412,13 +1412,13 @@ textarea{resize:none;height:62px;line-height:1.5}
       <div id="obj-seance-bars"></div>
     </div>
     <div class="hall-tabs">
-      <button class="hall-tab active" onclick="switchSeanceHall('ancienne',this)">Ancienne salle</button>
       <button class="hall-tab" onclick="switchSeanceHall('nouvelle',this)">Nouvelle salle</button>
+      <button class="hall-tab active" onclick="switchSeanceHall('ancienne',this)">Ancienne salle</button>
     </div>
 
     <!-- Info map -->
     <div style="display:flex;align-items:center;gap:10px;background:var(--accent-bg);border:1.5px solid #ffd5c2;border-radius:var(--r);padding:12px 14px;margin-bottom:10px">
-      <span style="font-size:20px;flex-shrink:0">/</span>
+      <span style="font-size:20px;flex-shrink:0">🗺️</span>
       <div style="font-size:13px;color:var(--ink2);line-height:1.5;font-weight:500">Trouve les blocs de ta séance dans la map ci-dessous et valide-les directement dans l'app.</div>
     </div>
     <div id="seance-map-note" style="display:none"></div>
@@ -8045,9 +8045,13 @@ function selectSeanceZone(name){
     BLOCS.filter(b=>b.secteur===name||b.secteur===name.replace('Zone ','')).forEach(b=>{
       const key=b.id+'|'+b.couleur;
       const res=results[key]||results[b.id]||'';
-      // Couleur du mur = couleurPrises uniquement (pas la couleur d'étiquette)
-      const dispCol = b.couleurPrisesHex || (b.couleurPrises ? CCOLS[b.couleurPrises] : null) || '#888888';
-      const dispNom = b.couleurPrises || '?';
+      // Couleur du mur : couleurPrises si dispo, sinon couleur d'étiquette comme fallback
+      const dispCol = b.couleurPrisesHex
+        || (b.couleurPrises ? CCOLS[b.couleurPrises] : null)
+        || b.col
+        || CCOLS[b.couleur]
+        || '#888888';
+      const dispNom = b.couleurPrises || b.couleur || '?';
       zoneDots.push({
         couleur: dispNom, res, id: b.id,
         col: dispCol,
