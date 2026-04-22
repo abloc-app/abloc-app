@@ -162,6 +162,7 @@ input:checked+.toggle-track::after{transform:translateX(18px)}
 .rbtn:active{transform:scale(.92)}
 .rbtn.ok{background:var(--green-bg);border-color:var(--green);color:var(--green)}
 .rbtn.nok{background:var(--red-bg);border-color:var(--red);color:var(--red)}
+.rbtn.flash{background:#fff7ed;border-color:#f97316;color:#ea580c}
 
 /* ── PROGRESS ─────────────────────────────────────────────────────── */
 .prog-wrap{height:4px;background:var(--off2);border-radius:2px;overflow:hidden;margin-top:5px}
@@ -682,7 +683,7 @@ textarea{resize:none;height:62px;line-height:1.5}
 .zone-panel-close{background:none;border:none;font-size:24px;color:var(--ink3);cursor:pointer;line-height:1;padding:0}
 .bloc-detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:none;align-items:flex-end;justify-content:center}
 .bloc-detail-overlay.open{display:flex}
-.bloc-detail-sheet{background:var(--white);border-radius:var(--r) var(--r) 0 0;width:100%;max-width:430px;padding:20px;max-height:85vh;overflow-y:auto;padding-bottom:calc(20px + env(safe-area-inset-bottom))}
+.bloc-detail-sheet{background:var(--white);border-radius:var(--r) var(--r) 0 0;width:100%;max-width:430px;padding:20px;max-height:85vh;overflow-y:auto;padding-bottom:calc(20px + env(safe-area-inset-bottom));transition:transform .25s ease;touch-action:pan-y}
 .bloc-detail-handle{width:36px;height:4px;background:var(--line2);border-radius:2px;margin:0 auto 16px}
 .bloc-detail-top{display:flex;align-items:center;gap:14px;margin-bottom:14px}
 .bloc-detail-color{width:52px;height:52px;border-radius:50%;flex-shrink:0;border:3px solid rgba(0,0,0,.08)}
@@ -2263,6 +2264,8 @@ function toArr(v) { return Array.isArray(v) ? v : (v ? [v] : []); }
 
 const BLOCS = [
 ];
+// Helper : 'flash' compte comme un succès
+const isOk = v => v === 'ok' || v === 'flash';
 
 const MOON_PROBLEMS = [
   {id:'M01',grade:'6B+'},{id:'M02',grade:'6C'},{id:'M03',grade:'6C+'},{id:'M04',grade:'7A'},{id:'M05',grade:'7A+'},
@@ -8692,6 +8695,7 @@ function openBlocDetail(bloc){
   +'<button class="btn" onclick="closeBlocDetail()" style="margin-top:8px;color:var(--ink3)">Fermer</button>';
 
   document.getElementById('bloc-detail-overlay').classList.add('open');
+  initSheetSwipe();
 }
 
 function saveBlocMedia(mediaKey){
@@ -8781,7 +8785,49 @@ function deleteBlocDetail(id, couleur) {
   showToast('Bloc supprimé');
 }
 
-function closeBlocDetail(){document.getElementById('bloc-detail-overlay').classList.remove('open');}
+function closeBlocDetail(){
+  const sheet = document.getElementById('bloc-detail-sheet');
+  if(sheet){sheet.style.transform='translateY(100%)';setTimeout(()=>{sheet.style.transform='';document.getElementById('bloc-detail-overlay').classList.remove('open');},220);}
+  else{document.getElementById('bloc-detail-overlay').classList.remove('open');}
+}
+
+function initSheetSwipe() {
+  const sheet = document.getElementById('bloc-detail-sheet');
+  if(!sheet || sheet._swipeInit) return;
+  sheet._swipeInit = true;
+  let startY = 0, curY = 0, dragging = false;
+
+  sheet.addEventListener('touchstart', e => {
+    // Ne déclencher que si le sheet est scrollé tout en haut OU si touche sur le handle
+    const isHandle = e.target.closest('.bloc-detail-handle');
+    if(sheet.scrollTop > 0 && !isHandle) return;
+    startY = e.touches[0].clientY;
+    curY = startY;
+    dragging = true;
+    sheet.style.transition = 'none';
+  }, {passive:true});
+
+  sheet.addEventListener('touchmove', e => {
+    if(!dragging) return;
+    const isHandle = e.target.closest('.bloc-detail-handle');
+    if(sheet.scrollTop > 0 && !isHandle) { dragging=false; sheet.style.transform=''; return; }
+    curY = e.touches[0].clientY;
+    const dy = Math.max(0, curY - startY);
+    sheet.style.transform = `translateY(${dy}px)`;
+  }, {passive:true});
+
+  sheet.addEventListener('touchend', () => {
+    if(!dragging) return;
+    dragging = false;
+    sheet.style.transition = '';
+    const dy = curY - startY;
+    if(dy > 80) {
+      closeBlocDetail();
+    } else {
+      sheet.style.transform = '';
+    }
+  });
+}
 
 function setBlocEssais(val, el, id) {
   const bloc = BLOCS.find(b=>b.id===id); if(!bloc) return;
