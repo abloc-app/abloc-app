@@ -8082,10 +8082,12 @@ function selectSeanceZone(name){
       const xRel = (wallPositions[b.id] !== undefined) ? wallPositions[b.id] : defaultX;
       const xImg = xPct + (xRel / 100) * wPct;
 
-      // Couleur : résultat > couleur du bloc
+      // Couleur : résultat > couleurPrises > couleur étiquette > gris
+      const CCOLS_WALL = {vert:'#22c55e',orange:'#f97316',rose:'#ec4899',rouge:'#ef4444',bleu:'#3b82f6',noir:'#475569',blanc:'#9ca3af',mauve:'#8b5cf6',jaune:'#fbbf24'};
+      const baseCol = b.col || b.couleurPrisesHex || CCOLS_WALL[b.couleurPrises] || CCOLS_WALL[b.couleur] || '#888888';
       const lineColor = b.res === 'ok'  ? '#22c55e'
                       : b.res === 'nok' ? '#ef4444'
-                      : b.col;
+                      : baseCol;
 
       const opacity = b.res ? '1' : '0.75';
       const lineW   = b.res ? '4px' : '3px';
@@ -9006,10 +9008,11 @@ async function loadBlocsFromSupabase() {
     let added = 0;
     data.forEach(b => {
       // Convertir format Supabase -> format app
+      const SUPABASE_CCOLS = {vert:'#22c55e',orange:'#f97316',rose:'#ec4899',rouge:'#ef4444',bleu:'#3b82f6',noir:'#475569',blanc:'#9ca3af',mauve:'#8b5cf6',jaune:'#fbbf24'};
       const bloc = {
         id: b.id,
         couleur: b.couleur,
-        col: b.col || '#888',
+        col: b.col || SUPABASE_CCOLS[b.couleur] || '#888',
         secteur: b.secteur,
         hall: b.hall || 'ancienne',
         inclinaisons: b.inclinaisons || [],
