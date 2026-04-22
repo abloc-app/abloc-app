@@ -858,12 +858,6 @@ textarea{resize:none;height:62px;line-height:1.5}
     <div class="auth-error" id="login-error"></div>
     <button class="auth-btn" id="login-btn" onclick="doLogin()">Se connecter</button>
     <div style="text-align:center;font-size:12px;color:var(--ink3);cursor:pointer;margin-top:4px" onclick="doResetPassword()">Mot de passe oublié ?</div>
-    <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--line);text-align:center">
-      <div style="font-size:11px;color:var(--ink3);margin-bottom:8px">Ou tester sans compte</div>
-      <button class="btn" onclick="loginDemo()" style="width:100%;margin:0;color:var(--accent);border-color:var(--accent);font-size:13px">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:middle"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Mode démo — accès immédiat
-      </button>
-    </div>
   </div>
 
   <!-- REGISTER -->
@@ -8959,19 +8953,6 @@ function initSeanceMap(){
 
 
 // ========== MODE DEMO ==========
-function loginDemo() {
-  currentUser = {id:'demo-user', email:'demo@abloc.app', user_metadata:{}};
-  currentProfile = {pseudo:'Demo', email:'demo@abloc.app'};
-  hideAuthScreen();
-  updateUserPill();
-  showTab('seance');
-  loadAll();
-  loadBlocsFromSupabase();
-  initSeanceMap();
-  renderActuFeed();
-  checkAllBadges();
-  showToast('Mode demo - donnees locales uniquement');
-}
 
 
 // ========== NOTES COACHING & OBJECTIFS ==========
